@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Со мной всё так — Soft</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f4ede1;
+    --paper-2: #ece2d0;
+    --ink: #2a2620;
+    --ink-2: #4d453a;
+    --ink-soft: #847663;
+    --rule: #d6c9b0;
+    --accent: #a64a3a;
+    --accent-2: #c79a6a;
+    --serif: "Fraunces", "Times New Roman", serif;
+    --sans: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper); color: var(--ink);
+    font-family: var(--sans); font-size: 16px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 400; margin: 0; }
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-soft); }
+
+  /* Top */
+  header.bar {
+    padding: 28px 0;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  header.bar .logo {
+    font-family: var(--serif); font-size: 22px; font-style: italic;
+    font-variation-settings: "opsz" 144;
+  }
+  header.bar nav { display: flex; gap: 32px; font-size: 14px; }
+  header.bar nav a { color: var(--ink-2); text-decoration: none; }
+  @media (max-width: 720px) { header.bar nav { display: none; } }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--accent); color: var(--paper);
+    font-family: var(--sans); font-weight: 500; font-size: 15px;
+    padding: 16px 28px; border-radius: 999px;
+    text-decoration: none; border: none; cursor: pointer;
+    transition: transform .2s ease, background .2s ease;
+  }
+  .btn:hover { transform: translateY(-1px); background: var(--ink); }
+  .btn .arr { font-family: var(--serif); font-style: italic; font-size: 18px; }
+  .btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+  .btn-ghost:hover { background: var(--ink); color: var(--paper); }
+
+  /* HERO — soft asymmetric */
+  .hero {
+    padding: 40px 0 120px;
+    position: relative; overflow: hidden;
+  }
+  .hero-grid {
+    display: grid; grid-template-columns: 1fr 380px;
+    gap: 64px; align-items: center;
+  }
+  @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; gap: 32px; } }
+  .hero h1 {
+    font-size: clamp(60px, 12vw, 180px);
+    line-height: 0.92; letter-spacing: -0.04em;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+    text-wrap: balance;
+  }
+  .hero h1 .it { font-style: italic; color: var(--accent); }
+  .hero h1 .so { display: block; }
+  .hero h1 .with { display: block; padding-left: 1.5em; }
+  .hero h1 .ok { display: block; padding-left: 0.3em; }
+  .hero-side {
+    display: flex; flex-direction: column; gap: 24px;
+  }
+  .hero-image {
+    aspect-ratio: 4/5;
+    border-radius: 999px 999px 24px 24px;
+    background:
+      linear-gradient(180deg, color-mix(in oklch, var(--accent-2) 70%, var(--paper)) 0%, var(--accent-2) 100%);
+    display: flex; align-items: center; justify-content: center;
+    padding: 8% 6% 10%;
+    box-sizing: border-box;
+  }
+  .hero-image img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    display: block;
+    filter:
+      drop-shadow(0 30px 40px rgba(20,18,14,0.22))
+      drop-shadow(0 10px 14px rgba(20,18,14,0.12))
+      drop-shadow(0 2px 4px rgba(20,18,14,0.10));
+  }
+
+  .hero-desc {
+    margin-top: 56px;
+    font-family: var(--serif); font-size: clamp(20px, 2.4vw, 28px);
+    line-height: 1.4; color: var(--ink-2); max-width: 740px;
+    font-variation-settings: "opsz" 36;
+  }
+  .hero-desc em { color: var(--accent); font-style: italic; }
+
+  .hero-meta {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    margin-top: 56px; padding: 24px 0;
+    border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  }
+  .hero-meta .m { padding: 0 24px; border-left: 1px solid var(--rule); }
+  .hero-meta .m:first-child { border-left: none; padding-left: 0; }
+  .hero-meta .k { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-soft); }
+  .hero-meta .v { font-family: var(--serif); font-size: clamp(20px, 2.5vw, 28px); margin-top: 4px; font-variation-settings: "opsz" 36; }
+  .hero-meta .v .it { font-style: italic; color: var(--accent); }
+  @media (max-width: 720px) { .hero-meta { grid-template-columns: repeat(2, 1fr); } .hero-meta .m { padding: 12px; border-left: none; border-bottom: 1px solid var(--rule); } }
+
+  .hero-cta { margin-top: 40px; display: flex; gap: 16px; flex-wrap: wrap; }
+
+  /* Sections */
+  section { padding: 120px 0; }
+  section.alt { background: var(--paper-2); }
+  .sec-head { margin-bottom: 64px; max-width: 900px; }
+  .sec-head .num { font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+  .sec-head h2 { font-size: clamp(36px, 5vw, 64px); line-height: 1.05; margin-top: 16px; text-wrap: balance; font-variation-settings: "opsz" 144; }
+  .sec-head h2 .it { font-style: italic; color: var(--accent); }
+
+  /* Pains — speech bubbles in chaotic flow */
+  .pains-flow { position: relative; min-height: 600px; }
+  .bubble {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 28px;
+    padding: 28px 32px;
+    font-family: var(--serif); font-size: 19px; line-height: 1.4; color: var(--ink-2);
+    box-shadow: 0 4px 24px -8px rgba(42, 38, 32, 0.1);
+    max-width: 460px;
+    position: relative;
+  }
+  .bubble.alt { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+  .bubble .tail { position: absolute; bottom: -10px; left: 40px; width: 20px; height: 20px; background: inherit; border-bottom: 1px solid var(--rule); border-right: 1px solid var(--rule); transform: rotate(45deg); }
+  .bubble.alt .tail { background: var(--accent); border-color: var(--accent); }
+  .bubble.r .tail { left: auto; right: 40px; }
+
+  .pains-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+  }
+  .pains-grid .col { display: flex; flex-direction: column; gap: 32px; }
+  .pains-grid .col:nth-child(2) { padding-top: 56px; }
+  @media (max-width: 720px) { .pains-grid { grid-template-columns: 1fr; } .pains-grid .col:nth-child(2) { padding-top: 0; } }
+
+  .turn {
+    margin-top: 80px; text-align: center;
+    padding: 56px 32px;
+    background: var(--paper);
+    border-radius: 32px;
+    border: 1px solid var(--rule);
+    max-width: 900px; margin-left: auto; margin-right: auto;
+  }
+  .turn-eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+  .turn h3 {
+    font-size: clamp(28px, 4vw, 48px); line-height: 1.15; margin: 16px 0 0;
+    font-variation-settings: "opsz" 144; text-wrap: balance;
+  }
+  .turn h3 .it { font-style: italic; color: var(--accent); }
+  .turn h3 b { font-weight: 600; }
+
+  /* Why */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+  .two-col p { font-family: var(--serif); font-size: 20px; line-height: 1.55; color: var(--ink-2); margin: 0 0 18px; font-variation-settings: "opsz" 24; }
+  .two-col p strong { color: var(--ink); font-weight: 500; }
+  @media (max-width: 720px) { .two-col { grid-template-columns: 1fr; gap: 32px; } }
+
+  .system-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .chip {
+    font-family: var(--sans); font-size: 13px; padding: 10px 18px;
+    background: var(--paper); border: 1px solid var(--rule); border-radius: 999px;
+    color: var(--ink-2);
+  }
+  .chip.x { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+  .pull-card {
+    margin-top: 32px; padding: 40px;
+    background: var(--ink); color: var(--paper); border-radius: 32px;
+    font-family: var(--serif); font-style: italic; font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.1; text-wrap: balance;
+    font-variation-settings: "opsz" 144;
+  }
+  .pull-card .accent { color: var(--accent-2); }
+
+  /* Stats */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; }
+  .stat-card {
+    background: var(--paper); border: 1px solid var(--rule); border-radius: 28px;
+    padding: 36px; display: flex; flex-direction: column; gap: 16px;
+  }
+  .stat-card .n { font-family: var(--serif); font-size: 88px; line-height: 0.85; color: var(--accent); font-variation-settings: "opsz" 144; }
+  .stat-card .n .it { font-style: italic; }
+  .stat-card .l { font-size: 15px; color: var(--ink-2); }
+  @media (max-width: 720px) { .stats { grid-template-columns: 1fr; } }
+
+  /* Outcomes — pills */
+  .outcomes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .outcome-card {
+    background: var(--paper); border: 1px solid var(--rule); border-radius: 24px;
+    padding: 32px; display: grid; grid-template-columns: 56px 1fr; gap: 20px;
+    align-items: start;
+  }
+  .outcome-card .num {
+    font-family: var(--serif); font-style: italic; font-size: 36px;
+    color: var(--accent); line-height: 1; font-variation-settings: "opsz" 144;
+  }
+  .outcome-card p { font-family: var(--serif); font-size: 18px; line-height: 1.45; margin: 0; color: var(--ink); font-variation-settings: "opsz" 24; }
+  @media (max-width: 720px) { .outcomes { grid-template-columns: 1fr; } }
+
+  /* Program */
+  .program-meta {
+    display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 48px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .program-meta span { padding: 8px 14px; background: var(--paper); border-radius: 999px; border: 1px solid var(--rule); color: var(--ink-2); }
+
+  .session-card {
+    background: var(--paper); border-radius: 32px; border: 1px solid var(--rule);
+    padding: 40px; margin-bottom: 24px;
+    display: grid; grid-template-columns: 220px 1fr; gap: 48px; align-items: start;
+  }
+  .session-card .ord {
+    font-family: var(--serif); font-style: italic; font-size: 120px; line-height: 0.9;
+    color: var(--accent); font-variation-settings: "opsz" 144;
+  }
+  .session-card .date { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-soft); margin-top: 8px; }
+  .session-card h3 { font-size: clamp(24px, 3vw, 32px); line-height: 1.15; margin-bottom: 16px; font-variation-settings: "opsz" 36; text-wrap: balance; }
+  .session-card p { font-family: var(--serif); font-size: 17px; line-height: 1.55; color: var(--ink-2); margin: 0; font-variation-settings: "opsz" 18; }
+  .session-card .takeaway {
+    margin-top: 20px; padding: 18px 22px;
+    background: var(--paper-2); border-radius: 16px;
+    border-left: 3px solid var(--accent);
+  }
+  .session-card .takeaway b { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 4px; font-weight: 500; }
+  .session-card .takeaway p { font-size: 15px; }
+  @media (max-width: 720px) { .session-card { grid-template-columns: 1fr; gap: 16px; padding: 28px; } .session-card .ord { font-size: 80px; } }
+
+  /* Includes */
+  .includes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .inc-card {
+    background: var(--paper); border-radius: 28px; border: 1px solid var(--rule);
+    padding: 36px; display: flex; flex-direction: column; gap: 14px;
+  }
+  .inc-card .glyph {
+    font-family: var(--serif); font-style: italic; font-size: 40px; color: var(--accent);
+    font-variation-settings: "opsz" 144;
+  }
+  .inc-card h4 { font-family: var(--serif); font-size: 22px; margin: 0; line-height: 1.2; font-variation-settings: "opsz" 36; }
+  .inc-card p { font-size: 15px; color: var(--ink-2); margin: 0; line-height: 1.5; }
+  @media (max-width: 720px) { .includes { grid-template-columns: 1fr; } }
+
+  /* Author */
+  .author-card {
+    background: var(--paper); border-radius: 32px; border: 1px solid var(--rule);
+    padding: 56px;
+    display: grid; grid-template-columns: 320px 1fr; gap: 48px;
+    align-items: start;
+  }
+  @media (max-width: 860px) { .author-card { grid-template-columns: 1fr; padding: 32px; } }
+  .author-photo {
+    aspect-ratio: 3/4; border-radius: 200px 200px 24px 24px;
+    background:
+      radial-gradient(ellipse at 50% 30%, var(--accent-2), var(--paper-2));
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: var(--ink); padding: 24px; gap: 8px; text-align: center;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em;
+  }
+  .author-photo .ph-title { font-family: var(--serif); font-style: italic; font-size: 16px; letter-spacing: 0; }
+  .author-name { font-family: var(--serif); font-size: clamp(36px, 5vw, 56px); line-height: 1; font-variation-settings: "opsz" 144; }
+  .author-name .it { font-style: italic; color: var(--accent); }
+  .author-role { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-soft); margin-top: 12px; }
+  .author-quote {
+    margin-top: 28px; padding: 24px;
+    background: var(--paper-2); border-radius: 20px;
+    font-family: var(--serif); font-style: italic; font-size: 18px; line-height: 1.5;
+    color: var(--ink-2); border-left: 3px solid var(--accent);
+  }
+  .author-bio { margin-top: 20px; font-family: var(--serif); font-size: 17px; line-height: 1.6; color: var(--ink-2); }
+  .author-credits { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 12px; }
+  .author-credits .cred { padding: 10px 16px; background: var(--paper-2); border-radius: 999px; font-size: 13px; }
+  .author-credits .cred b { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-right: 8px; font-weight: 500; }
+
+  /* Reviews */
+  .reviews { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .review-card {
+    background: var(--paper); border-radius: 28px; border: 1px solid var(--rule);
+    padding: 32px; display: flex; flex-direction: column; gap: 18px;
+  }
+  .review-card .ph { width: 56px; aspect-ratio: 1; border-radius: 50%; background: var(--paper-2); border: 1px solid var(--rule); }
+  .review-card p { font-family: var(--serif); font-size: 17px; line-height: 1.5; margin: 0; color: var(--ink-2); }
+  .review-card .who { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); }
+  .reviews-note { grid-column: 1 / -1; text-align: center; font-family: var(--mono); font-size: 11px; color: var(--ink-soft); padding: 16px 0; letter-spacing: 0.04em; }
+  @media (max-width: 860px) { .reviews { grid-template-columns: 1fr; } }
+
+  /* Price */
+  .price-card {
+    background: var(--ink); color: var(--paper);
+    border-radius: 40px; padding: 56px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 56px;
+    align-items: start;
+  }
+  @media (max-width: 860px) { .price-card { grid-template-columns: 1fr; padding: 32px; } }
+  .price-num { font-family: var(--serif); font-size: clamp(72px, 11vw, 144px); line-height: 0.85; letter-spacing: -0.03em; font-variation-settings: "opsz" 144; }
+  .price-num .cur { font-style: italic; color: var(--accent-2); }
+  .price-sub { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: oklch(0.7 0.02 60); margin-top: 16px; }
+  .price-list { list-style: none; padding: 0; margin: 0 0 32px; }
+  .price-list li {
+    font-family: var(--serif); font-size: 17px; line-height: 1.5;
+    padding: 12px 0; border-bottom: 1px solid oklch(0.3 0.01 60);
+    color: oklch(0.85 0.02 60); display: flex; gap: 12px;
+  }
+  .price-list li::before { content: "→"; color: var(--accent-2); font-style: italic; }
+  .price-card .btn { background: var(--accent-2); color: var(--ink); }
+  .price-card .btn:hover { background: var(--paper); }
+  .price-cta-note { font-size: 13px; color: oklch(0.7 0.02 60); margin-top: 14px; max-width: 320px; }
+
+  /* FAQ */
+  .faq details {
+    background: var(--paper); border: 1px solid var(--rule); border-radius: 20px;
+    padding: 24px 28px; margin-bottom: 12px;
+  }
+  .faq summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: baseline; justify-content: space-between; gap: 24px;
+    font-family: var(--serif); font-size: clamp(18px, 2vw, 22px); font-weight: 500;
+    line-height: 1.3; font-variation-settings: "opsz" 36;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary .icon { font-family: var(--serif); font-style: italic; color: var(--accent); font-size: 24px; transition: transform .3s; }
+  .faq details[open] summary .icon { transform: rotate(45deg); }
+  .faq .ans { font-family: var(--serif); font-size: 16px; line-height: 1.55; color: var(--ink-2); margin-top: 14px; max-width: 720px; }
+
+  /* Final */
+  .final { padding: 140px 0; text-align: center; background: var(--paper-2); }
+  .final h2 { font-size: clamp(40px, 6.5vw, 88px); line-height: 1.05; max-width: 18ch; margin: 0 auto; text-wrap: balance; font-variation-settings: "opsz" 144; }
+  .final h2 .it { font-style: italic; color: var(--accent); }
+  .final p { font-family: var(--serif); font-size: clamp(20px, 2.4vw, 26px); margin: 24px auto 48px; max-width: 28ch; color: var(--ink-2); font-variation-settings: "opsz" 36; text-wrap: balance; }
+  .final-meta { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-soft); margin-top: 24px; }
+  .final-meta .accent { color: var(--accent); }
+
+  footer { padding: 32px 0; font-size: 13px; color: var(--ink-soft); border-top: 1px solid var(--rule); background: var(--paper); }
+  footer .row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="bar">
+    <div class="logo"><span style="font-style:normal; font-weight:600">со мной</span> <em>всё&nbsp;так</em></div>
+    <nav>
+      <a href="#program">Программа</a>
+      <a href="#author">Автор</a>
+      <a href="#price">Запись</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn" href="#price"><span>В клуб</span><span class="arr">→</span></a>
+  </header>
+</div>
+
+<!-- HERO -->
+<div class="wrap">
+<div class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="eyebrow" style="margin-bottom: 24px;">Книжный клуб · Первый поток · Май 2026</div>
+      <h1>
+        <span class="so">со&nbsp;мной</span>
+        <span class="with">всё&nbsp;</span>
+        <span class="ok"><span class="it">так.</span></span>
+      </h1>
+    </div>
+    <div class="hero-side">
+      <div class="hero-image">
+        <img src="./book-cover.png" alt="Обложка книги «Культ красоты», Анастасия Торопова, Альпина Паблишер 2026" style="opacity: 1">
+      </div>
+    </div>
+  </div>
+
+  <p class="hero-desc">
+    Книжный клуб, после которого ты перестанешь считать себя проблемой&nbsp;— и начнёшь жить свою жизнь, а не чужую. Читаем книгу <em>«Культ красоты»</em> Анастасии Тороповой&nbsp;— и разбираем её вместе.
+  </p>
+
+  <div class="hero-meta">
+    <div class="m"><div class="k">Встреч</div><div class="v"><span class="it">5</span></div></div>
+    <div class="m"><div class="k">Формат</div><div class="v">Онлайн</div></div>
+    <div class="m"><div class="k">Старт</div><div class="v">13 мая</div></div>
+    <div class="m"><div class="k">Мест</div><div class="v">12 макс.</div></div>
+  </div>
+
+  <div class="hero-cta">
+    <a class="btn" href="#price"><span>Хочу в клуб</span><span class="arr">→</span></a>
+    <a class="btn btn-ghost" href="#program"><span>Посмотреть программу</span></a>
+  </div>
+</div>
+</div>
+
+<!-- PAINS -->
+<section class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">02 — Узнавание</div>
+      <h2>Скажи честно&nbsp;— тебе тоже <span class="it">знакомо?</span></h2>
+    </div>
+
+    <div class="pains-grid">
+      <div class="col">
+        <div class="bubble">«С моим телом что-то не так. Было всегда. Наверное, всегда и будет.»<span class="tail"></span></div>
+        <div class="bubble">«Шкаф набит&nbsp;— надеть нечего. Деньги уходят куда-то. Ощущение, что я всё делаю не так, никуда не уходит.»<span class="tail"></span></div>
+        <div class="bubble">«Я не понимаю, чего хочу на самом деле. Своего&nbsp;— или того, что мне сказали хотеть?»<span class="tail"></span></div>
+      </div>
+      <div class="col">
+        <div class="bubble alt r">«Я опять виновата. За шоколад. За пропущенную тренировку. За покупку, которую не планировала. За то, что выгляжу не так. Снова.»<span class="tail"></span></div>
+        <div class="bubble r">«Я читаю про любовь к себе. Слушаю про принятие. Хожу на практики. И всё равно чувствую: я недостаточно стараюсь.»<span class="tail"></span></div>
+        <div class="bubble r">«Я устала работать над собой. Устала быть лучшей версией себя. Просто устала.»<span class="tail"></span></div>
+      </div>
+    </div>
+
+    <div class="turn">
+      <div class="turn-eyebrow">Поворот</div>
+      <h3>Если что-то из этого&nbsp;— про тебя, у нас есть кое-что важное.<br>Ты не сломана. Ты не слабая. <b>С тобой всё <span class="it">так.</span></b></h3>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">03 — Откуда</div>
+      <h2>Тогда откуда это <span class="it">берётся?</span></h2>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <p>Потому что мы живём в культуре, которая <strong>зарабатывает на твоей тревоге.</strong></p>
+        <p>«Ты недостаточна — купи это» — реклама, индустрия красоты, диет-культура, духовные практики, соцсети, романтические сценарии. Всё это&nbsp;— не случайно. Это <strong>система.</strong> И у неё есть механизмы.</p>
+        <div class="system-chips" style="margin-top: 24px;">
+          <span class="chip">Beauty</span>
+          <span class="chip">Diet culture</span>
+          <span class="chip">Self-help</span>
+          <span class="chip">Wellness</span>
+          <span class="chip x">Algorithms</span>
+          <span class="chip">Romance</span>
+          <span class="chip">Spirituality</span>
+          <span class="chip">Advertising</span>
+        </div>
+      </div>
+      <div>
+        <div class="pull-card">Когда понимаешь <span class="accent">механизм</span>&nbsp;— он перестаёт работать.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">04 — Метод</div>
+      <h2>Почему книга? <span class="it">Почему философия?</span></h2>
+    </div>
+
+    <div class="two-col">
+      <p>Психология говорит «работай над собой». Философия задаёт другой вопрос: <strong>а зачем вообще это «работай над собой» придумали?</strong></p>
+      <p>Философия&nbsp;— инструмент, чтобы увидеть систему <em>снаружи</em>, а не изнутри. <strong>Не лекция. Разговор.</strong> С практиками, дискуссиями и пространством, где можно говорить честно.</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card"><div class="n"><span class="it">5</span></div><div class="l">живых встреч по 90&nbsp;минут</div></div>
+      <div class="stat-card"><div class="n"><span class="it">12</span></div><div class="l">участниц максимум — тёплое сообщество</div></div>
+      <div class="stat-card"><div class="n"><span class="it">1</span></div><div class="l">рабочая тетрадь как личный манифест</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- OUTCOMES -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">05 — После</div>
+      <h2>После клуба <span class="it">ты:</span></h2>
+    </div>
+
+    <div class="outcomes">
+      <div class="outcome-card"><span class="num">01</span><p>Увидишь тревогу о теле как культурный механизм&nbsp;— и перестанешь воспринимать её как личный провал.</p></div>
+      <div class="outcome-card"><span class="num">02</span><p>Научишься отличать свои желания от маркетинговых импульсов&nbsp;— и начнёшь тратить деньги осознаннее.</p></div>
+      <div class="outcome-card"><span class="num">03</span><p>Получишь исторический иммунитет к стандартам красоты&nbsp;— следующий тренд уже в пути.</p></div>
+      <div class="outcome-card"><span class="num">04</span><p>Разберёшь, какие любовные и сексуальные сценарии навязаны культурой.</p></div>
+      <div class="outcome-card"><span class="num">05</span><p>Увидишь, как «забота о себе» превратилась в новую форму дисциплины&nbsp;— и сможешь выбирать практики из удовольствия.</p></div>
+      <div class="outcome-card"><span class="num">06</span><p>Выйдешь из ловушки «будь собой»&nbsp;— и найдёшь точку опоры, не зависящую от трендов и чужих ожиданий.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROGRAM -->
+<section id="program" class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">06 — Программа</div>
+      <h2>Пять встреч&nbsp;— <span class="it">пять освобождений</span></h2>
+    </div>
+
+    <div class="program-meta">
+      <span>Каждую среду</span>
+      <span>13 мая — 10 июня</span>
+      <span>90 минут</span>
+      <span>Онлайн</span>
+    </div>
+
+    <div class="session-card">
+      <div><div class="ord"><em>01</em></div><div class="date">13 мая · ср</div></div>
+      <div>
+        <h3>Тело как текст: отучаемся себя&nbsp;критиковать</h3>
+        <p>Введение в философию телесности. Кто придумал правила о «нормальном» теле&nbsp;— и зачем. Как из «принцессы» превращаются в «лузершу»&nbsp;— и кому это выгодно.</p>
+        <div class="takeaway"><b>Что унесёшь</b><p>Философский язык для того, что раньше было «просто ощущением». Первый шаг к тому, чтобы отделить своё от чужого.</p></div>
+      </div>
+    </div>
+
+    <div class="session-card">
+      <div><div class="ord"><em>02</em></div><div class="date">20 мая · ср</div></div>
+      <div>
+        <h3>Еда, косметика, одежда: отделяем своё от навязанного</h3>
+        <p>Почему шкаф полон, а надеть нечего. Как работает «мифология» по Барту. Чьи желания ты желаешь&nbsp;— свои или чужие?</p>
+        <div class="takeaway"><b>Что унесёшь</b><p>Умение видеть разницу между «я хочу это» и «я боюсь без этого». Косметическая тревога&nbsp;— не личная несостоятельность.</p></div>
+      </div>
+    </div>
+
+    <div class="session-card">
+      <div><div class="ord"><em>03</em></div><div class="date">27 мая · ср</div></div>
+      <div>
+        <h3>История женского тела: красота за гранью трендов</h3>
+        <p>От «слабого мужчины» в античности до бодипозитива. Что общего у корсета и диеты в 2026&nbsp;году? Есть ли выход из колеса «новых идеалов»?</p>
+        <div class="takeaway"><b>Что унесёшь</b><p>Исторический иммунитет. Если стандарт менялся 15 раз&nbsp;— следующий уже в пути.</p></div>
+      </div>
+    </div>
+
+    <div class="session-card">
+      <div><div class="ord"><em>04</em></div><div class="date">3 июня · ср</div></div>
+      <div>
+        <h3>Красота, секс, любовь и духовность</h3>
+        <p>Как культура сценаризирует сексуальность. Почему «настоящая любовь&nbsp;— это жертва». Где граница между самопомощью и эксплуатацией тревоги?</p>
+        <div class="takeaway"><b>Что унесёшь</b><p>Любовные сценарии&nbsp;— конструкции, а не законы природы. Больше языка для своих потребностей.</p></div>
+      </div>
+    </div>
+
+    <div class="session-card">
+      <div><div class="ord"><em>05</em></div><div class="date">10 июня · ср</div></div>
+      <div>
+        <h3>Превращаем тело-товар в&nbsp;тело-опору</h3>
+        <p>Как разорвать цикл «я должна работать над собой». Почему «быть здоровой» стала новой формой дисциплины. Как найти точку опоры.</p>
+        <div class="takeaway"><b>Что унесёшь</b><p>Моё тело&nbsp;— не проблема, которую нужно решить. Это пространство, в котором я живу.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INCLUDES -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">07 — Состав</div>
+      <h2>Что ты <span class="it">получаешь</span></h2>
+    </div>
+
+    <div class="includes">
+      <div class="inc-card"><div class="glyph">i.</div><h4>5 живых онлайн-встреч</h4><p>Каждая среда с 13 мая по 10 июня, 90 минут, максимум 12 участниц.</p></div>
+      <div class="inc-card"><div class="glyph">ii.</div><h4>Безлимитный доступ к&nbsp;записям</h4><p>На Rutube — смотри когда угодно, пересматривай, возвращайся.</p></div>
+      <div class="inc-card"><div class="glyph">iii.</div><h4>Закрытый чат</h4><p>Для разговоров, вопросов, обсуждений между встречами.</p></div>
+      <div class="inc-card"><div class="glyph">iv.</div><h4>PDF-тетрадь «Манифест защиты&nbsp;себя»</h4><p>Заполняешь на протяжении клуба и уносишь как личный документ.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- AUTHOR -->
+<section id="author" class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">08 — Автор</div>
+      <h2>Анастасия <span class="it">Торопова</span></h2>
+    </div>
+
+    <div class="author-card">
+      <div class="author-photo">
+        <span>[ портрет ]</span>
+        <span class="ph-title">студийный портрет</span>
+        <span>3:4 · фото автора</span>
+      </div>
+      <div>
+        <div class="author-name">Анастасия <span class="it">Торопова</span></div>
+        <div class="author-role">Философ · исследователь телесности</div>
+        <div class="author-quote">«В старших классах мне говорили: „Ты как модель“&nbsp;— при росте 176 см. Через эту призму я посмотрела на себя в зеркало и обнаружила, что „ужасно толстая“ — хотя объективно вес был в норме.»</div>
+        <p class="author-bio">Я начала худеть, тратить силы и время, подчиняясь чужому стандарту. Со временем я начала работать со своим образом не как человек, который следит за фигурой, а как философ, исследующий собственный опыт. И вот тогда всё изменилось.</p>
+        <div class="author-credits">
+          <span class="cred"><b>Образование</b>[ философский ф-т, к.ф.н. ]</span>
+          <span class="cred"><b>Опыт</b>[ 10 лет философии телесности ]</span>
+          <span class="cred"><b>Книга</b>«Культ красоты», Альпина 2026</span>
+          <span class="cred"><b>Лекции</b>[ публичные лекции, эфиры ]</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">09 — Голоса</div>
+      <h2>Что говорят <span class="it">участницы</span></h2>
+    </div>
+
+    <div class="reviews">
+      <div class="review-card"><div class="ph"></div><p>«[ отзыв 3–5 предложений&nbsp;— добавим после первого потока ]»</p><div class="who">[ Имя · Город ]</div></div>
+      <div class="review-card"><div class="ph"></div><p>«[ отзыв 3–5 предложений&nbsp;— добавим после первого потока ]»</p><div class="who">[ Имя · Город ]</div></div>
+      <div class="review-card"><div class="ph"></div><p>«[ отзыв 3–5 предложений&nbsp;— добавим после первого потока ]»</p><div class="who">[ Имя · Город ]</div></div>
+      <div class="reviews-note">— первый поток · отзывы появятся после 10 июня —</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICE -->
+<section id="price" class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">10 — Запись</div>
+      <h2>Участие <span class="it">в клубе</span></h2>
+    </div>
+
+    <div class="price-card">
+      <div>
+        <div class="price-num">15 000<span class="cur"> ₽</span></div>
+        <div class="price-sub">Максимум 12 мест · Первый поток</div>
+        <div style="margin-top: 32px;">
+          <a class="btn" href="#"><span>Хочу участвовать</span><span class="arr">→</span></a>
+          <p class="price-cta-note">Напишешь в Telegram&nbsp;— расскажем про оплату и ответим на вопросы.</p>
+        </div>
+      </div>
+      <ul class="price-list">
+        <li>5 живых онлайн-встреч&nbsp;· каждая среда</li>
+        <li>13 мая — 10 июня</li>
+        <li>Записи на Rutube&nbsp;— навсегда</li>
+        <li>Закрытый чат участниц</li>
+        <li>PDF-тетрадь «Манифест защиты себя»</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">11 — Вопросы</div>
+      <h2>Вопросы, которые обычно <span class="it">возникают</span></h2>
+    </div>
+
+    <div class="faq">
+      <details><summary><span>Я не знакома с философией&nbsp;— это не слишком сложно?</span><span class="icon">+</span></summary><div class="ans">Нет. Анастасия переводит философские идеи на человеческий язык. Здесь не нужны никакие знания&nbsp;— нужно только желание думать и говорить честно.</div></details>
+      <details><summary><span>Нужно ли читать книгу до начала клуба?</span><span class="icon">+</span></summary><div class="ans">Нет. К каждой встрече есть конкретные главы&nbsp;— читаете вместе с клубом, по частям.</div></details>
+      <details><summary><span>Что если я пропущу встречу?</span><span class="icon">+</span></summary><div class="ans">Все встречи записываются. Доступ на Rutube&nbsp;— без ограничений по времени.</div></details>
+      <details><summary><span>Почему только 12 человек?</span><span class="icon">+</span></summary><div class="ans">Это не вебинар&nbsp;— это клуб. Чтобы у каждой было пространство говорить, быть услышанной и чувствовать себя в безопасности.</div></details>
+      <details><summary><span>Клуб только для женщин?</span><span class="icon">+</span></summary><div class="ans">Да, это пространство для женщин.</div></details>
+      <details><summary><span>Когда старт?</span><span class="icon">+</span></summary><div class="ans">13 мая 2026 года (среда). Всего 5 встреч, последняя&nbsp;— 10 июня.</div></details>
+      <details><summary><span>Как проходит оплата?</span><span class="icon">+</span></summary><div class="ans">Перейди по ссылке выше&nbsp;— напишем в Telegram, ответим на вопросы и пришлём реквизиты.</div></details>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL -->
+<div class="final">
+  <div class="wrap">
+    <h2>Пять сред. <span class="it">Одна</span> книга. <span class="it">Двенадцать</span> женщин.</h2>
+    <p>И, возможно, первый раз за долгое время&nbsp;— ощущение, что с тобой всё <span style="font-style:italic; color: var(--accent)">так.</span></p>
+    <a class="btn" href="#"><span>Написать в Telegram</span><span class="arr">→</span></a>
+    <div class="final-meta">Старт 13 мая · Осталось <span class="accent">7</span> мест</div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap row">
+    <span>© 2026 · Книжный клуб «Со мной всё так»</span>
+    <span>hello@somnoyvsetak.ru&nbsp;&nbsp;·&nbsp;&nbsp;@somnoyvsetak</span>
+  </div>
+</footer>
+
+
+
+<script type="application/json" id="__om_srcmap">{"gen":"81fc92f7","entries":[{"id":"81fc92f7:0","tag":"html","openStart":16,"attrEnd":31,"openEnd":32,"closeEnd":40511,"textRuns":[[32,33],[18322,18323],[40503,40504]],"parentId":null,"childIds":["81fc92f7:1","81fc92f7:7"]},{"id":"81fc92f7:1","tag":"head","openStart":33,"attrEnd":38,"openEnd":39,"closeEnd":18322,"textRuns":[[39,40],[64,65],[135,136],[187,188],[247,248],[316,317],[585,586],[18314,18315]],"parentId":"81fc92f7:0","childIds":["81fc92f7:2","81fc92f7:3","81fc92f7:4","81fc92f7:5","81fc92f7:6"]},{"id":"81fc92f7:2","tag":"meta","openStart":40,"attrEnd":61,"openEnd":64,"closeEnd":64,"textRuns":[],"parentId":"81fc92f7:1","childIds":[]},{"id":"81fc92f7:3","tag":"meta","openStart":65,"attrEnd":132,"openEnd":135,"closeEnd":135,"textRuns":[],"parentId":"81fc92f7:1","childIds":[]},{"id":"81fc92f7:4","tag":"link","openStart":188,"attrEnd":246,"openEnd":247,"closeEnd":247,"textRuns":[],"parentId":"81fc92f7:1","childIds":[]},{"id":"81fc92f7:5","tag":"link","openStart":248,"attrEnd":315,"openEnd":316,"closeEnd":316,"textRuns":[],"parentId":"81fc92f7:1","childIds":[]},{"id":"81fc92f7:6","tag":"link","openStart":317,"attrEnd":584,"openEnd":585,"closeEnd":585,"textRuns":[],"parentId":"81fc92f7:1","childIds":[]},{"id":"81fc92f7:7","tag":"body","openStart":18323,"attrEnd":18328,"openEnd":18329,"closeEnd":40503,"textRuns":[[18329,18331],[18784,18786],[18799,18800],[20535,20537],[20551,20552],[22671,22673],[22685,22686],[24145,24147],[24166,24167],[25568,25570],[25587,25588],[27322,27324],[27340,27341],[31655,31657],[31674,31675],[32845,32847],[32862,32863],[34887,34889],[34905,34906],[35959,35961],[35975,35976],[37143,37145],[37157,37158],[39647,39649],[39663,39664],[40278,40280],[40494,40496]],"parentId":"81fc92f7:0","childIds":["81fc92f7:8","81fc92f7:21","81fc92f7:56","81fc92f7:83","81fc92f7:107","81fc92f7:132","81fc92f7:157","81fc92f7:223","81fc92f7:246","81fc92f7:272","81fc92f7:292","81fc92f7:314","81fc92f7:356","81fc92f7:368"]},{"id":"81fc92f7:8","tag":"div","openStart":18331,"attrEnd":18348,"openEnd":18349,"closeEnd":18784,"textRuns":[[18349,18352],[18777,18778]],"parentId":"81fc92f7:7","childIds":["81fc92f7:9"]},{"id":"81fc92f7:9","tag":"header","openStart":18352,"attrEnd":18371,"openEnd":18372,"closeEnd":18777,"textRuns":[[18372,18377],[18498,18503],[18675,18680],[18765,18768]],"parentId":"81fc92f7:8","childIds":["81fc92f7:10","81fc92f7:13","81fc92f7:18"]},{"id":"81fc92f7:10","tag":"div","openStart":18377,"attrEnd":18394,"openEnd":18395,"closeEnd":18498,"textRuns":[[18464,18465]],"parentId":"81fc92f7:9","childIds":["81fc92f7:11","81fc92f7:12"]},{"id":"81fc92f7:11","tag":"span","openStart":18395,"attrEnd":18443,"openEnd":18444,"closeEnd":18464,"styleAttr":[18408,18442],"textRuns":[[18444,18457]],"parentId":"81fc92f7:10","childIds":[]},{"id":"81fc92f7:12","tag":"em","openStart":18465,"attrEnd":18468,"openEnd":18469,"closeEnd":18492,"textRuns":[[18469,18487]],"parentId":"81fc92f7:10","childIds":[]},{"id":"81fc92f7:13","tag":"nav","openStart":18503,"attrEnd":18507,"openEnd":18508,"closeEnd":18675,"textRuns":[[18508,18515],[18556,18563],[18595,18602],[18635,18642],[18664,18669]],"parentId":"81fc92f7:9","childIds":["81fc92f7:14","81fc92f7:15","81fc92f7:16","81fc92f7:17"]},{"id":"81fc92f7:14","tag":"a","openStart":18515,"attrEnd":18533,"openEnd":18534,"closeEnd":18556,"textRuns":[[18534,18552]],"parentId":"81fc92f7:13","childIds":[]},{"id":"81fc92f7:15","tag":"a","openStart":18563,"attrEnd":18580,"openEnd":18581,"closeEnd":18595,"textRuns":[[18581,18591]],"parentId":"81fc92f7:13","childIds":[]},{"id":"81fc92f7:16","tag":"a","openStart":18602,"attrEnd":18618,"openEnd":18619,"closeEnd":18635,"textRuns":[[18619,18631]],"parentId":"81fc92f7:13","childIds":[]},{"id":"81fc92f7:17","tag":"a","openStart":18642,"attrEnd":18656,"openEnd":18657,"closeEnd":18664,"textRuns":[[18657,18660]],"parentId":"81fc92f7:13","childIds":[]},{"id":"81fc92f7:18","tag":"a","openStart":18680,"attrEnd":18708,"openEnd":18709,"closeEnd":18765,"textRuns":[],"parentId":"81fc92f7:9","childIds":["81fc92f7:19","81fc92f7:20"]},{"id":"81fc92f7:19","tag":"span","openStart":18709,"attrEnd":18714,"openEnd":18715,"closeEnd":18733,"textRuns":[[18715,18726]],"parentId":"81fc92f7:18","childIds":[]},{"id":"81fc92f7:20","tag":"span","openStart":18733,"attrEnd":18750,"openEnd":18751,"closeEnd":18761,"textRuns":[[18751,18754]],"parentId":"81fc92f7:18","childIds":[]},{"id":"81fc92f7:21","tag":"div","openStart":18800,"attrEnd":18817,"openEnd":18818,"closeEnd":20535,"textRuns":[[18818,18819],[20528,20529]],"parentId":"81fc92f7:7","childIds":["81fc92f7:22"]},{"id":"81fc92f7:22","tag":"div","openStart":18819,"attrEnd":18836,"openEnd":18837,"closeEnd":20528,"textRuns":[[18837,18840],[19489,19493],[19877,19881],[20285,20289],[20521,20522]],"parentId":"81fc92f7:21","childIds":["81fc92f7:23","81fc92f7:34","81fc92f7:36","81fc92f7:50"]},{"id":"81fc92f7:23","tag":"div","openStart":18840,"attrEnd":18862,"openEnd":18863,"closeEnd":19489,"textRuns":[[18863,18868],[19197,19202],[19480,19483]],"parentId":"81fc92f7:22","childIds":["81fc92f7:24","81fc92f7:31"]},{"id":"81fc92f7:24","tag":"div","openStart":18868,"attrEnd":18872,"openEnd":18873,"closeEnd":19197,"textRuns":[[18873,18880],[19001,19008],[19186,19191]],"parentId":"81fc92f7:23","childIds":["81fc92f7:25","81fc92f7:26"]},{"id":"81fc92f7:25","tag":"div","openStart":18880,"attrEnd":18929,"openEnd":18930,"closeEnd":19001,"styleAttr":[18908,18928],"textRuns":[[18930,18995]],"parentId":"81fc92f7:24","childIds":[]},{"id":"81fc92f7:26","tag":"h1","openStart":19008,"attrEnd":19011,"openEnd":19012,"closeEnd":19186,"textRuns":[[19012,19021],[19063,19072],[19110,19119],[19174,19181]],"parentId":"81fc92f7:24","childIds":["81fc92f7:27","81fc92f7:28","81fc92f7:29"]},{"id":"81fc92f7:27","tag":"span","openStart":19021,"attrEnd":19037,"openEnd":19038,"closeEnd":19063,"textRuns":[[19038,19056]],"parentId":"81fc92f7:26","childIds":[]},{"id":"81fc92f7:28","tag":"span","openStart":19072,"attrEnd":19090,"openEnd":19091,"closeEnd":19110,"textRuns":[[19091,19103]],"parentId":"81fc92f7:26","childIds":[]},{"id":"81fc92f7:29","tag":"span","openStart":19119,"attrEnd":19135,"openEnd":19136,"closeEnd":19174,"textRuns":[],"parentId":"81fc92f7:26","childIds":["81fc92f7:30"]},{"id":"81fc92f7:30","tag":"span","openStart":19136,"attrEnd":19152,"openEnd":19153,"closeEnd":19167,"textRuns":[[19153,19160]],"parentId":"81fc92f7:29","childIds":[]},{"id":"81fc92f7:31","tag":"div","openStart":19202,"attrEnd":19224,"openEnd":19225,"closeEnd":19480,"textRuns":[[19225,19232],[19469,19474]],"parentId":"81fc92f7:23","childIds":["81fc92f7:32"]},{"id":"81fc92f7:32","tag":"div","openStart":19232,"attrEnd":19255,"openEnd":19256,"closeEnd":19469,"textRuns":[[19256,19265],[19456,19463]],"parentId":"81fc92f7:31","childIds":["81fc92f7:33"]},{"id":"81fc92f7:33","tag":"img","openStart":19265,"attrEnd":19453,"openEnd":19456,"closeEnd":19456,"styleAttr":[19442,19452],"textRuns":[],"parentId":"81fc92f7:32","childIds":[]},{"id":"81fc92f7:34","tag":"p","openStart":19493,"attrEnd":19513,"openEnd":19514,"textRuns":[[19514,19744],[19782,19873]],"parentId":"81fc92f7:22","childIds":["81fc92f7:35"]},{"id":"81fc92f7:35","tag":"em","openStart":19744,"attrEnd":19747,"openEnd":19748,"closeEnd":19782,"textRuns":[[19748,19777]],"parentId":"81fc92f7:34","childIds":[]},{"id":"81fc92f7:36","tag":"div","openStart":19881,"attrEnd":19903,"openEnd":19904,"closeEnd":20285,"textRuns":[[19904,19909],[20009,20014],[20101,20106],[20188,20193],[20276,20279]],"parentId":"81fc92f7:22","childIds":["81fc92f7:37","81fc92f7:41","81fc92f7:44","81fc92f7:47"]},{"id":"81fc92f7:37","tag":"div","openStart":19909,"attrEnd":19923,"openEnd":19924,"closeEnd":20009,"textRuns":[],"parentId":"81fc92f7:36","childIds":["81fc92f7:38","81fc92f7:39"]},{"id":"81fc92f7:38","tag":"div","openStart":19924,"attrEnd":19938,"openEnd":19939,"closeEnd":19957,"textRuns":[[19939,19951]],"parentId":"81fc92f7:37","childIds":[]},{"id":"81fc92f7:39","tag":"div","openStart":19957,"attrEnd":19971,"openEnd":19972,"closeEnd":20003,"textRuns":[],"parentId":"81fc92f7:37","childIds":["81fc92f7:40"]},{"id":"81fc92f7:40","tag":"span","openStart":19972,"attrEnd":19988,"openEnd":19989,"closeEnd":19997,"textRuns":[[19989,19990]],"parentId":"81fc92f7:39","childIds":[]},{"id":"81fc92f7:41","tag":"div","openStart":20014,"attrEnd":20028,"openEnd":20029,"closeEnd":20101,"textRuns":[],"parentId":"81fc92f7:36","childIds":["81fc92f7:42","81fc92f7:43"]},{"id":"81fc92f7:42","tag":"div","openStart":20029,"attrEnd":20043,"openEnd":20044,"closeEnd":20062,"textRuns":[[20044,20056]],"parentId":"81fc92f7:41","childIds":[]},{"id":"81fc92f7:43","tag":"div","openStart":20062,"attrEnd":20076,"openEnd":20077,"closeEnd":20095,"textRuns":[[20077,20089]],"parentId":"81fc92f7:41","childIds":[]},{"id":"81fc92f7:44","tag":"div","openStart":20106,"attrEnd":20120,"openEnd":20121,"closeEnd":20188,"textRuns":[],"parentId":"81fc92f7:36","childIds":["81fc92f7:45","81fc92f7:46"]},{"id":"81fc92f7:45","tag":"div","openStart":20121,"attrEnd":20135,"openEnd":20136,"closeEnd":20152,"textRuns":[[20136,20146]],"parentId":"81fc92f7:44","childIds":[]},{"id":"81fc92f7:46","tag":"div","openStart":20152,"attrEnd":20166,"openEnd":20167,"closeEnd":20182,"textRuns":[[20167,20176]],"parentId":"81fc92f7:44","childIds":[]},{"id":"81fc92f7:47","tag":"div","openStart":20193,"attrEnd":20207,"openEnd":20208,"closeEnd":20276,"textRuns":[],"parentId":"81fc92f7:36","childIds":["81fc92f7:48","81fc92f7:49"]},{"id":"81fc92f7:48","tag":"div","openStart":20208,"attrEnd":20222,"openEnd":20223,"closeEnd":20237,"textRuns":[[20223,20231]],"parentId":"81fc92f7:47","childIds":[]},{"id":"81fc92f7:49","tag":"div","openStart":20237,"attrEnd":20251,"openEnd":20252,"closeEnd":20270,"textRuns":[[20252,20264]],"parentId":"81fc92f7:47","childIds":[]},{"id":"81fc92f7:50","tag":"div","openStart":20289,"attrEnd":20310,"openEnd":20311,"closeEnd":20521,"textRuns":[[20311,20316],[20410,20415],[20512,20515]],"parentId":"81fc92f7:22","childIds":["81fc92f7:51","81fc92f7:54"]},{"id":"81fc92f7:51","tag":"a","openStart":20316,"attrEnd":20344,"openEnd":20345,"closeEnd":20410,"textRuns":[],"parentId":"81fc92f7:50","childIds":["81fc92f7:52","81fc92f7:53"]},{"id":"81fc92f7:52","tag":"span","openStart":20345,"attrEnd":20350,"openEnd":20351,"closeEnd":20378,"textRuns":[[20351,20371]],"parentId":"81fc92f7:51","childIds":[]},{"id":"81fc92f7:53","tag":"span","openStart":20378,"attrEnd":20395,"openEnd":20396,"closeEnd":20406,"textRuns":[[20396,20399]],"parentId":"81fc92f7:51","childIds":[]},{"id":"81fc92f7:54","tag":"a","openStart":20415,"attrEnd":20455,"openEnd":20456,"closeEnd":20512,"textRuns":[],"parentId":"81fc92f7:50","childIds":["81fc92f7:55"]},{"id":"81fc92f7:55","tag":"span","openStart":20456,"attrEnd":20461,"openEnd":20462,"closeEnd":20508,"textRuns":[[20462,20501]],"parentId":"81fc92f7:54","childIds":[]},{"id":"81fc92f7:56","tag":"section","openStart":20552,"attrEnd":20572,"openEnd":20573,"closeEnd":22671,"textRuns":[[20573,20576],[22660,22661]],"parentId":"81fc92f7:7","childIds":["81fc92f7:57"]},{"id":"81fc92f7:57","tag":"div","openStart":20576,"attrEnd":20593,"openEnd":20594,"closeEnd":22660,"textRuns":[[20594,20599],[20793,20799],[22324,22330],[22651,22654]],"parentId":"81fc92f7:56","childIds":["81fc92f7:58","81fc92f7:62","81fc92f7:77"]},{"id":"81fc92f7:58","tag":"div","openStart":20599,"attrEnd":20620,"openEnd":20621,"closeEnd":20793,"textRuns":[[20621,20628],[20676,20683],[20782,20787]],"parentId":"81fc92f7:57","childIds":["81fc92f7:59","81fc92f7:60"]},{"id":"81fc92f7:59","tag":"div","openStart":20628,"attrEnd":20644,"openEnd":20645,"closeEnd":20676,"textRuns":[[20645,20670]],"parentId":"81fc92f7:58","childIds":[]},{"id":"81fc92f7:60","tag":"h2","openStart":20683,"attrEnd":20686,"openEnd":20687,"closeEnd":20782,"textRuns":[[20687,20738]],"parentId":"81fc92f7:58","childIds":["81fc92f7:61"]},{"id":"81fc92f7:61","tag":"span","openStart":20738,"attrEnd":20754,"openEnd":20755,"closeEnd":20777,"textRuns":[[20755,20770]],"parentId":"81fc92f7:60","childIds":[]},{"id":"81fc92f7:62","tag":"div","openStart":20799,"attrEnd":20822,"openEnd":20823,"closeEnd":22324,"textRuns":[[20823,20830],[21507,21514],[22313,22318]],"parentId":"81fc92f7:57","childIds":["81fc92f7:63","81fc92f7:70"]},{"id":"81fc92f7:63","tag":"div","openStart":20830,"attrEnd":20846,"openEnd":20847,"closeEnd":21507,"textRuns":[[20847,20856],[21028,21037],[21280,21289],[21494,21501]],"parentId":"81fc92f7:62","childIds":["81fc92f7:64","81fc92f7:66","81fc92f7:68"]},{"id":"81fc92f7:64","tag":"div","openStart":20856,"attrEnd":20875,"openEnd":20876,"closeEnd":21028,"textRuns":[[20876,20996]],"parentId":"81fc92f7:63","childIds":["81fc92f7:65"]},{"id":"81fc92f7:65","tag":"span","openStart":20996,"attrEnd":21014,"openEnd":21015,"closeEnd":21022,"textRuns":[],"parentId":"81fc92f7:64","childIds":[]},{"id":"81fc92f7:66","tag":"div","openStart":21037,"attrEnd":21056,"openEnd":21057,"closeEnd":21280,"textRuns":[[21057,21248]],"parentId":"81fc92f7:63","childIds":["81fc92f7:67"]},{"id":"81fc92f7:67","tag":"span","openStart":21248,"attrEnd":21266,"openEnd":21267,"closeEnd":21274,"textRuns":[],"parentId":"81fc92f7:66","childIds":[]},{"id":"81fc92f7:68","tag":"div","openStart":21289,"attrEnd":21308,"openEnd":21309,"closeEnd":21494,"textRuns":[[21309,21462]],"parentId":"81fc92f7:63","childIds":["81fc92f7:69"]},{"id":"81fc92f7:69","tag":"span","openStart":21462,"attrEnd":21480,"openEnd":21481,"closeEnd":21488,"textRuns":[],"parentId":"81fc92f7:68","childIds":[]},{"id":"81fc92f7:70","tag":"div","openStart":21514,"attrEnd":21530,"openEnd":21531,"closeEnd":22313,"textRuns":[[21531,21540],[21827,21836],[22095,22104],[22300,22307]],"parentId":"81fc92f7:62","childIds":["81fc92f7:71","81fc92f7:73","81fc92f7:75"]},{"id":"81fc92f7:71","tag":"div","openStart":21540,"attrEnd":21565,"openEnd":21566,"closeEnd":21827,"textRuns":[[21566,21795]],"parentId":"81fc92f7:70","childIds":["81fc92f7:72"]},{"id":"81fc92f7:72","tag":"span","openStart":21795,"attrEnd":21813,"openEnd":21814,"closeEnd":21821,"textRuns":[],"parentId":"81fc92f7:71","childIds":[]},{"id":"81fc92f7:73","tag":"div","openStart":21836,"attrEnd":21857,"openEnd":21858,"closeEnd":22095,"textRuns":[[21858,22063]],"parentId":"81fc92f7:70","childIds":["81fc92f7:74"]},{"id":"81fc92f7:74","tag":"span","openStart":22063,"attrEnd":22081,"openEnd":22082,"closeEnd":22089,"textRuns":[],"parentId":"81fc92f7:73","childIds":[]},{"id":"81fc92f7:75","tag":"div","openStart":22104,"attrEnd":22125,"openEnd":22126,"closeEnd":22300,"textRuns":[[22126,22268]],"parentId":"81fc92f7:70","childIds":["81fc92f7:76"]},{"id":"81fc92f7:76","tag":"span","openStart":22268,"attrEnd":22286,"openEnd":22287,"closeEnd":22294,"textRuns":[],"parentId":"81fc92f7:75","childIds":[]},{"id":"81fc92f7:77","tag":"div","openStart":22330,"attrEnd":22347,"openEnd":22348,"closeEnd":22651,"textRuns":[[22348,22355],[22401,22408],[22640,22645]],"parentId":"81fc92f7:57","childIds":["81fc92f7:78","81fc92f7:79"]},{"id":"81fc92f7:78","tag":"div","openStart":22355,"attrEnd":22380,"openEnd":22381,"closeEnd":22401,"textRuns":[[22381,22395]],"parentId":"81fc92f7:77","childIds":[]},{"id":"81fc92f7:79","tag":"h3","openStart":22408,"attrEnd":22411,"openEnd":22412,"closeEnd":22640,"textRuns":[[22412,22521],[22526,22576]],"parentId":"81fc92f7:77","childIds":["81fc92f7:80","81fc92f7:81"]},{"id":"81fc92f7:80","tag":"br","openStart":22521,"attrEnd":22524,"openEnd":22526,"closeEnd":22526,"textRuns":[],"parentId":"81fc92f7:79","childIds":[]},{"id":"81fc92f7:81","tag":"b","openStart":22576,"attrEnd":22578,"openEnd":22579,"closeEnd":22635,"textRuns":[[22579,22600]],"parentId":"81fc92f7:79","childIds":["81fc92f7:82"]},{"id":"81fc92f7:82","tag":"span","openStart":22600,"attrEnd":22616,"openEnd":22617,"closeEnd":22631,"textRuns":[[22617,22624]],"parentId":"81fc92f7:81","childIds":[]},{"id":"81fc92f7:83","tag":"section","openStart":22686,"attrEnd":22694,"openEnd":22695,"closeEnd":24145,"textRuns":[[22695,22698],[24134,24135]],"parentId":"81fc92f7:7","childIds":["81fc92f7:84"]},{"id":"81fc92f7:84","tag":"div","openStart":22698,"attrEnd":22715,"openEnd":22716,"closeEnd":24134,"textRuns":[[22716,22721],[22889,22895],[24125,24128]],"parentId":"81fc92f7:83","childIds":["81fc92f7:85","81fc92f7:89"]},{"id":"81fc92f7:85","tag":"div","openStart":22721,"attrEnd":22742,"openEnd":22743,"closeEnd":22889,"textRuns":[[22743,22750],[22792,22799],[22878,22883]],"parentId":"81fc92f7:84","childIds":["81fc92f7:86","81fc92f7:87"]},{"id":"81fc92f7:86","tag":"div","openStart":22750,"attrEnd":22766,"openEnd":22767,"closeEnd":22792,"textRuns":[[22767,22786]],"parentId":"81fc92f7:85","childIds":[]},{"id":"81fc92f7:87","tag":"h2","openStart":22799,"attrEnd":22802,"openEnd":22803,"closeEnd":22878,"textRuns":[[22803,22834]],"parentId":"81fc92f7:85","childIds":["81fc92f7:88"]},{"id":"81fc92f7:88","tag":"span","openStart":22834,"attrEnd":22850,"openEnd":22851,"closeEnd":22873,"textRuns":[[22851,22866]],"parentId":"81fc92f7:87","childIds":[]},{"id":"81fc92f7:89","tag":"div","openStart":22895,"attrEnd":22915,"openEnd":22916,"closeEnd":24125,"textRuns":[[22916,22923],[23926,23933],[24114,24119]],"parentId":"81fc92f7:84","childIds":["81fc92f7:90","81fc92f7:104"]},{"id":"81fc92f7:90","tag":"div","openStart":22923,"attrEnd":22927,"openEnd":22928,"closeEnd":23926,"textRuns":[[22928,22937],[23089,23098],[23464,23473],[23913,23920]],"parentId":"81fc92f7:89","childIds":["81fc92f7:91","81fc92f7:93","81fc92f7:95"]},{"id":"81fc92f7:91","tag":"p","openStart":22937,"attrEnd":22939,"openEnd":22940,"textRuns":[[22940,23012]],"parentId":"81fc92f7:90","childIds":["81fc92f7:92"]},{"id":"81fc92f7:92","tag":"strong","openStart":23012,"attrEnd":23019,"openEnd":23020,"closeEnd":23085,"textRuns":[[23020,23076]],"parentId":"81fc92f7:91","childIds":[]},{"id":"81fc92f7:93","tag":"p","openStart":23098,"attrEnd":23100,"openEnd":23101,"textRuns":[[23101,23386],[23418,23460]],"parentId":"81fc92f7:90","childIds":["81fc92f7:94"]},{"id":"81fc92f7:94","tag":"strong","openStart":23386,"attrEnd":23393,"openEnd":23394,"closeEnd":23418,"textRuns":[[23394,23409]],"parentId":"81fc92f7:93","childIds":[]},{"id":"81fc92f7:95","tag":"div","openStart":23473,"attrEnd":23524,"openEnd":23525,"closeEnd":23913,"styleAttr":[23506,23523],"textRuns":[[23525,23536],[23568,23579],[23617,23628],[23663,23674],[23708,23719],[23757,23768],[23801,23812],[23850,23861],[23898,23907]],"parentId":"81fc92f7:90","childIds":["81fc92f7:96","81fc92f7:97","81fc92f7:98","81fc92f7:99","81fc92f7:100","81fc92f7:101","81fc92f7:102","81fc92f7:103"]},{"id":"81fc92f7:96","tag":"span","openStart":23536,"attrEnd":23554,"openEnd":23555,"closeEnd":23568,"textRuns":[[23555,23561]],"parentId":"81fc92f7:95","childIds":[]},{"id":"81fc92f7:97","tag":"span","openStart":23579,"attrEnd":23597,"openEnd":23598,"closeEnd":23617,"textRuns":[[23598,23610]],"parentId":"81fc92f7:95","childIds":[]},{"id":"81fc92f7:98","tag":"span","openStart":23628,"attrEnd":23646,"openEnd":23647,"closeEnd":23663,"textRuns":[[23647,23656]],"parentId":"81fc92f7:95","childIds":[]},{"id":"81fc92f7:99","tag":"span","openStart":23674,"attrEnd":23692,"openEnd":23693,"closeEnd":23708,"textRuns":[[23693,23701]],"parentId":"81fc92f7:95","childIds":[]},{"id":"81fc92f7:100","tag":"span","openStart":23719,"attrEnd":23739,"openEnd":23740,"closeEnd":23757,"textRuns":[[23740,23750]],"parentId":"81fc92f7:95","childIds":[]},{"id":"81fc92f7:101","tag":"span","openStart":23768,"attrEnd":23786,"openEnd":23787,"closeEnd":23801,"textRuns":[[23787,23794]],"parentId":"81fc92f7:95","childIds":[]},{"id":"81fc92f7:102","tag":"span","openStart":23812,"attrEnd":23830,"openEnd":23831,"closeEnd":23850,"textRuns":[[23831,23843]],"parentId":"81fc92f7:95","childIds":[]},{"id":"81fc92f7:103","tag":"span","openStart":23861,"attrEnd":23879,"openEnd":23880,"closeEnd":23898,"textRuns":[[23880,23891]],"parentId":"81fc92f7:95","childIds":[]},{"id":"81fc92f7:104","tag":"div","openStart":23933,"attrEnd":23937,"openEnd":23938,"closeEnd":24114,"textRuns":[[23938,23947],[24101,24108]],"parentId":"81fc92f7:89","childIds":["81fc92f7:105"]},{"id":"81fc92f7:105","tag":"div","openStart":23947,"attrEnd":23969,"openEnd":23970,"closeEnd":24101,"textRuns":[[23970,24000],[24044,24095]],"parentId":"81fc92f7:104","childIds":["81fc92f7:106"]},{"id":"81fc92f7:106","tag":"span","openStart":24000,"attrEnd":24020,"openEnd":24021,"closeEnd":24044,"textRuns":[[24021,24037]],"parentId":"81fc92f7:105","childIds":[]},{"id":"81fc92f7:107","tag":"section","openStart":24167,"attrEnd":24187,"openEnd":24188,"closeEnd":25568,"textRuns":[[24188,24191],[25557,25558]],"parentId":"81fc92f7:7","childIds":["81fc92f7:108"]},{"id":"81fc92f7:108","tag":"div","openStart":24191,"attrEnd":24208,"openEnd":24209,"closeEnd":25557,"textRuns":[[24209,24214],[24391,24397],[25018,25024],[25548,25551]],"parentId":"81fc92f7:107","childIds":["81fc92f7:109","81fc92f7:113","81fc92f7:119"]},{"id":"81fc92f7:109","tag":"div","openStart":24214,"attrEnd":24235,"openEnd":24236,"closeEnd":24391,"textRuns":[[24236,24243],[24283,24290],[24380,24385]],"parentId":"81fc92f7:108","childIds":["81fc92f7:110","81fc92f7:111"]},{"id":"81fc92f7:110","tag":"div","openStart":24243,"attrEnd":24259,"openEnd":24260,"closeEnd":24283,"textRuns":[[24260,24277]],"parentId":"81fc92f7:109","childIds":[]},{"id":"81fc92f7:111","tag":"h2","openStart":24290,"attrEnd":24293,"openEnd":24294,"closeEnd":24380,"textRuns":[[24294,24319]],"parentId":"81fc92f7:109","childIds":["81fc92f7:112"]},{"id":"81fc92f7:112","tag":"span","openStart":24319,"attrEnd":24335,"openEnd":24336,"closeEnd":24375,"textRuns":[[24336,24368]],"parentId":"81fc92f7:111","childIds":[]},{"id":"81fc92f7:113","tag":"div","openStart":24397,"attrEnd":24417,"openEnd":24418,"closeEnd":25018,"textRuns":[[24418,24425],[24672,24679],[25007,25012]],"parentId":"81fc92f7:108","childIds":["81fc92f7:114","81fc92f7:116"]},{"id":"81fc92f7:114","tag":"p","openStart":24425,"attrEnd":24427,"openEnd":24428,"textRuns":[[24428,24561]],"parentId":"81fc92f7:113","childIds":["81fc92f7:115"]},{"id":"81fc92f7:115","tag":"strong","openStart":24561,"attrEnd":24568,"openEnd":24569,"closeEnd":24668,"textRuns":[[24569,24659]],"parentId":"81fc92f7:114","childIds":[]},{"id":"81fc92f7:116","tag":"p","openStart":24679,"attrEnd":24681,"openEnd":24682,"textRuns":[[24682,24773],[24796,24822],[24875,25003]],"parentId":"81fc92f7:113","childIds":["81fc92f7:117","81fc92f7:118"]},{"id":"81fc92f7:117","tag":"em","openStart":24773,"attrEnd":24776,"openEnd":24777,"closeEnd":24796,"textRuns":[[24777,24791]],"parentId":"81fc92f7:116","childIds":[]},{"id":"81fc92f7:118","tag":"strong","openStart":24822,"attrEnd":24829,"openEnd":24830,"closeEnd":24875,"textRuns":[[24830,24866]],"parentId":"81fc92f7:116","childIds":[]},{"id":"81fc92f7:119","tag":"div","openStart":25024,"attrEnd":25042,"openEnd":25043,"closeEnd":25548,"textRuns":[[25043,25050],[25193,25200],[25368,25375],[25537,25542]],"parentId":"81fc92f7:108","childIds":["81fc92f7:120","81fc92f7:124","81fc92f7:128"]},{"id":"81fc92f7:120","tag":"div","openStart":25050,"attrEnd":25072,"openEnd":25073,"closeEnd":25193,"textRuns":[],"parentId":"81fc92f7:119","childIds":["81fc92f7:121","81fc92f7:123"]},{"id":"81fc92f7:121","tag":"div","openStart":25073,"attrEnd":25087,"openEnd":25088,"closeEnd":25119,"textRuns":[],"parentId":"81fc92f7:120","childIds":["81fc92f7:122"]},{"id":"81fc92f7:122","tag":"span","openStart":25088,"attrEnd":25104,"openEnd":25105,"closeEnd":25113,"textRuns":[[25105,25106]],"parentId":"81fc92f7:121","childIds":[]},{"id":"81fc92f7:123","tag":"div","openStart":25119,"attrEnd":25133,"openEnd":25134,"closeEnd":25187,"textRuns":[[25134,25181]],"parentId":"81fc92f7:120","childIds":[]},{"id":"81fc92f7:124","tag":"div","openStart":25200,"attrEnd":25222,"openEnd":25223,"closeEnd":25368,"textRuns":[],"parentId":"81fc92f7:119","childIds":["81fc92f7:125","81fc92f7:127"]},{"id":"81fc92f7:125","tag":"div","openStart":25223,"attrEnd":25237,"openEnd":25238,"closeEnd":25270,"textRuns":[],"parentId":"81fc92f7:124","childIds":["81fc92f7:126"]},{"id":"81fc92f7:126","tag":"span","openStart":25238,"attrEnd":25254,"openEnd":25255,"closeEnd":25264,"textRuns":[[25255,25257]],"parentId":"81fc92f7:125","childIds":[]},{"id":"81fc92f7:127","tag":"div","openStart":25270,"attrEnd":25284,"openEnd":25285,"closeEnd":25362,"textRuns":[[25285,25356]],"parentId":"81fc92f7:124","childIds":[]},{"id":"81fc92f7:128","tag":"div","openStart":25375,"attrEnd":25397,"openEnd":25398,"closeEnd":25537,"textRuns":[],"parentId":"81fc92f7:119","childIds":["81fc92f7:129","81fc92f7:131"]},{"id":"81fc92f7:129","tag":"div","openStart":25398,"attrEnd":25412,"openEnd":25413,"closeEnd":25444,"textRuns":[],"parentId":"81fc92f7:128","childIds":["81fc92f7:130"]},{"id":"81fc92f7:130","tag":"span","openStart":25413,"attrEnd":25429,"openEnd":25430,"closeEnd":25438,"textRuns":[[25430,25431]],"parentId":"81fc92f7:129","childIds":[]},{"id":"81fc92f7:131","tag":"div","openStart":25444,"attrEnd":25458,"openEnd":25459,"closeEnd":25531,"textRuns":[[25459,25525]],"parentId":"81fc92f7:128","childIds":[]},{"id":"81fc92f7:132","tag":"section","openStart":25588,"attrEnd":25596,"openEnd":25597,"closeEnd":27322,"textRuns":[[25597,25600],[27311,27312]],"parentId":"81fc92f7:7","childIds":["81fc92f7:133"]},{"id":"81fc92f7:133","tag":"div","openStart":25600,"attrEnd":25617,"openEnd":25618,"closeEnd":27311,"textRuns":[[25618,25623],[25770,25776],[27302,27305]],"parentId":"81fc92f7:132","childIds":["81fc92f7:134","81fc92f7:138"]},{"id":"81fc92f7:134","tag":"div","openStart":25623,"attrEnd":25644,"openEnd":25645,"closeEnd":25770,"textRuns":[[25645,25652],[25692,25699],[25759,25764]],"parentId":"81fc92f7:133","childIds":["81fc92f7:135","81fc92f7:136"]},{"id":"81fc92f7:135","tag":"div","openStart":25652,"attrEnd":25668,"openEnd":25669,"closeEnd":25692,"textRuns":[[25669,25686]],"parentId":"81fc92f7:134","childIds":[]},{"id":"81fc92f7:136","tag":"h2","openStart":25699,"attrEnd":25702,"openEnd":25703,"closeEnd":25759,"textRuns":[[25703,25725]],"parentId":"81fc92f7:134","childIds":["81fc92f7:137"]},{"id":"81fc92f7:137","tag":"span","openStart":25725,"attrEnd":25741,"openEnd":25742,"closeEnd":25754,"textRuns":[[25742,25747]],"parentId":"81fc92f7:136","childIds":[]},{"id":"81fc92f7:138","tag":"div","openStart":25776,"attrEnd":25797,"openEnd":25798,"closeEnd":27302,"textRuns":[[25798,25805],[26056,26063],[26316,26323],[26547,26554],[26747,26754],[27034,27041],[27291,27296]],"parentId":"81fc92f7:133","childIds":["81fc92f7:139","81fc92f7:142","81fc92f7:145","81fc92f7:148","81fc92f7:151","81fc92f7:154"]},{"id":"81fc92f7:139","tag":"div","openStart":25805,"attrEnd":25830,"openEnd":25831,"closeEnd":26056,"textRuns":[],"parentId":"81fc92f7:138","childIds":["81fc92f7:140","81fc92f7:141"]},{"id":"81fc92f7:140","tag":"span","openStart":25831,"attrEnd":25848,"openEnd":25849,"closeEnd":25858,"textRuns":[[25849,25851]],"parentId":"81fc92f7:139","childIds":[]},{"id":"81fc92f7:141","tag":"p","openStart":25858,"attrEnd":25860,"openEnd":25861,"textRuns":[[25861,26046]],"parentId":"81fc92f7:139","childIds":[]},{"id":"81fc92f7:142","tag":"div","openStart":26063,"attrEnd":26088,"openEnd":26089,"closeEnd":26316,"textRuns":[],"parentId":"81fc92f7:138","childIds":["81fc92f7:143","81fc92f7:144"]},{"id":"81fc92f7:143","tag":"span","openStart":26089,"attrEnd":26106,"openEnd":26107,"closeEnd":26116,"textRuns":[[26107,26109]],"parentId":"81fc92f7:142","childIds":[]},{"id":"81fc92f7:144","tag":"p","openStart":26116,"attrEnd":26118,"openEnd":26119,"textRuns":[[26119,26306]],"parentId":"81fc92f7:142","childIds":[]},{"id":"81fc92f7:145","tag":"div","openStart":26323,"attrEnd":26348,"openEnd":26349,"closeEnd":26547,"textRuns":[],"parentId":"81fc92f7:138","childIds":["81fc92f7:146","81fc92f7:147"]},{"id":"81fc92f7:146","tag":"span","openStart":26349,"attrEnd":26366,"openEnd":26367,"closeEnd":26376,"textRuns":[[26367,26369]],"parentId":"81fc92f7:145","childIds":[]},{"id":"81fc92f7:147","tag":"p","openStart":26376,"attrEnd":26378,"openEnd":26379,"textRuns":[[26379,26537]],"parentId":"81fc92f7:145","childIds":[]},{"id":"81fc92f7:148","tag":"div","openStart":26554,"attrEnd":26579,"openEnd":26580,"closeEnd":26747,"textRuns":[],"parentId":"81fc92f7:138","childIds":["81fc92f7:149","81fc92f7:150"]},{"id":"81fc92f7:149","tag":"span","openStart":26580,"attrEnd":26597,"openEnd":26598,"closeEnd":26607,"textRuns":[[26598,26600]],"parentId":"81fc92f7:148","childIds":[]},{"id":"81fc92f7:150","tag":"p","openStart":26607,"attrEnd":26609,"openEnd":26610,"textRuns":[[26610,26737]],"parentId":"81fc92f7:148","childIds":[]},{"id":"81fc92f7:151","tag":"div","openStart":26754,"attrEnd":26779,"openEnd":26780,"closeEnd":27034,"textRuns":[],"parentId":"81fc92f7:138","childIds":["81fc92f7:152","81fc92f7:153"]},{"id":"81fc92f7:152","tag":"span","openStart":26780,"attrEnd":26797,"openEnd":26798,"closeEnd":26807,"textRuns":[[26798,26800]],"parentId":"81fc92f7:151","childIds":[]},{"id":"81fc92f7:153","tag":"p","openStart":26807,"attrEnd":26809,"openEnd":26810,"textRuns":[[26810,27024]],"parentId":"81fc92f7:151","childIds":[]},{"id":"81fc92f7:154","tag":"div","openStart":27041,"attrEnd":27066,"openEnd":27067,"closeEnd":27291,"textRuns":[],"parentId":"81fc92f7:138","childIds":["81fc92f7:155","81fc92f7:156"]},{"id":"81fc92f7:155","tag":"span","openStart":27067,"attrEnd":27084,"openEnd":27085,"closeEnd":27094,"textRuns":[[27085,27087]],"parentId":"81fc92f7:154","childIds":[]},{"id":"81fc92f7:156","tag":"p","openStart":27094,"attrEnd":27096,"openEnd":27097,"textRuns":[[27097,27281]],"parentId":"81fc92f7:154","childIds":[]},{"id":"81fc92f7:157","tag":"section","openStart":27341,"attrEnd":27374,"openEnd":27375,"closeEnd":31655,"textRuns":[[27375,27378],[31644,31645]],"parentId":"81fc92f7:7","childIds":["81fc92f7:158"]},{"id":"81fc92f7:158","tag":"div","openStart":27378,"attrEnd":27395,"openEnd":27396,"closeEnd":31644,"textRuns":[[27396,27401],[27593,27599],[27789,27795],[28628,28634],[29415,29421],[30156,30162],[30916,30922],[31635,31638]],"parentId":"81fc92f7:157","childIds":["81fc92f7:159","81fc92f7:163","81fc92f7:168","81fc92f7:179","81fc92f7:190","81fc92f7:201","81fc92f7:212"]},{"id":"81fc92f7:159","tag":"div","openStart":27401,"attrEnd":27422,"openEnd":27423,"closeEnd":27593,"textRuns":[[27423,27430],[27478,27485],[27582,27587]],"parentId":"81fc92f7:158","childIds":["81fc92f7:160","81fc92f7:161"]},{"id":"81fc92f7:160","tag":"div","openStart":27430,"attrEnd":27446,"openEnd":27447,"closeEnd":27478,"textRuns":[[27447,27472]],"parentId":"81fc92f7:159","childIds":[]},{"id":"81fc92f7:161","tag":"h2","openStart":27485,"attrEnd":27488,"openEnd":27489,"closeEnd":27582,"textRuns":[[27489,27520]],"parentId":"81fc92f7:159","childIds":["81fc92f7:162"]},{"id":"81fc92f7:162","tag":"span","openStart":27520,"attrEnd":27536,"openEnd":27537,"closeEnd":27577,"textRuns":[[27537,27570]],"parentId":"81fc92f7:161","childIds":[]},{"id":"81fc92f7:163","tag":"div","openStart":27599,"attrEnd":27624,"openEnd":27625,"closeEnd":27789,"textRuns":[[27625,27632],[27668,27675],[27713,27720],[27746,27753],[27778,27783]],"parentId":"81fc92f7:158","childIds":["81fc92f7:164","81fc92f7:165","81fc92f7:166","81fc92f7:167"]},{"id":"81fc92f7:164","tag":"span","openStart":27632,"attrEnd":27637,"openEnd":27638,"closeEnd":27668,"textRuns":[[27638,27661]],"parentId":"81fc92f7:163","childIds":[]},{"id":"81fc92f7:165","tag":"span","openStart":27675,"attrEnd":27680,"openEnd":27681,"closeEnd":27713,"textRuns":[[27681,27706]],"parentId":"81fc92f7:163","childIds":[]},{"id":"81fc92f7:166","tag":"span","openStart":27720,"attrEnd":27725,"openEnd":27726,"closeEnd":27746,"textRuns":[[27726,27739]],"parentId":"81fc92f7:163","childIds":[]},{"id":"81fc92f7:167","tag":"span","openStart":27753,"attrEnd":27758,"openEnd":27759,"closeEnd":27778,"textRuns":[[27759,27771]],"parentId":"81fc92f7:163","childIds":[]},{"id":"81fc92f7:168","tag":"div","openStart":27795,"attrEnd":27820,"openEnd":27821,"closeEnd":28628,"textRuns":[[27821,27828],[27914,27921],[28617,28622]],"parentId":"81fc92f7:158","childIds":["81fc92f7:169","81fc92f7:173"]},{"id":"81fc92f7:169","tag":"div","openStart":27828,"attrEnd":27832,"openEnd":27833,"closeEnd":27914,"textRuns":[],"parentId":"81fc92f7:168","childIds":["81fc92f7:170","81fc92f7:172"]},{"id":"81fc92f7:170","tag":"div","openStart":27833,"attrEnd":27849,"openEnd":27850,"closeEnd":27867,"textRuns":[],"parentId":"81fc92f7:169","childIds":["81fc92f7:171"]},{"id":"81fc92f7:171","tag":"em","openStart":27850,"attrEnd":27853,"openEnd":27854,"closeEnd":27861,"textRuns":[[27854,27856]],"parentId":"81fc92f7:170","childIds":[]},{"id":"81fc92f7:172","tag":"div","openStart":27867,"attrEnd":27884,"openEnd":27885,"closeEnd":27908,"textRuns":[[27885,27902]],"parentId":"81fc92f7:169","childIds":[]},{"id":"81fc92f7:173","tag":"div","openStart":27921,"attrEnd":27925,"openEnd":27926,"closeEnd":28617,"textRuns":[[27926,27935],[28027,28036],[28329,28338],[28604,28611]],"parentId":"81fc92f7:168","childIds":["81fc92f7:174","81fc92f7:175","81fc92f7:176"]},{"id":"81fc92f7:174","tag":"h3","openStart":27935,"attrEnd":27938,"openEnd":27939,"closeEnd":28027,"textRuns":[[27939,28022]],"parentId":"81fc92f7:173","childIds":[]},{"id":"81fc92f7:175","tag":"p","openStart":28036,"attrEnd":28038,"openEnd":28039,"textRuns":[[28039,28325]],"parentId":"81fc92f7:173","childIds":[]},{"id":"81fc92f7:176","tag":"div","openStart":28338,"attrEnd":28359,"openEnd":28360,"closeEnd":28604,"textRuns":[],"parentId":"81fc92f7:173","childIds":["81fc92f7:177","81fc92f7:178"]},{"id":"81fc92f7:177","tag":"b","openStart":28360,"attrEnd":28362,"openEnd":28363,"closeEnd":28388,"textRuns":[[28363,28384]],"parentId":"81fc92f7:176","childIds":[]},{"id":"81fc92f7:178","tag":"p","openStart":28388,"attrEnd":28390,"openEnd":28391,"textRuns":[[28391,28594]],"parentId":"81fc92f7:176","childIds":[]},{"id":"81fc92f7:179","tag":"div","openStart":28634,"attrEnd":28659,"openEnd":28660,"closeEnd":29415,"textRuns":[[28660,28667],[28753,28760],[29404,29409]],"parentId":"81fc92f7:158","childIds":["81fc92f7:180","81fc92f7:184"]},{"id":"81fc92f7:180","tag":"div","openStart":28667,"attrEnd":28671,"openEnd":28672,"closeEnd":28753,"textRuns":[],"parentId":"81fc92f7:179","childIds":["81fc92f7:181","81fc92f7:183"]},{"id":"81fc92f7:181","tag":"div","openStart":28672,"attrEnd":28688,"openEnd":28689,"closeEnd":28706,"textRuns":[],"parentId":"81fc92f7:180","childIds":["81fc92f7:182"]},{"id":"81fc92f7:182","tag":"em","openStart":28689,"attrEnd":28692,"openEnd":28693,"closeEnd":28700,"textRuns":[[28693,28695]],"parentId":"81fc92f7:181","childIds":[]},{"id":"81fc92f7:183","tag":"div","openStart":28706,"attrEnd":28723,"openEnd":28724,"closeEnd":28747,"textRuns":[[28724,28741]],"parentId":"81fc92f7:180","childIds":[]},{"id":"81fc92f7:184","tag":"div","openStart":28760,"attrEnd":28764,"openEnd":28765,"closeEnd":29404,"textRuns":[[28765,28774],[28878,28887],[29100,29109],[29391,29398]],"parentId":"81fc92f7:179","childIds":["81fc92f7:185","81fc92f7:186","81fc92f7:187"]},{"id":"81fc92f7:185","tag":"h3","openStart":28774,"attrEnd":28777,"openEnd":28778,"closeEnd":28878,"textRuns":[[28778,28873]],"parentId":"81fc92f7:184","childIds":[]},{"id":"81fc92f7:186","tag":"p","openStart":28887,"attrEnd":28889,"openEnd":28890,"textRuns":[[28890,29096]],"parentId":"81fc92f7:184","childIds":[]},{"id":"81fc92f7:187","tag":"div","openStart":29109,"attrEnd":29130,"openEnd":29131,"closeEnd":29391,"textRuns":[],"parentId":"81fc92f7:184","childIds":["81fc92f7:188","81fc92f7:189"]},{"id":"81fc92f7:188","tag":"b","openStart":29131,"attrEnd":29133,"openEnd":29134,"closeEnd":29159,"textRuns":[[29134,29155]],"parentId":"81fc92f7:187","childIds":[]},{"id":"81fc92f7:189","tag":"p","openStart":29159,"attrEnd":29161,"openEnd":29162,"textRuns":[[29162,29381]],"parentId":"81fc92f7:187","childIds":[]},{"id":"81fc92f7:190","tag":"div","openStart":29421,"attrEnd":29446,"openEnd":29447,"closeEnd":30156,"textRuns":[[29447,29454],[29540,29547],[30145,30150]],"parentId":"81fc92f7:158","childIds":["81fc92f7:191","81fc92f7:195"]},{"id":"81fc92f7:191","tag":"div","openStart":29454,"attrEnd":29458,"openEnd":29459,"closeEnd":29540,"textRuns":[],"parentId":"81fc92f7:190","childIds":["81fc92f7:192","81fc92f7:194"]},{"id":"81fc92f7:192","tag":"div","openStart":29459,"attrEnd":29475,"openEnd":29476,"closeEnd":29493,"textRuns":[],"parentId":"81fc92f7:191","childIds":["81fc92f7:193"]},{"id":"81fc92f7:193","tag":"em","openStart":29476,"attrEnd":29479,"openEnd":29480,"closeEnd":29487,"textRuns":[[29480,29482]],"parentId":"81fc92f7:192","childIds":[]},{"id":"81fc92f7:194","tag":"div","openStart":29493,"attrEnd":29510,"openEnd":29511,"closeEnd":29534,"textRuns":[[29511,29528]],"parentId":"81fc92f7:191","childIds":[]},{"id":"81fc92f7:195","tag":"div","openStart":29547,"attrEnd":29551,"openEnd":29552,"closeEnd":30145,"textRuns":[[29552,29561],[29659,29668],[29917,29926],[30132,30139]],"parentId":"81fc92f7:190","childIds":["81fc92f7:196","81fc92f7:197","81fc92f7:198"]},{"id":"81fc92f7:196","tag":"h3","openStart":29561,"attrEnd":29564,"openEnd":29565,"closeEnd":29659,"textRuns":[[29565,29654]],"parentId":"81fc92f7:195","childIds":[]},{"id":"81fc92f7:197","tag":"p","openStart":29668,"attrEnd":29670,"openEnd":29671,"textRuns":[[29671,29913]],"parentId":"81fc92f7:195","childIds":[]},{"id":"81fc92f7:198","tag":"div","openStart":29926,"attrEnd":29947,"openEnd":29948,"closeEnd":30132,"textRuns":[],"parentId":"81fc92f7:195","childIds":["81fc92f7:199","81fc92f7:200"]},{"id":"81fc92f7:199","tag":"b","openStart":29948,"attrEnd":29950,"openEnd":29951,"closeEnd":29976,"textRuns":[[29951,29972]],"parentId":"81fc92f7:198","childIds":[]},{"id":"81fc92f7:200","tag":"p","openStart":29976,"attrEnd":29978,"openEnd":29979,"textRuns":[[29979,30122]],"parentId":"81fc92f7:198","childIds":[]},{"id":"81fc92f7:201","tag":"div","openStart":30162,"attrEnd":30187,"openEnd":30188,"closeEnd":30916,"textRuns":[[30188,30195],[30282,30289],[30905,30910]],"parentId":"81fc92f7:158","childIds":["81fc92f7:202","81fc92f7:206"]},{"id":"81fc92f7:202","tag":"div","openStart":30195,"attrEnd":30199,"openEnd":30200,"closeEnd":30282,"textRuns":[],"parentId":"81fc92f7:201","childIds":["81fc92f7:203","81fc92f7:205"]},{"id":"81fc92f7:203","tag":"div","openStart":30200,"attrEnd":30216,"openEnd":30217,"closeEnd":30234,"textRuns":[],"parentId":"81fc92f7:202","childIds":["81fc92f7:204"]},{"id":"81fc92f7:204","tag":"em","openStart":30217,"attrEnd":30220,"openEnd":30221,"closeEnd":30228,"textRuns":[[30221,30223]],"parentId":"81fc92f7:203","childIds":[]},{"id":"81fc92f7:205","tag":"div","openStart":30234,"attrEnd":30251,"openEnd":30252,"closeEnd":30276,"textRuns":[[30252,30270]],"parentId":"81fc92f7:202","childIds":[]},{"id":"81fc92f7:206","tag":"div","openStart":30289,"attrEnd":30293,"openEnd":30294,"closeEnd":30905,"textRuns":[[30294,30303],[30374,30383],[30649,30658],[30892,30899]],"parentId":"81fc92f7:201","childIds":["81fc92f7:207","81fc92f7:208","81fc92f7:209"]},{"id":"81fc92f7:207","tag":"h3","openStart":30303,"attrEnd":30306,"openEnd":30307,"closeEnd":30374,"textRuns":[[30307,30369]],"parentId":"81fc92f7:206","childIds":[]},{"id":"81fc92f7:208","tag":"p","openStart":30383,"attrEnd":30385,"openEnd":30386,"textRuns":[[30386,30645]],"parentId":"81fc92f7:206","childIds":[]},{"id":"81fc92f7:209","tag":"div","openStart":30658,"attrEnd":30679,"openEnd":30680,"closeEnd":30892,"textRuns":[],"parentId":"81fc92f7:206","childIds":["81fc92f7:210","81fc92f7:211"]},{"id":"81fc92f7:210","tag":"b","openStart":30680,"attrEnd":30682,"openEnd":30683,"closeEnd":30708,"textRuns":[[30683,30704]],"parentId":"81fc92f7:209","childIds":[]},{"id":"81fc92f7:211","tag":"p","openStart":30708,"attrEnd":30710,"openEnd":30711,"textRuns":[[30711,30882]],"parentId":"81fc92f7:209","childIds":[]},{"id":"81fc92f7:212","tag":"div","openStart":30922,"attrEnd":30947,"openEnd":30948,"closeEnd":31635,"textRuns":[[30948,30955],[31043,31050],[31624,31629]],"parentId":"81fc92f7:158","childIds":["81fc92f7:213","81fc92f7:217"]},{"id":"81fc92f7:213","tag":"div","openStart":30955,"attrEnd":30959,"openEnd":30960,"closeEnd":31043,"textRuns":[],"parentId":"81fc92f7:212","childIds":["81fc92f7:214","81fc92f7:216"]},{"id":"81fc92f7:214","tag":"div","openStart":30960,"attrEnd":30976,"openEnd":30977,"closeEnd":30994,"textRuns":[],"parentId":"81fc92f7:213","childIds":["81fc92f7:215"]},{"id":"81fc92f7:215","tag":"em","openStart":30977,"attrEnd":30980,"openEnd":30981,"closeEnd":30988,"textRuns":[[30981,30983]],"parentId":"81fc92f7:214","childIds":[]},{"id":"81fc92f7:216","tag":"div","openStart":30994,"attrEnd":31011,"openEnd":31012,"closeEnd":31037,"textRuns":[[31012,31031]],"parentId":"81fc92f7:213","childIds":[]},{"id":"81fc92f7:217","tag":"div","openStart":31050,"attrEnd":31054,"openEnd":31055,"closeEnd":31624,"textRuns":[[31055,31064],[31141,31150],[31388,31397],[31611,31618]],"parentId":"81fc92f7:212","childIds":["81fc92f7:218","81fc92f7:219","81fc92f7:220"]},{"id":"81fc92f7:218","tag":"h3","openStart":31064,"attrEnd":31067,"openEnd":31068,"closeEnd":31141,"textRuns":[[31068,31136]],"parentId":"81fc92f7:217","childIds":[]},{"id":"81fc92f7:219","tag":"p","openStart":31150,"attrEnd":31152,"openEnd":31153,"textRuns":[[31153,31384]],"parentId":"81fc92f7:217","childIds":[]},{"id":"81fc92f7:220","tag":"div","openStart":31397,"attrEnd":31418,"openEnd":31419,"closeEnd":31611,"textRuns":[],"parentId":"81fc92f7:217","childIds":["81fc92f7:221","81fc92f7:222"]},{"id":"81fc92f7:221","tag":"b","openStart":31419,"attrEnd":31421,"openEnd":31422,"closeEnd":31447,"textRuns":[[31422,31443]],"parentId":"81fc92f7:220","childIds":[]},{"id":"81fc92f7:222","tag":"p","openStart":31447,"attrEnd":31449,"openEnd":31450,"textRuns":[[31450,31601]],"parentId":"81fc92f7:220","childIds":[]},{"id":"81fc92f7:223","tag":"section","openStart":31675,"attrEnd":31683,"openEnd":31684,"closeEnd":32845,"textRuns":[[31684,31687],[32834,32835]],"parentId":"81fc92f7:7","childIds":["81fc92f7:224"]},{"id":"81fc92f7:224","tag":"div","openStart":31687,"attrEnd":31704,"openEnd":31705,"closeEnd":32834,"textRuns":[[31705,31710],[31862,31868],[32825,32828]],"parentId":"81fc92f7:223","childIds":["81fc92f7:225","81fc92f7:229"]},{"id":"81fc92f7:225","tag":"div","openStart":31710,"attrEnd":31731,"openEnd":31732,"closeEnd":31862,"textRuns":[[31732,31739],[31781,31788],[31851,31856]],"parentId":"81fc92f7:224","childIds":["81fc92f7:226","81fc92f7:227"]},{"id":"81fc92f7:226","tag":"div","openStart":31739,"attrEnd":31755,"openEnd":31756,"closeEnd":31781,"textRuns":[[31756,31775]],"parentId":"81fc92f7:225","childIds":[]},{"id":"81fc92f7:227","tag":"h2","openStart":31788,"attrEnd":31791,"openEnd":31792,"closeEnd":31851,"textRuns":[[31792,31804]],"parentId":"81fc92f7:225","childIds":["81fc92f7:228"]},{"id":"81fc92f7:228","tag":"span","openStart":31804,"attrEnd":31820,"openEnd":31821,"closeEnd":31846,"textRuns":[[31821,31839]],"parentId":"81fc92f7:227","childIds":[]},{"id":"81fc92f7:229","tag":"div","openStart":31868,"attrEnd":31889,"openEnd":31890,"closeEnd":32825,"textRuns":[[31890,31897],[32113,32120],[32355,32362],[32556,32563],[32814,32819]],"parentId":"81fc92f7:224","childIds":["81fc92f7:230","81fc92f7:234","81fc92f7:238","81fc92f7:242"]},{"id":"81fc92f7:230","tag":"div","openStart":31897,"attrEnd":31918,"openEnd":31919,"closeEnd":32113,"textRuns":[],"parentId":"81fc92f7:229","childIds":["81fc92f7:231","81fc92f7:232","81fc92f7:233"]},{"id":"81fc92f7:231","tag":"div","openStart":31919,"attrEnd":31937,"openEnd":31938,"closeEnd":31946,"textRuns":[[31938,31940]],"parentId":"81fc92f7:230","childIds":[]},{"id":"81fc92f7:232","tag":"h4","openStart":31946,"attrEnd":31949,"openEnd":31950,"closeEnd":31993,"textRuns":[[31950,31988]],"parentId":"81fc92f7:230","childIds":[]},{"id":"81fc92f7:233","tag":"p","openStart":31993,"attrEnd":31995,"openEnd":31996,"textRuns":[[31996,32103]],"parentId":"81fc92f7:230","childIds":[]},{"id":"81fc92f7:234","tag":"div","openStart":32120,"attrEnd":32141,"openEnd":32142,"closeEnd":32355,"textRuns":[],"parentId":"81fc92f7:229","childIds":["81fc92f7:235","81fc92f7:236","81fc92f7:237"]},{"id":"81fc92f7:235","tag":"div","openStart":32142,"attrEnd":32160,"openEnd":32161,"closeEnd":32170,"textRuns":[[32161,32164]],"parentId":"81fc92f7:234","childIds":[]},{"id":"81fc92f7:236","tag":"h4","openStart":32170,"attrEnd":32173,"openEnd":32174,"closeEnd":32237,"textRuns":[[32174,32232]],"parentId":"81fc92f7:234","childIds":[]},{"id":"81fc92f7:237","tag":"p","openStart":32237,"attrEnd":32239,"openEnd":32240,"textRuns":[[32240,32345]],"parentId":"81fc92f7:234","childIds":[]},{"id":"81fc92f7:238","tag":"div","openStart":32362,"attrEnd":32383,"openEnd":32384,"closeEnd":32556,"textRuns":[],"parentId":"81fc92f7:229","childIds":["81fc92f7:239","81fc92f7:240","81fc92f7:241"]},{"id":"81fc92f7:239","tag":"div","openStart":32384,"attrEnd":32402,"openEnd":32403,"closeEnd":32413,"textRuns":[[32403,32407]],"parentId":"81fc92f7:238","childIds":[]},{"id":"81fc92f7:240","tag":"h4","openStart":32413,"attrEnd":32416,"openEnd":32417,"closeEnd":32445,"textRuns":[[32417,32440]],"parentId":"81fc92f7:238","childIds":[]},{"id":"81fc92f7:241","tag":"p","openStart":32445,"attrEnd":32447,"openEnd":32448,"textRuns":[[32448,32546]],"parentId":"81fc92f7:238","childIds":[]},{"id":"81fc92f7:242","tag":"div","openStart":32563,"attrEnd":32584,"openEnd":32585,"closeEnd":32814,"textRuns":[],"parentId":"81fc92f7:229","childIds":["81fc92f7:243","81fc92f7:244","81fc92f7:245"]},{"id":"81fc92f7:243","tag":"div","openStart":32585,"attrEnd":32603,"openEnd":32604,"closeEnd":32613,"textRuns":[[32604,32607]],"parentId":"81fc92f7:242","childIds":[]},{"id":"81fc92f7:244","tag":"h4","openStart":32613,"attrEnd":32616,"openEnd":32617,"closeEnd":32688,"textRuns":[[32617,32683]],"parentId":"81fc92f7:242","childIds":[]},{"id":"81fc92f7:245","tag":"p","openStart":32688,"attrEnd":32690,"openEnd":32691,"textRuns":[[32691,32804]],"parentId":"81fc92f7:242","childIds":[]},{"id":"81fc92f7:246","tag":"section","openStart":32863,"attrEnd":32895,"openEnd":32896,"closeEnd":34887,"textRuns":[[32896,32899],[34876,34877]],"parentId":"81fc92f7:7","childIds":["81fc92f7:247"]},{"id":"81fc92f7:247","tag":"div","openStart":32899,"attrEnd":32916,"openEnd":32917,"closeEnd":34876,"textRuns":[[32917,32922],[33077,33083],[34867,34870]],"parentId":"81fc92f7:246","childIds":["81fc92f7:248","81fc92f7:252"]},{"id":"81fc92f7:248","tag":"div","openStart":32922,"attrEnd":32943,"openEnd":32944,"closeEnd":33077,"textRuns":[[32944,32951],[32991,32998],[33066,33071]],"parentId":"81fc92f7:247","childIds":["81fc92f7:249","81fc92f7:250"]},{"id":"81fc92f7:249","tag":"div","openStart":32951,"attrEnd":32967,"openEnd":32968,"closeEnd":32991,"textRuns":[[32968,32985]],"parentId":"81fc92f7:248","childIds":[]},{"id":"81fc92f7:250","tag":"h2","openStart":32998,"attrEnd":33001,"openEnd":33002,"closeEnd":33066,"textRuns":[[33002,33021]],"parentId":"81fc92f7:248","childIds":["81fc92f7:251"]},{"id":"81fc92f7:251","tag":"span","openStart":33021,"attrEnd":33037,"openEnd":33038,"closeEnd":33061,"textRuns":[[33038,33054]],"parentId":"81fc92f7:250","childIds":[]},{"id":"81fc92f7:252","tag":"div","openStart":33083,"attrEnd":33107,"openEnd":33108,"closeEnd":34867,"textRuns":[[33108,33115],[33316,33323],[34856,34861]],"parentId":"81fc92f7:247","childIds":["81fc92f7:253","81fc92f7:257"]},{"id":"81fc92f7:253","tag":"div","openStart":33115,"attrEnd":33140,"openEnd":33141,"closeEnd":33316,"textRuns":[[33141,33150],[33181,33190],[33253,33262],[33303,33310]],"parentId":"81fc92f7:252","childIds":["81fc92f7:254","81fc92f7:255","81fc92f7:256"]},{"id":"81fc92f7:254","tag":"span","openStart":33150,"attrEnd":33155,"openEnd":33156,"closeEnd":33181,"textRuns":[[33156,33174]],"parentId":"81fc92f7:253","childIds":[]},{"id":"81fc92f7:255","tag":"span","openStart":33190,"attrEnd":33212,"openEnd":33213,"closeEnd":33253,"textRuns":[[33213,33246]],"parentId":"81fc92f7:253","childIds":[]},{"id":"81fc92f7:256","tag":"span","openStart":33262,"attrEnd":33267,"openEnd":33268,"closeEnd":33303,"textRuns":[[33268,33296]],"parentId":"81fc92f7:253","childIds":[]},{"id":"81fc92f7:257","tag":"div","openStart":33323,"attrEnd":33327,"openEnd":33328,"closeEnd":34856,"textRuns":[[33328,33337],[33427,33436],[33532,33541],[33918,33927],[34370,34379],[34843,34850]],"parentId":"81fc92f7:252","childIds":["81fc92f7:258","81fc92f7:260","81fc92f7:261","81fc92f7:262","81fc92f7:263"]},{"id":"81fc92f7:258","tag":"div","openStart":33337,"attrEnd":33361,"openEnd":33362,"closeEnd":33427,"textRuns":[[33362,33381]],"parentId":"81fc92f7:257","childIds":["81fc92f7:259"]},{"id":"81fc92f7:259","tag":"span","openStart":33381,"attrEnd":33397,"openEnd":33398,"closeEnd":33421,"textRuns":[[33398,33414]],"parentId":"81fc92f7:258","childIds":[]},{"id":"81fc92f7:260","tag":"div","openStart":33436,"attrEnd":33460,"openEnd":33461,"closeEnd":33532,"textRuns":[[33461,33526]],"parentId":"81fc92f7:257","childIds":[]},{"id":"81fc92f7:261","tag":"div","openStart":33541,"attrEnd":33566,"openEnd":33567,"closeEnd":33918,"textRuns":[[33567,33912]],"parentId":"81fc92f7:257","childIds":[]},{"id":"81fc92f7:262","tag":"p","openStart":33927,"attrEnd":33948,"openEnd":33949,"textRuns":[[33949,34366]],"parentId":"81fc92f7:257","childIds":[]},{"id":"81fc92f7:263","tag":"div","openStart":34379,"attrEnd":34406,"openEnd":34407,"closeEnd":34843,"textRuns":[[34407,34418],[34516,34527],[34621,34632],[34725,34736],[34828,34837]],"parentId":"81fc92f7:257","childIds":["81fc92f7:264","81fc92f7:266","81fc92f7:268","81fc92f7:270"]},{"id":"81fc92f7:264","tag":"span","openStart":34418,"attrEnd":34436,"openEnd":34437,"closeEnd":34516,"textRuns":[[34466,34509]],"parentId":"81fc92f7:263","childIds":["81fc92f7:265"]},{"id":"81fc92f7:265","tag":"b","openStart":34437,"attrEnd":34439,"openEnd":34440,"closeEnd":34466,"textRuns":[[34440,34462]],"parentId":"81fc92f7:264","childIds":[]},{"id":"81fc92f7:266","tag":"span","openStart":34527,"attrEnd":34545,"openEnd":34546,"closeEnd":34621,"textRuns":[[34561,34614]],"parentId":"81fc92f7:263","childIds":["81fc92f7:267"]},{"id":"81fc92f7:267","tag":"b","openStart":34546,"attrEnd":34548,"openEnd":34549,"closeEnd":34561,"textRuns":[[34549,34557]],"parentId":"81fc92f7:266","childIds":[]},{"id":"81fc92f7:268","tag":"span","openStart":34632,"attrEnd":34650,"openEnd":34651,"closeEnd":34725,"textRuns":[[34668,34718]],"parentId":"81fc92f7:263","childIds":["81fc92f7:269"]},{"id":"81fc92f7:269","tag":"b","openStart":34651,"attrEnd":34653,"openEnd":34654,"closeEnd":34668,"textRuns":[[34654,34664]],"parentId":"81fc92f7:268","childIds":[]},{"id":"81fc92f7:270","tag":"span","openStart":34736,"attrEnd":34754,"openEnd":34755,"closeEnd":34828,"textRuns":[[34774,34821]],"parentId":"81fc92f7:263","childIds":["81fc92f7:271"]},{"id":"81fc92f7:271","tag":"b","openStart":34755,"attrEnd":34757,"openEnd":34758,"closeEnd":34774,"textRuns":[[34758,34770]],"parentId":"81fc92f7:270","childIds":[]},{"id":"81fc92f7:272","tag":"section","openStart":34906,"attrEnd":34914,"openEnd":34915,"closeEnd":35959,"textRuns":[[34915,34918],[35948,35949]],"parentId":"81fc92f7:7","childIds":["81fc92f7:273"]},{"id":"81fc92f7:273","tag":"div","openStart":34918,"attrEnd":34935,"openEnd":34936,"closeEnd":35948,"textRuns":[[34936,34941],[35103,35109],[35939,35942]],"parentId":"81fc92f7:272","childIds":["81fc92f7:274","81fc92f7:278"]},{"id":"81fc92f7:274","tag":"div","openStart":34941,"attrEnd":34962,"openEnd":34963,"closeEnd":35103,"textRuns":[[34963,34970],[35012,35019],[35092,35097]],"parentId":"81fc92f7:273","childIds":["81fc92f7:275","81fc92f7:276"]},{"id":"81fc92f7:275","tag":"div","openStart":34970,"attrEnd":34986,"openEnd":34987,"closeEnd":35012,"textRuns":[[34987,35006]],"parentId":"81fc92f7:274","childIds":[]},{"id":"81fc92f7:276","tag":"h2","openStart":35019,"attrEnd":35022,"openEnd":35023,"closeEnd":35092,"textRuns":[[35023,35045]],"parentId":"81fc92f7:274","childIds":["81fc92f7:277"]},{"id":"81fc92f7:277","tag":"span","openStart":35045,"attrEnd":35061,"openEnd":35062,"closeEnd":35087,"textRuns":[[35062,35080]],"parentId":"81fc92f7:276","childIds":[]},{"id":"81fc92f7:278","tag":"div","openStart":35109,"attrEnd":35129,"openEnd":35130,"closeEnd":35939,"textRuns":[[35130,35137],[35354,35361],[35578,35585],[35802,35809],[35928,35933]],"parentId":"81fc92f7:273","childIds":["81fc92f7:279","81fc92f7:283","81fc92f7:287","81fc92f7:291"]},{"id":"81fc92f7:279","tag":"div","openStart":35137,"attrEnd":35161,"openEnd":35162,"closeEnd":35354,"textRuns":[],"parentId":"81fc92f7:278","childIds":["81fc92f7:280","81fc92f7:281","81fc92f7:282"]},{"id":"81fc92f7:280","tag":"div","openStart":35162,"attrEnd":35177,"openEnd":35178,"closeEnd":35184,"textRuns":[],"parentId":"81fc92f7:279","childIds":[]},{"id":"81fc92f7:281","tag":"p","openStart":35184,"attrEnd":35186,"openEnd":35187,"textRuns":[[35187,35297]],"parentId":"81fc92f7:279","childIds":[]},{"id":"81fc92f7:282","tag":"div","openStart":35301,"attrEnd":35317,"openEnd":35318,"closeEnd":35348,"textRuns":[[35318,35342]],"parentId":"81fc92f7:279","childIds":[]},{"id":"81fc92f7:283","tag":"div","openStart":35361,"attrEnd":35385,"openEnd":35386,"closeEnd":35578,"textRuns":[],"parentId":"81fc92f7:278","childIds":["81fc92f7:284","81fc92f7:285","81fc92f7:286"]},{"id":"81fc92f7:284","tag":"div","openStart":35386,"attrEnd":35401,"openEnd":35402,"closeEnd":35408,"textRuns":[],"parentId":"81fc92f7:283","childIds":[]},{"id":"81fc92f7:285","tag":"p","openStart":35408,"attrEnd":35410,"openEnd":35411,"textRuns":[[35411,35521]],"parentId":"81fc92f7:283","childIds":[]},{"id":"81fc92f7:286","tag":"div","openStart":35525,"attrEnd":35541,"openEnd":35542,"closeEnd":35572,"textRuns":[[35542,35566]],"parentId":"81fc92f7:283","childIds":[]},{"id":"81fc92f7:287","tag":"div","openStart":35585,"attrEnd":35609,"openEnd":35610,"closeEnd":35802,"textRuns":[],"parentId":"81fc92f7:278","childIds":["81fc92f7:288","81fc92f7:289","81fc92f7:290"]},{"id":"81fc92f7:288","tag":"div","openStart":35610,"attrEnd":35625,"openEnd":35626,"closeEnd":35632,"textRuns":[],"parentId":"81fc92f7:287","childIds":[]},{"id":"81fc92f7:289","tag":"p","openStart":35632,"attrEnd":35634,"openEnd":35635,"textRuns":[[35635,35745]],"parentId":"81fc92f7:287","childIds":[]},{"id":"81fc92f7:290","tag":"div","openStart":35749,"attrEnd":35765,"openEnd":35766,"closeEnd":35796,"textRuns":[[35766,35790]],"parentId":"81fc92f7:287","childIds":[]},{"id":"81fc92f7:291","tag":"div","openStart":35809,"attrEnd":35834,"openEnd":35835,"closeEnd":35928,"textRuns":[[35835,35922]],"parentId":"81fc92f7:278","childIds":[]},{"id":"81fc92f7:292","tag":"section","openStart":35976,"attrEnd":36007,"openEnd":36008,"closeEnd":37143,"textRuns":[[36008,36011],[37132,37133]],"parentId":"81fc92f7:7","childIds":["81fc92f7:293"]},{"id":"81fc92f7:293","tag":"div","openStart":36011,"attrEnd":36028,"openEnd":36029,"closeEnd":37132,"textRuns":[[36029,36034],[36184,36190],[37123,37126]],"parentId":"81fc92f7:292","childIds":["81fc92f7:294","81fc92f7:298"]},{"id":"81fc92f7:294","tag":"div","openStart":36034,"attrEnd":36055,"openEnd":36056,"closeEnd":36184,"textRuns":[[36056,36063],[36105,36112],[36173,36178]],"parentId":"81fc92f7:293","childIds":["81fc92f7:295","81fc92f7:296"]},{"id":"81fc92f7:295","tag":"div","openStart":36063,"attrEnd":36079,"openEnd":36080,"closeEnd":36105,"textRuns":[[36080,36099]],"parentId":"81fc92f7:294","childIds":[]},{"id":"81fc92f7:296","tag":"h2","openStart":36112,"attrEnd":36115,"openEnd":36116,"closeEnd":36173,"textRuns":[[36116,36131]],"parentId":"81fc92f7:294","childIds":["81fc92f7:297"]},{"id":"81fc92f7:297","tag":"span","openStart":36131,"attrEnd":36147,"openEnd":36148,"closeEnd":36168,"textRuns":[[36148,36161]],"parentId":"81fc92f7:296","childIds":[]},{"id":"81fc92f7:298","tag":"div","openStart":36190,"attrEnd":36213,"openEnd":36214,"closeEnd":37123,"textRuns":[[36214,36221],[36734,36741],[37112,37117]],"parentId":"81fc92f7:293","childIds":["81fc92f7:299","81fc92f7:308"]},{"id":"81fc92f7:299","tag":"div","openStart":36221,"attrEnd":36225,"openEnd":36226,"closeEnd":36734,"textRuns":[[36226,36235],[36306,36315],[36399,36408],[36721,36728]],"parentId":"81fc92f7:298","childIds":["81fc92f7:300","81fc92f7:302","81fc92f7:303"]},{"id":"81fc92f7:300","tag":"div","openStart":36235,"attrEnd":36257,"openEnd":36258,"closeEnd":36306,"textRuns":[[36258,36271]],"parentId":"81fc92f7:299","childIds":["81fc92f7:301"]},{"id":"81fc92f7:301","tag":"span","openStart":36271,"attrEnd":36288,"openEnd":36289,"closeEnd":36300,"textRuns":[[36289,36293]],"parentId":"81fc92f7:300","childIds":[]},{"id":"81fc92f7:302","tag":"div","openStart":36315,"attrEnd":36337,"openEnd":36338,"closeEnd":36399,"textRuns":[[36338,36393]],"parentId":"81fc92f7:299","childIds":[]},{"id":"81fc92f7:303","tag":"div","openStart":36408,"attrEnd":36438,"openEnd":36439,"closeEnd":36721,"styleAttr":[36420,36437],"textRuns":[[36439,36450],[36550,36561],[36706,36715]],"parentId":"81fc92f7:299","childIds":["81fc92f7:304","81fc92f7:307"]},{"id":"81fc92f7:304","tag":"a","openStart":36450,"attrEnd":36473,"openEnd":36474,"closeEnd":36550,"textRuns":[],"parentId":"81fc92f7:303","childIds":["81fc92f7:305","81fc92f7:306"]},{"id":"81fc92f7:305","tag":"span","openStart":36474,"attrEnd":36479,"openEnd":36480,"closeEnd":36518,"textRuns":[[36480,36511]],"parentId":"81fc92f7:304","childIds":[]},{"id":"81fc92f7:306","tag":"span","openStart":36518,"attrEnd":36535,"openEnd":36536,"closeEnd":36546,"textRuns":[[36536,36539]],"parentId":"81fc92f7:304","childIds":[]},{"id":"81fc92f7:307","tag":"p","openStart":36561,"attrEnd":36586,"openEnd":36587,"textRuns":[[36587,36702]],"parentId":"81fc92f7:303","childIds":[]},{"id":"81fc92f7:308","tag":"ul","openStart":36741,"attrEnd":36763,"openEnd":36764,"closeEnd":37112,"textRuns":[[36764,36773],[36852,36861],[36895,36904],[36963,36972],[37021,37030],[37100,37107]],"parentId":"81fc92f7:298","childIds":["81fc92f7:309","81fc92f7:310","81fc92f7:311","81fc92f7:312","81fc92f7:313"]},{"id":"81fc92f7:309","tag":"li","openStart":36773,"attrEnd":36776,"openEnd":36777,"textRuns":[[36777,36847]],"parentId":"81fc92f7:308","childIds":[]},{"id":"81fc92f7:310","tag":"li","openStart":36861,"attrEnd":36864,"openEnd":36865,"textRuns":[[36865,36890]],"parentId":"81fc92f7:308","childIds":[]},{"id":"81fc92f7:311","tag":"li","openStart":36904,"attrEnd":36907,"openEnd":36908,"textRuns":[[36908,36958]],"parentId":"81fc92f7:308","childIds":[]},{"id":"81fc92f7:312","tag":"li","openStart":36972,"attrEnd":36975,"openEnd":36976,"textRuns":[[36976,37016]],"parentId":"81fc92f7:308","childIds":[]},{"id":"81fc92f7:313","tag":"li","openStart":37030,"attrEnd":37033,"openEnd":37034,"textRuns":[[37034,37095]],"parentId":"81fc92f7:308","childIds":[]},{"id":"81fc92f7:314","tag":"section","openStart":37158,"attrEnd":37175,"openEnd":37176,"closeEnd":39647,"textRuns":[[37176,37179],[39636,39637]],"parentId":"81fc92f7:7","childIds":["81fc92f7:315"]},{"id":"81fc92f7:315","tag":"div","openStart":37179,"attrEnd":37196,"openEnd":37197,"closeEnd":39636,"textRuns":[[37197,37202],[37388,37394],[39627,39630]],"parentId":"81fc92f7:314","childIds":["81fc92f7:316","81fc92f7:320"]},{"id":"81fc92f7:316","tag":"div","openStart":37202,"attrEnd":37223,"openEnd":37224,"closeEnd":37388,"textRuns":[[37224,37231],[37275,37282],[37377,37382]],"parentId":"81fc92f7:315","childIds":["81fc92f7:317","81fc92f7:318"]},{"id":"81fc92f7:317","tag":"div","openStart":37231,"attrEnd":37247,"openEnd":37248,"closeEnd":37275,"textRuns":[[37248,37269]],"parentId":"81fc92f7:316","childIds":[]},{"id":"81fc92f7:318","tag":"h2","openStart":37282,"attrEnd":37285,"openEnd":37286,"closeEnd":37377,"textRuns":[[37286,37330]],"parentId":"81fc92f7:316","childIds":["81fc92f7:319"]},{"id":"81fc92f7:319","tag":"span","openStart":37330,"attrEnd":37346,"openEnd":37347,"closeEnd":37372,"textRuns":[[37347,37365]],"parentId":"81fc92f7:318","childIds":[]},{"id":"81fc92f7:320","tag":"div","openStart":37394,"attrEnd":37410,"openEnd":37411,"closeEnd":39627,"textRuns":[[37411,37418],[37882,37889],[38211,38218],[38500,38507],[38877,38884],[39085,39092],[39320,39327],[39616,39621]],"parentId":"81fc92f7:315","childIds":["81fc92f7:321","81fc92f7:326","81fc92f7:331","81fc92f7:336","81fc92f7:341","81fc92f7:346","81fc92f7:351"]},{"id":"81fc92f7:321","tag":"details","openStart":37418,"attrEnd":37426,"openEnd":37427,"closeEnd":37882,"textRuns":[],"parentId":"81fc92f7:320","childIds":["81fc92f7:322","81fc92f7:325"]},{"id":"81fc92f7:322","tag":"summary","openStart":37427,"attrEnd":37435,"openEnd":37436,"closeEnd":37582,"textRuns":[],"parentId":"81fc92f7:321","childIds":["81fc92f7:323","81fc92f7:324"]},{"id":"81fc92f7:323","tag":"span","openStart":37436,"attrEnd":37441,"openEnd":37442,"closeEnd":37545,"textRuns":[[37442,37538]],"parentId":"81fc92f7:322","childIds":[]},{"id":"81fc92f7:324","tag":"span","openStart":37545,"attrEnd":37563,"openEnd":37564,"closeEnd":37572,"textRuns":[[37564,37565]],"parentId":"81fc92f7:322","childIds":[]},{"id":"81fc92f7:325","tag":"div","openStart":37582,"attrEnd":37598,"openEnd":37599,"closeEnd":37872,"textRuns":[[37599,37866]],"parentId":"81fc92f7:321","childIds":[]},{"id":"81fc92f7:326","tag":"details","openStart":37889,"attrEnd":37897,"openEnd":37898,"closeEnd":38211,"textRuns":[],"parentId":"81fc92f7:320","childIds":["81fc92f7:327","81fc92f7:330"]},{"id":"81fc92f7:327","tag":"summary","openStart":37898,"attrEnd":37906,"openEnd":37907,"closeEnd":38026,"textRuns":[],"parentId":"81fc92f7:326","childIds":["81fc92f7:328","81fc92f7:329"]},{"id":"81fc92f7:328","tag":"span","openStart":37907,"attrEnd":37912,"openEnd":37913,"closeEnd":37989,"textRuns":[[37913,37982]],"parentId":"81fc92f7:327","childIds":[]},{"id":"81fc92f7:329","tag":"span","openStart":37989,"attrEnd":38007,"openEnd":38008,"closeEnd":38016,"textRuns":[[38008,38009]],"parentId":"81fc92f7:327","childIds":[]},{"id":"81fc92f7:330","tag":"div","openStart":38026,"attrEnd":38042,"openEnd":38043,"closeEnd":38201,"textRuns":[[38043,38195]],"parentId":"81fc92f7:326","childIds":[]},{"id":"81fc92f7:331","tag":"details","openStart":38218,"attrEnd":38226,"openEnd":38227,"closeEnd":38500,"textRuns":[],"parentId":"81fc92f7:320","childIds":["81fc92f7:332","81fc92f7:335"]},{"id":"81fc92f7:332","tag":"summary","openStart":38227,"attrEnd":38235,"openEnd":38236,"closeEnd":38335,"textRuns":[],"parentId":"81fc92f7:331","childIds":["81fc92f7:333","81fc92f7:334"]},{"id":"81fc92f7:333","tag":"span","openStart":38236,"attrEnd":38241,"openEnd":38242,"closeEnd":38298,"textRuns":[[38242,38291]],"parentId":"81fc92f7:332","childIds":[]},{"id":"81fc92f7:334","tag":"span","openStart":38298,"attrEnd":38316,"openEnd":38317,"closeEnd":38325,"textRuns":[[38317,38318]],"parentId":"81fc92f7:332","childIds":[]},{"id":"81fc92f7:335","tag":"div","openStart":38335,"attrEnd":38351,"openEnd":38352,"closeEnd":38490,"textRuns":[[38352,38484]],"parentId":"81fc92f7:331","childIds":[]},{"id":"81fc92f7:336","tag":"details","openStart":38507,"attrEnd":38515,"openEnd":38516,"closeEnd":38877,"textRuns":[],"parentId":"81fc92f7:320","childIds":["81fc92f7:337","81fc92f7:340"]},{"id":"81fc92f7:337","tag":"summary","openStart":38516,"attrEnd":38524,"openEnd":38525,"closeEnd":38619,"textRuns":[],"parentId":"81fc92f7:336","childIds":["81fc92f7:338","81fc92f7:339"]},{"id":"81fc92f7:338","tag":"span","openStart":38525,"attrEnd":38530,"openEnd":38531,"closeEnd":38582,"textRuns":[[38531,38575]],"parentId":"81fc92f7:337","childIds":[]},{"id":"81fc92f7:339","tag":"span","openStart":38582,"attrEnd":38600,"openEnd":38601,"closeEnd":38609,"textRuns":[[38601,38602]],"parentId":"81fc92f7:337","childIds":[]},{"id":"81fc92f7:340","tag":"div","openStart":38619,"attrEnd":38635,"openEnd":38636,"closeEnd":38867,"textRuns":[[38636,38861]],"parentId":"81fc92f7:336","childIds":[]},{"id":"81fc92f7:341","tag":"details","openStart":38884,"attrEnd":38892,"openEnd":38893,"closeEnd":39085,"textRuns":[],"parentId":"81fc92f7:320","childIds":["81fc92f7:342","81fc92f7:345"]},{"id":"81fc92f7:342","tag":"summary","openStart":38893,"attrEnd":38901,"openEnd":38902,"closeEnd":38994,"textRuns":[],"parentId":"81fc92f7:341","childIds":["81fc92f7:343","81fc92f7:344"]},{"id":"81fc92f7:343","tag":"span","openStart":38902,"attrEnd":38907,"openEnd":38908,"closeEnd":38957,"textRuns":[[38908,38950]],"parentId":"81fc92f7:342","childIds":[]},{"id":"81fc92f7:344","tag":"span","openStart":38957,"attrEnd":38975,"openEnd":38976,"closeEnd":38984,"textRuns":[[38976,38977]],"parentId":"81fc92f7:342","childIds":[]},{"id":"81fc92f7:345","tag":"div","openStart":38994,"attrEnd":39010,"openEnd":39011,"closeEnd":39075,"textRuns":[[39011,39069]],"parentId":"81fc92f7:341","childIds":[]},{"id":"81fc92f7:346","tag":"details","openStart":39092,"attrEnd":39100,"openEnd":39101,"closeEnd":39320,"textRuns":[],"parentId":"81fc92f7:320","childIds":["81fc92f7:347","81fc92f7:350"]},{"id":"81fc92f7:347","tag":"summary","openStart":39101,"attrEnd":39109,"openEnd":39110,"closeEnd":39182,"textRuns":[],"parentId":"81fc92f7:346","childIds":["81fc92f7:348","81fc92f7:349"]},{"id":"81fc92f7:348","tag":"span","openStart":39110,"attrEnd":39115,"openEnd":39116,"closeEnd":39145,"textRuns":[[39116,39138]],"parentId":"81fc92f7:347","childIds":[]},{"id":"81fc92f7:349","tag":"span","openStart":39145,"attrEnd":39163,"openEnd":39164,"closeEnd":39172,"textRuns":[[39164,39165]],"parentId":"81fc92f7:347","childIds":[]},{"id":"81fc92f7:350","tag":"div","openStart":39182,"attrEnd":39198,"openEnd":39199,"closeEnd":39310,"textRuns":[[39199,39304]],"parentId":"81fc92f7:346","childIds":[]},{"id":"81fc92f7:351","tag":"details","openStart":39327,"attrEnd":39335,"openEnd":39336,"closeEnd":39616,"textRuns":[],"parentId":"81fc92f7:320","childIds":["81fc92f7:352","81fc92f7:355"]},{"id":"81fc92f7:352","tag":"summary","openStart":39336,"attrEnd":39344,"openEnd":39345,"closeEnd":39432,"textRuns":[],"parentId":"81fc92f7:351","childIds":["81fc92f7:353","81fc92f7:354"]},{"id":"81fc92f7:353","tag":"span","openStart":39345,"attrEnd":39350,"openEnd":39351,"closeEnd":39395,"textRuns":[[39351,39388]],"parentId":"81fc92f7:352","childIds":[]},{"id":"81fc92f7:354","tag":"span","openStart":39395,"attrEnd":39413,"openEnd":39414,"closeEnd":39422,"textRuns":[[39414,39415]],"parentId":"81fc92f7:352","childIds":[]},{"id":"81fc92f7:355","tag":"div","openStart":39432,"attrEnd":39448,"openEnd":39449,"closeEnd":39606,"textRuns":[[39449,39600]],"parentId":"81fc92f7:351","childIds":[]},{"id":"81fc92f7:356","tag":"div","openStart":39664,"attrEnd":39682,"openEnd":39683,"closeEnd":40278,"textRuns":[[39683,39686],[40271,40272]],"parentId":"81fc92f7:7","childIds":["81fc92f7:357"]},{"id":"81fc92f7:357","tag":"div","openStart":39686,"attrEnd":39703,"openEnd":39704,"closeEnd":40271,"textRuns":[[39704,39709],[39840,39845],[40046,40051],[40148,40153],[40262,40265]],"parentId":"81fc92f7:356","childIds":["81fc92f7:358","81fc92f7:361","81fc92f7:363","81fc92f7:366"]},{"id":"81fc92f7:358","tag":"h2","openStart":39709,"attrEnd":39712,"openEnd":39713,"closeEnd":39840,"textRuns":[[39713,39732],[39764,39777],[39821,39835]],"parentId":"81fc92f7:357","childIds":["81fc92f7:359","81fc92f7:360"]},{"id":"81fc92f7:359","tag":"span","openStart":39732,"attrEnd":39748,"openEnd":39749,"closeEnd":39764,"textRuns":[[39749,39757]],"parentId":"81fc92f7:358","childIds":[]},{"id":"81fc92f7:360","tag":"span","openStart":39777,"attrEnd":39793,"openEnd":39794,"closeEnd":39821,"textRuns":[[39794,39814]],"parentId":"81fc92f7:358","childIds":[]},{"id":"81fc92f7:361","tag":"p","openStart":39845,"attrEnd":39847,"openEnd":39848,"textRuns":[[39848,39974]],"parentId":"81fc92f7:357","childIds":["81fc92f7:362"]},{"id":"81fc92f7:362","tag":"span","openStart":39974,"attrEnd":40027,"openEnd":40028,"closeEnd":40042,"styleAttr":[39987,40026],"textRuns":[[40028,40035]],"parentId":"81fc92f7:361","childIds":[]},{"id":"81fc92f7:363","tag":"a","openStart":40051,"attrEnd":40074,"openEnd":40075,"closeEnd":40148,"textRuns":[],"parentId":"81fc92f7:357","childIds":["81fc92f7:364","81fc92f7:365"]},{"id":"81fc92f7:364","tag":"span","openStart":40075,"attrEnd":40080,"openEnd":40081,"closeEnd":40116,"textRuns":[[40081,40109]],"parentId":"81fc92f7:363","childIds":[]},{"id":"81fc92f7:365","tag":"span","openStart":40116,"attrEnd":40133,"openEnd":40134,"closeEnd":40144,"textRuns":[[40134,40137]],"parentId":"81fc92f7:363","childIds":[]},{"id":"81fc92f7:366","tag":"div","openStart":40153,"attrEnd":40176,"openEnd":40177,"closeEnd":40262,"textRuns":[[40177,40218],[40247,40256]],"parentId":"81fc92f7:357","childIds":["81fc92f7:367"]},{"id":"81fc92f7:367","tag":"span","openStart":40218,"attrEnd":40238,"openEnd":40239,"closeEnd":40247,"textRuns":[[40239,40240]],"parentId":"81fc92f7:366","childIds":[]},{"id":"81fc92f7:368","tag":"footer","openStart":40280,"attrEnd":40287,"openEnd":40288,"closeEnd":40494,"textRuns":[[40288,40291],[40484,40485]],"parentId":"81fc92f7:7","childIds":["81fc92f7:369"]},{"id":"81fc92f7:369","tag":"div","openStart":40291,"attrEnd":40312,"openEnd":40313,"closeEnd":40484,"textRuns":[[40313,40318],[40397,40402],[40475,40478]],"parentId":"81fc92f7:368","childIds":["81fc92f7:370","81fc92f7:371"]},{"id":"81fc92f7:370","tag":"span","openStart":40318,"attrEnd":40323,"openEnd":40324,"closeEnd":40397,"textRuns":[[40324,40390]],"parentId":"81fc92f7:369","childIds":[]},{"id":"81fc92f7:371","tag":"span","openStart":40402,"attrEnd":40407,"openEnd":40408,"closeEnd":40475,"textRuns":[[40408,40468]],"parentId":"81fc92f7:369","childIds":[]}]}</script></body><div></div></html>
