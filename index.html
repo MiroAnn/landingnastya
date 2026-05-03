@@ -1,1047 +1,905 @@
 <!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>🏔️ Поболтушки</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --bg:#0d0d1a; --card:#161628; --green:#00d46a; --red:#ff3b30; --blue:#4a9eff; --text:#fff; --muted:#6b7280; }
-    html { height: 100%; }
-    body {
-      background: var(--bg); color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none;
-    }
+<html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script>window.__resources = {};</script>
 
-    /* ── Главный экран ── */
-    #app {
-      position: fixed; inset: 0;   /* надёжно заполняет всё окно на desktop и mobile */
-      display: flex; flex-direction: column; align-items: center;
-      justify-content: space-between;
-      padding: 16px 18px 20px;
-      padding-bottom: max(20px, env(safe-area-inset-bottom));
-      overflow: hidden;
-    }
 
-    /* Шапка */
-    .hd { display: flex; align-items: center; justify-content: space-between; width: 100%; }
-    .hd-left { display: flex; flex-direction: column; gap: 5px; }
-    .hd-logo-title { display: flex; align-items: center; gap: 6px; }
-    .hd-logo { font-size: 1.2rem; line-height: 1; }
-    .hd-title { font-size: .95rem; font-weight: 700; }
-    .hd-room { display: flex; align-items: center; gap: 7px; }
-    .hd-rlbl { color: var(--muted); font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; }
-    .hd-rbadge { background: rgba(74,158,255,.1); border: 1px solid rgba(74,158,255,.24); color: var(--blue); font-size: .75rem; font-weight: 700; letter-spacing: .1em; padding: 2px 10px; border-radius: 20px; cursor: pointer; }
-    .hd-chint { font-size: .64rem; color: var(--muted); margin-top: 1px; opacity: 0; transition: opacity .3s; height: .75em; }
-    .hd-chint.on { opacity: 1; }
 
-    /* Участники */
-    .plist { width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 5px; }
-    .pi { display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: 10px; padding: 8px 12px; border: 1.5px solid transparent; transition: border-color .2s, background .2s; min-height: 38px; }
-    .pi.speaking { background: rgba(255,59,48,.06); border-color: rgba(255,59,48,.2); }
-    .pi.me-row { cursor: pointer; }
-    .pi.me-row:active { background: rgba(74,158,255,.08); }
-    .pd { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; transition: background .25s, transform .2s, box-shadow .25s; }
-    .pd.me { background: var(--green); box-shadow: 0 0 7px rgba(0,212,106,.5); }
-    .pd.online { background: var(--blue); box-shadow: 0 0 6px rgba(74,158,255,.4); }
-    .pd.speaking { background: var(--red); transform: scale(1.4); box-shadow: 0 0 9px rgba(255,59,48,.6); animation: blink .75s infinite; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
-    .pname { font-size: .88rem; font-weight: 600; flex: 1; }
-    .ptag { font-size: .66rem; color: var(--muted); white-space: nowrap; }
-    .pspk { font-size: .66rem; color: var(--red); white-space: nowrap; }
 
-    /* Инлайн-редактирование имени */
-    .pi.editing { border-color: rgba(74,158,255,.35); background: rgba(74,158,255,.06); }
-    .pname-input {
-      flex: 1; background: transparent; border: none; outline: none;
-      color: var(--text); font-size: .88rem; font-weight: 600;
-      font-family: inherit; padding: 0; min-width: 0;
-      touch-action: auto; user-select: text; -webkit-user-select: text;
-    }
-    .pname-input::placeholder { color: var(--muted); }
-    .save-btn { background: var(--green); border: none; border-radius: 7px; color: #000; font-size: .75rem; font-weight: 700; padding: 4px 9px; cursor: pointer; flex-shrink: 0; }
 
-    .stline { font-size: .76rem; color: var(--muted); text-align: center; margin-top: 3px; }
-    .stline.tx { color: var(--red); font-weight: 600; }
 
-    /* TALK */
-    .tw { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-    #tbtn {
-      width: 168px; height: 168px; border-radius: 50%;
-      border: none; outline: none; cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-      background: radial-gradient(circle at 38% 35%, #00e87a, #00a84f);
-      box-shadow: 0 0 0 9px rgba(0,212,106,.07),0 0 0 18px rgba(0,212,106,.03),0 9px 30px rgba(0,212,106,.35),inset 0 2px 0 rgba(255,255,255,.18),inset 0 -3px 7px rgba(0,0,0,.25);
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-      transition: transform .08s, box-shadow .08s, background .1s;
-    }
-    #tbtn:disabled { background: radial-gradient(circle at 38% 35%, #222238, #161628); box-shadow: 0 5px 18px rgba(0,0,0,.4); cursor: not-allowed; }
-    #tbtn.pressing { background: radial-gradient(circle at 38% 35%, #ff5f55, #cc2e24); box-shadow: 0 0 0 9px rgba(255,59,48,.1),0 0 0 18px rgba(255,59,48,.04),0 7px 26px rgba(255,59,48,.5),inset 0 2px 0 rgba(255,255,255,.12),inset 0 -3px 7px rgba(0,0,0,.3); transform: scale(.95); }
-    .bicon { font-size: 1.9rem; pointer-events: none; }
-    .blbl { font-size: .92rem; font-weight: 800; letter-spacing: .18em; color: rgba(255,255,255,.95); pointer-events: none; }
 
-    .thint { color: var(--muted); font-size: .73rem; text-align: center; }
 
-    /* Mute */
-    #mbtn { width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; border: 2px solid #1f1f38; background: var(--card); color: #fff; font-size: 1.3rem; cursor: pointer; outline: none; -webkit-tap-highlight-color: transparent; display: flex; align-items: center; justify-content: center; transition: background .2s, border-color .2s; }
-    #mbtn.muted { border-color: var(--red); background: rgba(255,59,48,.12); }
 
-    #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(60px); background: rgba(255,255,255,.12); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,.1); color: #fff; padding: 8px 16px; border-radius: 18px; font-size: .8rem; transition: transform .3s; pointer-events: none; white-space: nowrap; }
-    #toast.show { transform: translateX(-50%) translateY(0); }
 
-    /* ── Сплэш-экран ── */
-    #splash {
-      position:fixed; inset:0; z-index:3000;
-      background:var(--bg);
-      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
-      cursor:pointer; -webkit-tap-highlight-color:transparent;
-      transition:opacity .35s ease;
-      user-select:none; -webkit-user-select:none;
-    }
-    #splash.out { opacity:0; pointer-events:none; }
-    .sp-logo { font-size:3rem; line-height:1; }
-    .sp-title { font-size:1.5rem; font-weight:800; letter-spacing:.02em; }
-    .sp-room-lbl { color:var(--muted); font-size:.68rem; text-transform:uppercase; letter-spacing:.1em; margin-top:8px; }
-    .sp-room-badge { background:rgba(74,158,255,.1); border:1px solid rgba(74,158,255,.24); color:var(--blue); font-size:.85rem; font-weight:700; letter-spacing:.1em; padding:3px 14px; border-radius:20px; }
-    .sp-btn {
-      margin-top:24px; width:148px; height:148px; border-radius:50%; border:none;
-      background:radial-gradient(circle at 38% 35%,#4a9eff,#1a6fd4);
-      box-shadow:0 0 0 10px rgba(74,158,255,.08),0 8px 32px rgba(74,158,255,.4),inset 0 2px 0 rgba(255,255,255,.2);
-      color:#fff; font-size:.95rem; font-weight:800; letter-spacing:.14em;
-      display:flex; align-items:center; justify-content:center; flex-direction:column; gap:6px;
-      pointer-events:none; transition:transform .08s, box-shadow .08s;
-    }
-    #splash:active .sp-btn { transform:scale(.93); box-shadow:0 0 0 10px rgba(74,158,255,.12),0 4px 20px rgba(74,158,255,.3),inset 0 2px 0 rgba(255,255,255,.15); }
-    .sp-hint { color:var(--muted); font-size:.72rem; margin-top:10px; }
 
-    /* ── Debug panel ── */
-    #dbg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.92); z-index:999; flex-direction:column; font-family:monospace; font-size:11px; color:#ccc; }
-    #dbg.on { display:flex; }
-    #dbg-head { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-bottom:1px solid #222; flex-shrink:0; }
-    #dbg-head span { color:#fff; font-size:13px; font-weight:700; }
-    #dbg-close, #dbg-copy, #dbg-clear { background:none; border:1px solid #444; color:#aaa; border-radius:6px; padding:4px 10px; cursor:pointer; font-size:11px; }
-    #dbg-copy:active { background:#1a3a1a; color:#0f0; }
-    #dbg-clear:active { background:#3a1a1a; color:#f00; }
-    #dbg-body { flex:1; overflow-y:auto; padding:10px 14px; display:flex; flex-direction:column; gap:10px; }
-    .dbg-peer { background:#111; border-radius:8px; padding:8px 10px; border-left:3px solid #333; }
-    .dbg-peer.ice-connected { border-left-color:#00d46a; }
-    .dbg-peer.ice-checking  { border-left-color:#f59e0b; }
-    .dbg-peer.ice-failed    { border-left-color:#ff3b30; }
-    .dbg-peer.ice-new       { border-left-color:#4a9eff; }
-    .dbg-pname { color:#fff; font-weight:700; margin-bottom:4px; }
-    .dbg-row   { display:flex; gap:6px; margin-top:2px; }
-    .dbg-lbl   { color:#555; min-width:60px; }
-    .dbg-val   { color:#aaa; }
-    .dbg-val.ok  { color:#00d46a; }
-    .dbg-val.bad { color:#ff3b30; }
-    .dbg-val.mid { color:#f59e0b; }
-    #dbg-log { background:#0a0a14; border-radius:8px; padding:8px 10px; flex:1; overflow-y:auto; min-height:120px; }
-    .dbg-entry { padding:2px 0; border-bottom:1px solid #111; }
-    .dbg-entry .t { color:#444; margin-right:6px; }
-    .dbg-entry .ev { color:#7dd3fc; }
-    .dbg-entry .detail { color:#6b7280; }
-  </style>
-</head>
-<body>
 
-<div id="app">
-  <div class="hd">
-    <div class="hd-left">
-      <div class="hd-logo-title">
-        <div class="hd-logo">🏔️</div>
-        <div class="hd-title">Поболтушки</div>
-      </div>
-      <div class="hd-room">
-        <span class="hd-rlbl">Комната</span>
-        <span class="hd-rbadge" id="m-room">—</span>
-      </div>
-      <div class="hd-chint" id="m-chint">✓ Ссылка скопирована</div>
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Со мной всё так — Soft</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/">
+<style>/* vietnamese */
+
+/* latin-ext */
+
+/* latin */
+
+/* vietnamese */
+
+/* latin-ext */
+
+/* latin */
+
+/* vietnamese */
+
+/* latin-ext */
+
+/* latin */
+
+/* vietnamese */
+
+/* latin-ext */
+
+/* latin */
+
+/* vietnamese */
+
+/* latin-ext */
+
+/* latin */
+
+/* vietnamese */
+
+/* latin-ext */
+
+/* latin */
+
+/* vietnamese */
+
+/* latin-ext */
+
+/* latin */
+
+/* cyrillic-ext */
+
+/* cyrillic */
+
+/* greek-ext */
+
+/* greek */
+
+/* vietnamese */
+
+/* latin-ext */
+
+/* latin */
+
+/* cyrillic-ext */
+
+/* cyrillic */
+
+/* greek-ext */
+
+/* greek */
+
+/* vietnamese */
+
+/* latin-ext */
+
+/* latin */
+
+/* cyrillic-ext */
+
+/* cyrillic */
+
+/* greek-ext */
+
+/* greek */
+
+/* vietnamese */
+
+/* latin-ext */
+
+/* latin */
+
+/* cyrillic-ext */
+
+/* cyrillic */
+
+/* greek-ext */
+
+/* greek */
+
+/* vietnamese */
+
+/* latin-ext */
+
+/* latin */
+
+/* cyrillic-ext */
+
+/* cyrillic */
+
+/* greek */
+
+/* vietnamese */
+
+/* latin-ext */
+
+/* latin */
+
+/* cyrillic-ext */
+
+/* cyrillic */
+
+/* greek */
+
+/* vietnamese */
+
+/* latin-ext */
+
+/* latin */
+
+</style>
+<style>
+  :root {
+    --paper: #f4ede1;
+    --paper-2: #ece2d0;
+    --ink: #2a2620;
+    --ink-2: #4d453a;
+    --ink-soft: #847663;
+    --rule: #d6c9b0;
+    --accent: #a64a3a;
+    --accent-2: #c79a6a;
+    --serif: "Fraunces", "Times New Roman", serif;
+    --sans: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper); color: var(--ink);
+    font-family: var(--sans); font-size: 16px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 400; margin: 0; }
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-soft); }
+
+  /* Top */
+  header.bar {
+    padding: 28px 0;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  header.bar .logo {
+    font-family: var(--serif); font-size: 22px; font-style: italic;
+    font-variation-settings: "opsz" 144;
+  }
+  header.bar nav { display: flex; gap: 32px; font-size: 14px; }
+  header.bar nav a { color: var(--ink-2); text-decoration: none; }
+  @media (max-width: 720px) { header.bar nav { display: none; } }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--accent); color: var(--paper);
+    font-family: var(--sans); font-weight: 500; font-size: 15px;
+    padding: 16px 28px; border-radius: 999px;
+    text-decoration: none; border: none; cursor: pointer;
+    transition: transform .2s ease, background .2s ease;
+  }
+  .btn:hover { transform: translateY(-1px); background: var(--ink); }
+  .btn .arr { font-family: var(--serif); font-style: italic; font-size: 18px; }
+  .btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+  .btn-ghost:hover { background: var(--ink); color: var(--paper); }
+
+  /* HERO — soft asymmetric */
+  .hero {
+    padding: 40px 0 120px;
+    position: relative; overflow: hidden;
+  }
+  .hero-grid {
+    display: grid; grid-template-columns: 1fr 480px;
+    gap: 48px; align-items: center;
+  }
+  @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; gap: 32px; } }
+  .hero h1 {
+    font-size: clamp(60px, 12vw, 180px);
+    line-height: 0.92; letter-spacing: -0.04em;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+    text-wrap: balance;
+  }
+  .hero h1 .it { font-style: italic; color: var(--accent); }
+  .hero h1 .so { display: block; }
+  .hero h1 .with { display: block; padding-left: 1.5em; }
+  .hero h1 .ok { display: block; padding-left: 0.3em; }
+  .hero-side {
+    display: flex; flex-direction: column; gap: 24px;
+    margin-left: -60px;
+  }
+  @media (max-width: 900px) { .hero-side { margin-left: 0; } }
+  .hero-image {
+    aspect-ratio: 4/5;
+    display: flex; align-items: center; justify-content: flex-start;
+    box-sizing: border-box;
+  }
+  .hero-image img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    display: block;
+    filter:
+      drop-shadow(0 30px 40px rgba(20,18,14,0.22))
+      drop-shadow(0 10px 14px rgba(20,18,14,0.12))
+      drop-shadow(0 2px 4px rgba(20,18,14,0.10));
+  }
+
+  .hero-desc {
+    margin-top: 56px;
+    font-family: var(--serif); font-size: clamp(20px, 2.4vw, 28px);
+    line-height: 1.4; color: var(--ink-2); max-width: 740px;
+    font-variation-settings: "opsz" 36;
+  }
+  .hero-desc em { color: var(--accent); font-style: italic; }
+
+  .hero-meta {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    margin-top: 56px; padding: 24px 0;
+    border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  }
+  .hero-meta .m { padding: 0 24px; border-left: 1px solid var(--rule); }
+  .hero-meta .m:first-child { border-left: none; padding-left: 0; }
+  .hero-meta .k { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-soft); }
+  .hero-meta .v { font-family: var(--serif); font-size: clamp(20px, 2.5vw, 28px); margin-top: 4px; font-variation-settings: "opsz" 36; }
+  .hero-meta .v .it { font-style: italic; color: var(--accent); }
+  @media (max-width: 720px) { .hero-meta { grid-template-columns: repeat(2, 1fr); } .hero-meta .m { padding: 12px; border-left: none; border-bottom: 1px solid var(--rule); } }
+
+  .hero-cta { margin-top: 40px; display: flex; gap: 16px; flex-wrap: wrap; }
+
+  /* Marquee */
+  .marquee {
+    overflow: hidden;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    background: var(--paper);
+    padding: 18px 0;
+  }
+  .marquee-track {
+    display: flex; flex-wrap: nowrap; width: max-content;
+    animation: marquee 40s linear infinite;
+  }
+  .marquee-track span {
+    flex: none; padding: 0 32px;
+    font-family: var(--serif); font-style: italic;
+    font-size: clamp(28px, 4vw, 48px);
+    line-height: 1; color: var(--ink);
+    font-variation-settings: "opsz" 144;
+    white-space: nowrap;
+  }
+  .marquee-track .dot {
+    align-self: center;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); padding: 0; margin: 0 8px;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* Sections */
+  section { padding: 120px 0; }
+  section.alt { background: var(--paper-2); }
+  .sec-head { margin-bottom: 64px; max-width: 900px; }
+  .sec-head .num { font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+  .sec-head h2 { font-size: clamp(36px, 5vw, 64px); line-height: 1.05; margin-top: 16px; text-wrap: balance; font-variation-settings: "opsz" 144; }
+  .sec-head h2 .it { font-style: italic; color: var(--accent); }
+
+  /* Pains — speech bubbles in chaotic flow */
+  .pains-flow { position: relative; min-height: 600px; }
+  .bubble {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 28px;
+    padding: 28px 32px;
+    font-family: var(--serif); font-size: 19px; line-height: 1.4; color: var(--ink-2);
+    box-shadow: 0 4px 24px -8px rgba(42, 38, 32, 0.1);
+    max-width: 460px;
+    position: relative;
+  }
+  .bubble.alt { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+  .bubble .tail { position: absolute; bottom: -10px; left: 40px; width: 20px; height: 20px; background: inherit; border-bottom: 1px solid var(--rule); border-right: 1px solid var(--rule); transform: rotate(45deg); }
+  .bubble.alt .tail { background: var(--accent); border-color: var(--accent); }
+  .bubble.r .tail { left: auto; right: 40px; }
+
+  .pains-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+  }
+  .pains-grid .col { display: flex; flex-direction: column; gap: 32px; }
+  .pains-grid .col:nth-child(2) { padding-top: 56px; }
+  @media (max-width: 720px) { .pains-grid { grid-template-columns: 1fr; } .pains-grid .col:nth-child(2) { padding-top: 0; } }
+
+  .turn {
+    margin-top: 80px; text-align: center;
+    padding: 56px 32px;
+    background: var(--paper);
+    border-radius: 32px;
+    border: 1px solid var(--rule);
+    max-width: 900px; margin-left: auto; margin-right: auto;
+  }
+  .turn-eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+  .turn h3 {
+    font-size: clamp(28px, 4vw, 48px); line-height: 1.15; margin: 16px 0 0;
+    font-variation-settings: "opsz" 144; text-wrap: balance;
+  }
+  .turn h3 .it { font-style: italic; color: var(--accent); }
+  .turn h3 b { font-weight: 600; }
+
+  /* Why */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+  .two-col p { font-family: var(--serif); font-size: 20px; line-height: 1.55; color: var(--ink-2); margin: 0 0 18px; font-variation-settings: "opsz" 24; }
+  .two-col p strong { color: var(--ink); font-weight: 500; }
+  @media (max-width: 720px) { .two-col { grid-template-columns: 1fr; gap: 32px; } }
+
+  .system-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .chip {
+    font-family: var(--sans); font-size: 13px; padding: 10px 18px;
+    background: var(--paper); border: 1px solid var(--rule); border-radius: 999px;
+    color: var(--ink-2);
+  }
+  .chip.x { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+  .pull-card {
+    margin-top: 32px; padding: 40px;
+    background: var(--ink); color: var(--paper); border-radius: 32px;
+    font-family: var(--serif); font-style: italic; font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.1; text-wrap: balance;
+    font-variation-settings: "opsz" 144;
+  }
+  .pull-card .accent { color: var(--accent-2); }
+
+  /* Stats */
+  .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 48px; }
+  .stat-card {
+    background: var(--paper); border: 1px solid var(--rule); border-radius: 28px;
+    padding: 36px; display: flex; flex-direction: column; gap: 16px;
+  }
+  .stat-card .n { font-family: var(--serif); font-size: 88px; line-height: 0.85; color: var(--accent); font-variation-settings: "opsz" 144; }
+  .stat-card .n .it { font-style: italic; }
+  .stat-card .l { font-size: 15px; color: var(--ink-2); }
+  @media (max-width: 720px) { .stats { grid-template-columns: 1fr; } }
+
+  /* Outcomes — pills */
+  .outcomes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .outcome-card {
+    background: var(--paper); border: 1px solid var(--rule); border-radius: 24px;
+    padding: 32px; display: grid; grid-template-columns: 56px 1fr; gap: 20px;
+    align-items: start;
+  }
+  .outcome-card .num {
+    font-family: var(--serif); font-style: italic; font-size: 36px;
+    color: var(--accent); line-height: 1; font-variation-settings: "opsz" 144;
+  }
+  .outcome-card p { font-family: var(--serif); font-size: 18px; line-height: 1.45; margin: 0; color: var(--ink); font-variation-settings: "opsz" 24; }
+  @media (max-width: 720px) { .outcomes { grid-template-columns: 1fr; } }
+
+  /* Program */
+  .program-meta {
+    display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 48px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .program-meta span { padding: 8px 14px; background: var(--paper); border-radius: 999px; border: 1px solid var(--rule); color: var(--ink-2); }
+
+  .session-card {
+    background: var(--paper); border-radius: 32px; border: 1px solid var(--rule);
+    padding: 40px; margin-bottom: 24px;
+    display: grid; grid-template-columns: 220px 1fr; gap: 48px; align-items: start;
+  }
+  .session-card .ord {
+    font-family: var(--serif); font-style: italic; font-size: 120px; line-height: 0.9;
+    color: var(--accent); font-variation-settings: "opsz" 144;
+  }
+  .session-card .date { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-soft); margin-top: 8px; }
+  .session-card h3 { font-size: clamp(24px, 3vw, 32px); line-height: 1.15; margin-bottom: 16px; font-variation-settings: "opsz" 36; text-wrap: balance; }
+  .session-card p { font-family: var(--serif); font-size: 17px; line-height: 1.55; color: var(--ink-2); margin: 0; font-variation-settings: "opsz" 18; }
+  .session-card .takeaway {
+    margin-top: 20px; padding: 18px 22px;
+    background: var(--paper-2); border-radius: 16px;
+    border-left: 3px solid var(--accent);
+  }
+  .session-card .takeaway b { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 4px; font-weight: 500; }
+  .session-card .takeaway p { font-size: 15px; }
+  @media (max-width: 720px) { .session-card { grid-template-columns: 1fr; gap: 16px; padding: 28px; } .session-card .ord { font-size: 80px; } }
+
+  /* Includes */
+  .includes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .inc-card {
+    background: var(--paper); border-radius: 28px; border: 1px solid var(--rule);
+    padding: 36px; display: flex; flex-direction: column; gap: 14px;
+  }
+  .inc-card .glyph {
+    font-family: var(--serif); font-style: italic; font-size: 40px; color: var(--accent);
+    font-variation-settings: "opsz" 144;
+  }
+  .inc-card h4 { font-family: var(--serif); font-size: 22px; margin: 0; line-height: 1.2; font-variation-settings: "opsz" 36; }
+  .inc-card p { font-size: 15px; color: var(--ink-2); margin: 0; line-height: 1.5; }
+  @media (max-width: 720px) { .includes { grid-template-columns: 1fr; } }
+
+  /* Author */
+  .author-card {
+    background: var(--paper); border-radius: 32px; border: 1px solid var(--rule);
+    padding: 56px;
+    display: grid; grid-template-columns: 320px 1fr; gap: 48px;
+    align-items: start;
+  }
+  @media (max-width: 860px) { .author-card { grid-template-columns: 1fr; padding: 32px; } }
+  .author-photo {
+    aspect-ratio: 3/4; border-radius: 200px 200px 24px 24px;
+    overflow: hidden;
+    background: var(--paper-2);
+  }
+  .author-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .press-strip {
+    display: inline-flex; align-items: center; gap: 18px; flex-wrap: wrap;
+    padding: 14px 22px; margin-bottom: 24px;
+    background: var(--accent); color: var(--paper);
+    border-radius: 999px;
+    box-shadow: 0 8px 28px -12px var(--accent);
+  }
+  .press-strip .press-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.85; padding-right: 14px; border-right: 1px solid rgba(255,255,255,0.4); }
+  .press-strip .press-links { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .press-strip a { font-family: var(--serif); font-style: italic; font-size: 22px; color: var(--paper); text-decoration: none; line-height: 1; transition: opacity .15s, transform .15s; }
+  .press-strip a:hover { opacity: 0.85; transform: translateY(-1px); }
+  .press-strip .dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,0.55); }
+  .author-name { font-family: var(--serif); font-size: clamp(36px, 5vw, 56px); line-height: 1; font-variation-settings: "opsz" 144; }
+  .author-name .it { font-style: italic; color: var(--accent); }
+  .author-role { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-soft); margin-top: 12px; }
+  .author-quote {
+    margin-top: 28px; padding: 24px;
+    background: var(--paper-2); border-radius: 20px;
+    font-family: var(--serif); font-style: italic; font-size: 18px; line-height: 1.5;
+    color: var(--ink-2); border-left: 3px solid var(--accent);
+  }
+  .author-bio { margin-top: 20px; font-family: var(--serif); font-size: 17px; line-height: 1.6; color: var(--ink-2); }
+  .author-credits { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 12px; }
+  .author-credits .cred { padding: 10px 16px; background: var(--paper-2); border-radius: 999px; font-size: 13px; }
+  .author-credits .cred b { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-right: 8px; font-weight: 500; }
+  .author-credits .cred a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); transition: color .15s, border-color .15s; }
+  .author-credits .cred a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* Reviews */
+  .reviews { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .reviews.single { grid-template-columns: 1fr; max-width: 880px; margin: 0 auto; }
+  .reviews.single .review-card { padding: 56px 56px 48px; }
+  .reviews.single .review-card p { font-size: 22px; line-height: 1.55; }
+  .reviews.duo { grid-template-columns: repeat(2, 1fr); max-width: 1180px; margin: 0 auto; gap: 24px; }
+  .reviews.duo .review-card { padding: 44px 44px 40px; }
+  .reviews.duo .review-card p { font-size: 18px; line-height: 1.55; }
+  .review-card {
+    background: var(--paper); border-radius: 28px; border: 1px solid var(--rule);
+    padding: 32px; display: flex; flex-direction: column; gap: 18px;
+  }
+  .review-card .ph { width: 72px; height: 72px; border-radius: 50%; background: var(--paper-2); border: 1px solid var(--rule); overflow: hidden; flex-shrink: 0; }
+  .review-card .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .reviews.single .review-card .ph { width: 96px; height: 96px; }
+  .reviews.duo .review-card .ph { width: 80px; height: 80px; }
+  .review-card p { font-family: var(--serif); font-size: 17px; line-height: 1.5; margin: 0; color: var(--ink-2); }
+  .review-card .who { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); }
+  .review-card .who a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color .15s; }
+  .review-card .who a:hover { border-bottom-color: var(--accent); }
+  .reviews.single .review-card .who { font-size: 13px; }
+  .reviews-note { grid-column: 1 / -1; text-align: center; font-family: var(--mono); font-size: 11px; color: var(--ink-soft); padding: 16px 0; letter-spacing: 0.04em; }
+  @media (max-width: 860px) { .reviews { grid-template-columns: 1fr; } .reviews.duo { grid-template-columns: 1fr; } }
+
+  /* Price */
+  .price-card {
+    background: var(--ink); color: var(--paper);
+    border-radius: 40px; padding: 56px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 56px;
+    align-items: start;
+  }
+  @media (max-width: 860px) { .price-card { grid-template-columns: 1fr; padding: 32px; } }
+  .price-num { font-family: var(--serif); font-size: clamp(72px, 11vw, 144px); line-height: 0.85; letter-spacing: -0.03em; font-variation-settings: "opsz" 144; white-space: nowrap; }
+  .price-num .cur { font-style: italic; color: var(--accent-2); }
+  .price-sub { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: oklch(0.7 0.02 60); margin-top: 16px; }
+  .price-list { list-style: none; padding: 0; margin: 0 0 32px; }
+  .price-list li {
+    font-family: var(--serif); font-size: 17px; line-height: 1.5;
+    padding: 12px 0; border-bottom: 1px solid oklch(0.3 0.01 60);
+    color: oklch(0.85 0.02 60); display: flex; gap: 12px;
+  }
+  .price-list li::before { content: "→"; color: var(--accent-2); font-style: italic; }
+  .price-card .btn { background: var(--accent-2); color: var(--ink); }
+  .price-card .btn:hover { background: var(--paper); }
+  .price-cta-note { font-size: 13px; color: oklch(0.7 0.02 60); margin-top: 14px; max-width: 320px; }
+
+  /* FAQ */
+  .faq details {
+    background: var(--paper); border: 1px solid var(--rule); border-radius: 20px;
+    padding: 24px 28px; margin-bottom: 12px;
+  }
+  .faq summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: baseline; justify-content: space-between; gap: 24px;
+    font-family: var(--serif); font-size: clamp(18px, 2vw, 22px); font-weight: 500;
+    line-height: 1.3; font-variation-settings: "opsz" 36;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary .icon { font-family: var(--serif); font-style: italic; color: var(--accent); font-size: 24px; transition: transform .3s; }
+  .faq details[open] summary .icon { transform: rotate(45deg); }
+  .faq .ans { font-family: var(--serif); font-size: 16px; line-height: 1.55; color: var(--ink-2); margin-top: 14px; max-width: 720px; }
+
+  /* Final */
+  .final { padding: 140px 0; text-align: center; background: var(--paper-2); }
+  .final h2 { font-size: clamp(40px, 6.5vw, 88px); line-height: 1.05; max-width: 18ch; margin: 0 auto; text-wrap: balance; font-variation-settings: "opsz" 144; }
+  .final h2 .it { font-style: italic; color: var(--accent); }
+  .final p { font-family: var(--serif); font-size: clamp(20px, 2.4vw, 26px); margin: 24px auto 48px; max-width: 28ch; color: var(--ink-2); font-variation-settings: "opsz" 36; text-wrap: balance; }
+  .final-meta { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-soft); margin-top: 24px; }
+  .final-meta .accent { color: var(--accent); }
+
+  footer { padding: 32px 0; font-size: 13px; color: var(--ink-soft); border-top: 1px solid var(--rule); background: var(--paper); }
+  footer .row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+</style>
+<style>._button_10caf_25{border-radius:8px;border:unset;cursor:pointer;transition:.3s}._button_10caf_25:disabled{opacity:.3;cursor:not-allowed}._button_default_10caf_35{background:transparent;color:#43434e}._button_default_10caf_35:hover{background:#f3f4f7}._button_default_10caf_35:active{background:#8e8e8e}._button_default_10caf_35 ._svg_10caf_45 *{fill:#43434e}._button_primary_10caf_48{background:#007eff;color:#fff}._button_primary_10caf_48:hover{background:#3398ff}._button_primary_10caf_48:active{background:#66b2ff}._button_primary_10caf_48 ._svg_10caf_45 *{fill:#fff}._button_link_10caf_61{background:transparent;color:#007eff}._button_link_10caf_61:hover{color:#3398ff}._button_link_10caf_61:active{color:#66b2ff}._button_link_10caf_61 ._svg_10caf_45 *{fill:#007eff}._button_link_10caf_61 ._svg_10caf_45 *:hover{fill:#3398ff}._button_link_10caf_61 ._svg_10caf_45 *:active{fill:#66b2ff}._button_large_10caf_80{padding:12px 16px}._button_large_10caf_80 *{font-size:16px}._button_medium_10caf_86{padding:8px 16px}._button_medium_10caf_86 *{font-size:16px}._button_small_10caf_92{padding:4px;min-height:24px}._button_small_10caf_92 *{font-size:12px}._flexBox_9xdww_14{flex-flow:unset}._gap_extraTiny_9xdww_18{gap:2px}._gap_tiny_9xdww_22{gap:4px}._gap_extraSmall_9xdww_26{gap:6px}._gap_small_9xdww_30{gap:8px}._gap_medium_9xdww_34{gap:16px}._gap_normal_9xdww_38{gap:24px}._gap_large_9xdww_42{gap:32px}._gap_xLarge_9xdww_46{gap:48px}._gap_xxLarge_9xdww_50{gap:56px}._gap_extraLarge_9xdww_54{gap:64px}._column_9xdww_58{flex-direction:column!important}._flexWrap_9xdww_62{flex-wrap:wrap}._popover_12uvb_1{position:fixed;padding:8px 10px;z-index:2147483647;background:#31363de6;border-radius:4px;color:#fff;font-size:14px}._buttons_12uvb_11{position:fixed;top:0;right:0;padding:8px;z-index:2147483647}._popup_hcu7e_1{position:fixed;z-index:2147483649;background:#ffffffe6;border-radius:4px;color:#000;font-size:14px;line-height:1.286;width:350px;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);box-shadow:0 0 7px -5px #000}._popup_hcu7e_1:before{border-color:rgba(255,255,255,.9) transparent;border-width:0 7px 7px 7px;left:7px;top:-7px;border-style:solid;content:".";display:block;height:0;position:absolute;text-indent:-30000px;width:0}._color_hcu7e_27{width:20px;height:20px;cursor:pointer;flex-shrink:0}._styleContainer_hcu7e_34{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}._extraTiny_dg7lc_14{padding:2px}._extraTinyVR_dg7lc_18{padding-top:2px;padding-bottom:2px}._extraTinyHR_dg7lc_23{padding-left:2px;padding-right:2px}._extraTinyTop_dg7lc_28{padding-top:2px}._extraTinyRight_dg7lc_32{padding-right:2px}._extraTinyBottom_dg7lc_36{padding-bottom:2px}._extraTinyLeft_dg7lc_40{padding-left:2px}._tiny_dg7lc_44{padding:4px}._tinyVR_dg7lc_48{padding-top:4px;padding-bottom:4px}._tinyHR_dg7lc_53{padding-left:4px;padding-right:4px}._tinyTop_dg7lc_58{padding-top:4px}._tinyRight_dg7lc_62{padding-right:4px}._tinyBottom_dg7lc_66{padding-bottom:4px}._tinyLeft_dg7lc_70{padding-left:4px}._extraSmall_dg7lc_74{padding:6px}._extraSmallVR_dg7lc_78{padding-top:6px;padding-bottom:6px}._extraSmallHR_dg7lc_83{padding-left:6px;padding-right:6px}._extraSmallTop_dg7lc_88{padding-top:6px}._extraSmallRight_dg7lc_92{padding-right:6px}._extraSmallBottom_dg7lc_96{padding-bottom:6px}._extraSmallLeft_dg7lc_100{padding-left:6px}._small_dg7lc_104{padding:8px}._smallVR_dg7lc_108{padding-top:8px;padding-bottom:8px}._smallHR_dg7lc_113{padding-left:8px;padding-right:8px}._smallTop_dg7lc_118{padding-top:8px}._smallRight_dg7lc_122{padding-right:8px}._smallBottom_dg7lc_126{padding-bottom:8px}._smallLeft_dg7lc_130{padding-left:8px}._medium_dg7lc_134{padding:16px}._mediumVR_dg7lc_138{padding-top:16px;padding-bottom:16px}._mediumHR_dg7lc_143{padding-left:16px;padding-right:16px}._mediumTop_dg7lc_148{padding-top:16px}._mediumRight_dg7lc_152{padding-right:16px}._mediumBottom_dg7lc_156{padding-bottom:16px}._mediumLeft_dg7lc_160{padding-left:16px}._normal_dg7lc_164{padding:24px}._normalVR_dg7lc_168{padding-top:24px;padding-bottom:24px}._normalHR_dg7lc_173{padding-left:24px;padding-right:24px}._normalTop_dg7lc_178{padding-top:24px}._normalRight_dg7lc_182{padding-right:24px}._normalBottom_dg7lc_186{padding-bottom:24px}._normalLeft_dg7lc_190{padding-left:24px}._large_dg7lc_194{padding:32px}._largeVR_dg7lc_198{padding-top:32px;padding-bottom:32px}._largeHR_dg7lc_203{padding-left:32px;padding-right:32px}._largeTop_dg7lc_208{padding-top:32px}._largeRight_dg7lc_212{padding-right:32px}._largeBottom_dg7lc_216{padding-bottom:32px}._largeLeft_dg7lc_220{padding-left:32px}._xLarge_dg7lc_224{padding:48px}._xLargeVR_dg7lc_228{padding-top:48px;padding-bottom:48px}._xLargeHR_dg7lc_233{padding-left:48px;padding-right:48px}._xLargeTop_dg7lc_238{padding-top:48px}._xLargeRight_dg7lc_242{padding-right:48px}._xLargeBottom_dg7lc_246{padding-bottom:48px}._xLargeLeft_dg7lc_250{padding-left:48px}._xxLarge_dg7lc_254{padding:56px}._xxLargeVR_dg7lc_258{padding-top:56px;padding-bottom:56px}._xxLargeHR_dg7lc_263{padding-left:56px;padding-right:56px}._xxLargeTop_dg7lc_268{padding-top:56px}._xxLargeRight_dg7lc_272{padding-right:56px}._xxLargeBottom_dg7lc_276{padding-bottom:56px}._xxLargeLeft_dg7lc_280{padding-left:56px}._extraLarge_dg7lc_284{padding:64px}._extraLargeVR_dg7lc_288{padding-top:64px;padding-bottom:64px}._extraLargeHR_dg7lc_293{padding-left:64px;padding-right:64px}._extraLargeTop_dg7lc_298{padding-top:64px}._extraLargeRight_dg7lc_302{padding-right:64px}._extraLargeBottom_dg7lc_306{padding-bottom:64px}._extraLargeLeft_dg7lc_310{padding-left:64px}._size_tiny_ldink_23,._size_tiny_ldink_23 *{font-size:12px}._size_small_ldink_27,._size_small_ldink_27 *{font-size:16px}._size_medium_ldink_31,._size_medium_ldink_31 *{font-size:18px}._size_large_ldink_35,._size_large_ldink_35 *{font-size:32px}._weight_thin_ldink_39,._weight_thin_ldink_39 *{font-weight:100}._weight_extraLight_ldink_43,._weight_extraLight_ldink_43 *{font-weight:200}._weight_light_ldink_47,._weight_light_ldink_47 *{font-weight:300}._weight_normal_ldink_51,._weight_normal_ldink_51 *{font-weight:400}._weight_medium_ldink_55,._weight_medium_ldink_55 *{font-weight:500}._weight_semiBold_ldink_59,._weight_semiBold_ldink_59 *{font-weight:600}._weight_bold_ldink_63,._weight_bold_ldink_63 *{font-weight:700}._weight_extraBold_ldink_67,._weight_extraBold_ldink_67 *{font-weight:800}._lineHeight_ldink_71{line-height:100%}._secondary_ldink_75{color:#8e8e8e}._modal_ib2ay_25{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;justify-content:center;align-items:center;z-index:2147483649}._modal_ib2ay_25 ._background_ib2ay_36{position:absolute;top:0;left:0;width:100%;height:100%;transition:.3s;opacity:0;overflow:auto;background-color:color-mix(in srgb,#000000 60%,white 0%);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}._modal_ib2ay_25 ._window_ib2ay_48{min-width:280px;max-width:560px;background:#fff;border-radius:6px;padding:16px;z-index:1;position:relative;opacity:0;transform:scale(.01);transition:.3s;display:flex;flex-direction:column;box-shadow:0 2px 6px 2px #00000026,0 1px 2px #0000004d;overflow:auto}._modal_ib2ay_25 ._window_ib2ay_48 ._loading_ib2ay_64{position:absolute;width:100%;height:100%;top:0;left:0;background:#000000b3}._modal_ib2ay_25 ._window_ib2ay_48 ._loading_ib2ay_64 img{width:100px}._modal_visible_ib2ay_76 ._background_ib2ay_36{opacity:1}._modal_visible_ib2ay_76 ._window_ib2ay_48{opacity:1;transform:scale(1)}._modal_hidden_ib2ay_83 ._background_ib2ay_36{opacity:0}._modal_hidden_ib2ay_83 ._window_ib2ay_48{opacity:0;transform:scale(.01)}._modal_hiddenDone_ib2ay_90 ._background_ib2ay_36{opacity:0}._modal_hiddenDone_ib2ay_90 ._window_ib2ay_48{opacity:0;transform:scale(.01)}._color_13dyv_1{padding:0 8px;border-radius:8px;width:100%;box-shadow:0 0 7px -5px #000;font-weight:800;flex-shrink:0}
+</style><style>._button_10caf_25{border-radius:8px;border:unset;cursor:pointer;transition:.3s}._button_10caf_25:disabled{opacity:.3;cursor:not-allowed}._button_default_10caf_35{background:transparent;color:#43434e}._button_default_10caf_35:hover{background:#f3f4f7}._button_default_10caf_35:active{background:#8e8e8e}._button_default_10caf_35 ._svg_10caf_45 *{fill:#43434e}._button_primary_10caf_48{background:#007eff;color:#fff}._button_primary_10caf_48:hover{background:#3398ff}._button_primary_10caf_48:active{background:#66b2ff}._button_primary_10caf_48 ._svg_10caf_45 *{fill:#fff}._button_link_10caf_61{background:transparent;color:#007eff}._button_link_10caf_61:hover{color:#3398ff}._button_link_10caf_61:active{color:#66b2ff}._button_link_10caf_61 ._svg_10caf_45 *{fill:#007eff}._button_link_10caf_61 ._svg_10caf_45 *:hover{fill:#3398ff}._button_link_10caf_61 ._svg_10caf_45 *:active{fill:#66b2ff}._button_large_10caf_80{padding:12px 16px}._button_large_10caf_80 *{font-size:16px}._button_medium_10caf_86{padding:8px 16px}._button_medium_10caf_86 *{font-size:16px}._button_small_10caf_92{padding:4px;min-height:24px}._button_small_10caf_92 *{font-size:12px}._flexBox_9xdww_14{flex-flow:unset}._gap_extraTiny_9xdww_18{gap:2px}._gap_tiny_9xdww_22{gap:4px}._gap_extraSmall_9xdww_26{gap:6px}._gap_small_9xdww_30{gap:8px}._gap_medium_9xdww_34{gap:16px}._gap_normal_9xdww_38{gap:24px}._gap_large_9xdww_42{gap:32px}._gap_xLarge_9xdww_46{gap:48px}._gap_xxLarge_9xdww_50{gap:56px}._gap_extraLarge_9xdww_54{gap:64px}._column_9xdww_58{flex-direction:column!important}._flexWrap_9xdww_62{flex-wrap:wrap}._popover_12uvb_1{position:fixed;padding:8px 10px;z-index:2147483647;background:#31363de6;border-radius:4px;color:#fff;font-size:14px}._buttons_12uvb_11{position:fixed;top:0;right:0;padding:8px;z-index:2147483647}._popup_hcu7e_1{position:fixed;z-index:2147483649;background:#ffffffe6;border-radius:4px;color:#000;font-size:14px;line-height:1.286;width:350px;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);box-shadow:0 0 7px -5px #000}._popup_hcu7e_1:before{border-color:rgba(255,255,255,.9) transparent;border-width:0 7px 7px 7px;left:7px;top:-7px;border-style:solid;content:".";display:block;height:0;position:absolute;text-indent:-30000px;width:0}._color_hcu7e_27{width:20px;height:20px;cursor:pointer;flex-shrink:0}._styleContainer_hcu7e_34{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}._extraTiny_dg7lc_14{padding:2px}._extraTinyVR_dg7lc_18{padding-top:2px;padding-bottom:2px}._extraTinyHR_dg7lc_23{padding-left:2px;padding-right:2px}._extraTinyTop_dg7lc_28{padding-top:2px}._extraTinyRight_dg7lc_32{padding-right:2px}._extraTinyBottom_dg7lc_36{padding-bottom:2px}._extraTinyLeft_dg7lc_40{padding-left:2px}._tiny_dg7lc_44{padding:4px}._tinyVR_dg7lc_48{padding-top:4px;padding-bottom:4px}._tinyHR_dg7lc_53{padding-left:4px;padding-right:4px}._tinyTop_dg7lc_58{padding-top:4px}._tinyRight_dg7lc_62{padding-right:4px}._tinyBottom_dg7lc_66{padding-bottom:4px}._tinyLeft_dg7lc_70{padding-left:4px}._extraSmall_dg7lc_74{padding:6px}._extraSmallVR_dg7lc_78{padding-top:6px;padding-bottom:6px}._extraSmallHR_dg7lc_83{padding-left:6px;padding-right:6px}._extraSmallTop_dg7lc_88{padding-top:6px}._extraSmallRight_dg7lc_92{padding-right:6px}._extraSmallBottom_dg7lc_96{padding-bottom:6px}._extraSmallLeft_dg7lc_100{padding-left:6px}._small_dg7lc_104{padding:8px}._smallVR_dg7lc_108{padding-top:8px;padding-bottom:8px}._smallHR_dg7lc_113{padding-left:8px;padding-right:8px}._smallTop_dg7lc_118{padding-top:8px}._smallRight_dg7lc_122{padding-right:8px}._smallBottom_dg7lc_126{padding-bottom:8px}._smallLeft_dg7lc_130{padding-left:8px}._medium_dg7lc_134{padding:16px}._mediumVR_dg7lc_138{padding-top:16px;padding-bottom:16px}._mediumHR_dg7lc_143{padding-left:16px;padding-right:16px}._mediumTop_dg7lc_148{padding-top:16px}._mediumRight_dg7lc_152{padding-right:16px}._mediumBottom_dg7lc_156{padding-bottom:16px}._mediumLeft_dg7lc_160{padding-left:16px}._normal_dg7lc_164{padding:24px}._normalVR_dg7lc_168{padding-top:24px;padding-bottom:24px}._normalHR_dg7lc_173{padding-left:24px;padding-right:24px}._normalTop_dg7lc_178{padding-top:24px}._normalRight_dg7lc_182{padding-right:24px}._normalBottom_dg7lc_186{padding-bottom:24px}._normalLeft_dg7lc_190{padding-left:24px}._large_dg7lc_194{padding:32px}._largeVR_dg7lc_198{padding-top:32px;padding-bottom:32px}._largeHR_dg7lc_203{padding-left:32px;padding-right:32px}._largeTop_dg7lc_208{padding-top:32px}._largeRight_dg7lc_212{padding-right:32px}._largeBottom_dg7lc_216{padding-bottom:32px}._largeLeft_dg7lc_220{padding-left:32px}._xLarge_dg7lc_224{padding:48px}._xLargeVR_dg7lc_228{padding-top:48px;padding-bottom:48px}._xLargeHR_dg7lc_233{padding-left:48px;padding-right:48px}._xLargeTop_dg7lc_238{padding-top:48px}._xLargeRight_dg7lc_242{padding-right:48px}._xLargeBottom_dg7lc_246{padding-bottom:48px}._xLargeLeft_dg7lc_250{padding-left:48px}._xxLarge_dg7lc_254{padding:56px}._xxLargeVR_dg7lc_258{padding-top:56px;padding-bottom:56px}._xxLargeHR_dg7lc_263{padding-left:56px;padding-right:56px}._xxLargeTop_dg7lc_268{padding-top:56px}._xxLargeRight_dg7lc_272{padding-right:56px}._xxLargeBottom_dg7lc_276{padding-bottom:56px}._xxLargeLeft_dg7lc_280{padding-left:56px}._extraLarge_dg7lc_284{padding:64px}._extraLargeVR_dg7lc_288{padding-top:64px;padding-bottom:64px}._extraLargeHR_dg7lc_293{padding-left:64px;padding-right:64px}._extraLargeTop_dg7lc_298{padding-top:64px}._extraLargeRight_dg7lc_302{padding-right:64px}._extraLargeBottom_dg7lc_306{padding-bottom:64px}._extraLargeLeft_dg7lc_310{padding-left:64px}._size_tiny_ldink_23,._size_tiny_ldink_23 *{font-size:12px}._size_small_ldink_27,._size_small_ldink_27 *{font-size:16px}._size_medium_ldink_31,._size_medium_ldink_31 *{font-size:18px}._size_large_ldink_35,._size_large_ldink_35 *{font-size:32px}._weight_thin_ldink_39,._weight_thin_ldink_39 *{font-weight:100}._weight_extraLight_ldink_43,._weight_extraLight_ldink_43 *{font-weight:200}._weight_light_ldink_47,._weight_light_ldink_47 *{font-weight:300}._weight_normal_ldink_51,._weight_normal_ldink_51 *{font-weight:400}._weight_medium_ldink_55,._weight_medium_ldink_55 *{font-weight:500}._weight_semiBold_ldink_59,._weight_semiBold_ldink_59 *{font-weight:600}._weight_bold_ldink_63,._weight_bold_ldink_63 *{font-weight:700}._weight_extraBold_ldink_67,._weight_extraBold_ldink_67 *{font-weight:800}._lineHeight_ldink_71{line-height:100%}._secondary_ldink_75{color:#8e8e8e}._modal_ib2ay_25{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;justify-content:center;align-items:center;z-index:2147483649}._modal_ib2ay_25 ._background_ib2ay_36{position:absolute;top:0;left:0;width:100%;height:100%;transition:.3s;opacity:0;overflow:auto;background-color:color-mix(in srgb,#000000 60%,white 0%);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}._modal_ib2ay_25 ._window_ib2ay_48{min-width:280px;max-width:560px;background:#fff;border-radius:6px;padding:16px;z-index:1;position:relative;opacity:0;transform:scale(.01);transition:.3s;display:flex;flex-direction:column;box-shadow:0 2px 6px 2px #00000026,0 1px 2px #0000004d;overflow:auto}._modal_ib2ay_25 ._window_ib2ay_48 ._loading_ib2ay_64{position:absolute;width:100%;height:100%;top:0;left:0;background:#000000b3}._modal_ib2ay_25 ._window_ib2ay_48 ._loading_ib2ay_64 img{width:100px}._modal_visible_ib2ay_76 ._background_ib2ay_36{opacity:1}._modal_visible_ib2ay_76 ._window_ib2ay_48{opacity:1;transform:scale(1)}._modal_hidden_ib2ay_83 ._background_ib2ay_36{opacity:0}._modal_hidden_ib2ay_83 ._window_ib2ay_48{opacity:0;transform:scale(.01)}._modal_hiddenDone_ib2ay_90 ._background_ib2ay_36{opacity:0}._modal_hiddenDone_ib2ay_90 ._window_ib2ay_48{opacity:0;transform:scale(.01)}._color_13dyv_1{padding:0 8px;border-radius:8px;width:100%;box-shadow:0 0 7px -5px #000;font-weight:800;flex-shrink:0}
+</style><style>._button_10caf_25{border-radius:8px;border:unset;cursor:pointer;transition:.3s}._button_10caf_25:disabled{opacity:.3;cursor:not-allowed}._button_default_10caf_35{background:transparent;color:#43434e}._button_default_10caf_35:hover{background:#f3f4f7}._button_default_10caf_35:active{background:#8e8e8e}._button_default_10caf_35 ._svg_10caf_45 *{fill:#43434e}._button_primary_10caf_48{background:#007eff;color:#fff}._button_primary_10caf_48:hover{background:#3398ff}._button_primary_10caf_48:active{background:#66b2ff}._button_primary_10caf_48 ._svg_10caf_45 *{fill:#fff}._button_link_10caf_61{background:transparent;color:#007eff}._button_link_10caf_61:hover{color:#3398ff}._button_link_10caf_61:active{color:#66b2ff}._button_link_10caf_61 ._svg_10caf_45 *{fill:#007eff}._button_link_10caf_61 ._svg_10caf_45 *:hover{fill:#3398ff}._button_link_10caf_61 ._svg_10caf_45 *:active{fill:#66b2ff}._button_large_10caf_80{padding:12px 16px}._button_large_10caf_80 *{font-size:16px}._button_medium_10caf_86{padding:8px 16px}._button_medium_10caf_86 *{font-size:16px}._button_small_10caf_92{padding:4px;min-height:24px}._button_small_10caf_92 *{font-size:12px}._flexBox_9xdww_14{flex-flow:unset}._gap_extraTiny_9xdww_18{gap:2px}._gap_tiny_9xdww_22{gap:4px}._gap_extraSmall_9xdww_26{gap:6px}._gap_small_9xdww_30{gap:8px}._gap_medium_9xdww_34{gap:16px}._gap_normal_9xdww_38{gap:24px}._gap_large_9xdww_42{gap:32px}._gap_xLarge_9xdww_46{gap:48px}._gap_xxLarge_9xdww_50{gap:56px}._gap_extraLarge_9xdww_54{gap:64px}._column_9xdww_58{flex-direction:column!important}._flexWrap_9xdww_62{flex-wrap:wrap}._popover_12uvb_1{position:fixed;padding:8px 10px;z-index:2147483647;background:#31363de6;border-radius:4px;color:#fff;font-size:14px}._buttons_12uvb_11{position:fixed;top:0;right:0;padding:8px;z-index:2147483647}._popup_hcu7e_1{position:fixed;z-index:2147483649;background:#ffffffe6;border-radius:4px;color:#000;font-size:14px;line-height:1.286;width:350px;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);box-shadow:0 0 7px -5px #000}._popup_hcu7e_1:before{border-color:rgba(255,255,255,.9) transparent;border-width:0 7px 7px 7px;left:7px;top:-7px;border-style:solid;content:".";display:block;height:0;position:absolute;text-indent:-30000px;width:0}._color_hcu7e_27{width:20px;height:20px;cursor:pointer;flex-shrink:0}._styleContainer_hcu7e_34{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}._extraTiny_dg7lc_14{padding:2px}._extraTinyVR_dg7lc_18{padding-top:2px;padding-bottom:2px}._extraTinyHR_dg7lc_23{padding-left:2px;padding-right:2px}._extraTinyTop_dg7lc_28{padding-top:2px}._extraTinyRight_dg7lc_32{padding-right:2px}._extraTinyBottom_dg7lc_36{padding-bottom:2px}._extraTinyLeft_dg7lc_40{padding-left:2px}._tiny_dg7lc_44{padding:4px}._tinyVR_dg7lc_48{padding-top:4px;padding-bottom:4px}._tinyHR_dg7lc_53{padding-left:4px;padding-right:4px}._tinyTop_dg7lc_58{padding-top:4px}._tinyRight_dg7lc_62{padding-right:4px}._tinyBottom_dg7lc_66{padding-bottom:4px}._tinyLeft_dg7lc_70{padding-left:4px}._extraSmall_dg7lc_74{padding:6px}._extraSmallVR_dg7lc_78{padding-top:6px;padding-bottom:6px}._extraSmallHR_dg7lc_83{padding-left:6px;padding-right:6px}._extraSmallTop_dg7lc_88{padding-top:6px}._extraSmallRight_dg7lc_92{padding-right:6px}._extraSmallBottom_dg7lc_96{padding-bottom:6px}._extraSmallLeft_dg7lc_100{padding-left:6px}._small_dg7lc_104{padding:8px}._smallVR_dg7lc_108{padding-top:8px;padding-bottom:8px}._smallHR_dg7lc_113{padding-left:8px;padding-right:8px}._smallTop_dg7lc_118{padding-top:8px}._smallRight_dg7lc_122{padding-right:8px}._smallBottom_dg7lc_126{padding-bottom:8px}._smallLeft_dg7lc_130{padding-left:8px}._medium_dg7lc_134{padding:16px}._mediumVR_dg7lc_138{padding-top:16px;padding-bottom:16px}._mediumHR_dg7lc_143{padding-left:16px;padding-right:16px}._mediumTop_dg7lc_148{padding-top:16px}._mediumRight_dg7lc_152{padding-right:16px}._mediumBottom_dg7lc_156{padding-bottom:16px}._mediumLeft_dg7lc_160{padding-left:16px}._normal_dg7lc_164{padding:24px}._normalVR_dg7lc_168{padding-top:24px;padding-bottom:24px}._normalHR_dg7lc_173{padding-left:24px;padding-right:24px}._normalTop_dg7lc_178{padding-top:24px}._normalRight_dg7lc_182{padding-right:24px}._normalBottom_dg7lc_186{padding-bottom:24px}._normalLeft_dg7lc_190{padding-left:24px}._large_dg7lc_194{padding:32px}._largeVR_dg7lc_198{padding-top:32px;padding-bottom:32px}._largeHR_dg7lc_203{padding-left:32px;padding-right:32px}._largeTop_dg7lc_208{padding-top:32px}._largeRight_dg7lc_212{padding-right:32px}._largeBottom_dg7lc_216{padding-bottom:32px}._largeLeft_dg7lc_220{padding-left:32px}._xLarge_dg7lc_224{padding:48px}._xLargeVR_dg7lc_228{padding-top:48px;padding-bottom:48px}._xLargeHR_dg7lc_233{padding-left:48px;padding-right:48px}._xLargeTop_dg7lc_238{padding-top:48px}._xLargeRight_dg7lc_242{padding-right:48px}._xLargeBottom_dg7lc_246{padding-bottom:48px}._xLargeLeft_dg7lc_250{padding-left:48px}._xxLarge_dg7lc_254{padding:56px}._xxLargeVR_dg7lc_258{padding-top:56px;padding-bottom:56px}._xxLargeHR_dg7lc_263{padding-left:56px;padding-right:56px}._xxLargeTop_dg7lc_268{padding-top:56px}._xxLargeRight_dg7lc_272{padding-right:56px}._xxLargeBottom_dg7lc_276{padding-bottom:56px}._xxLargeLeft_dg7lc_280{padding-left:56px}._extraLarge_dg7lc_284{padding:64px}._extraLargeVR_dg7lc_288{padding-top:64px;padding-bottom:64px}._extraLargeHR_dg7lc_293{padding-left:64px;padding-right:64px}._extraLargeTop_dg7lc_298{padding-top:64px}._extraLargeRight_dg7lc_302{padding-right:64px}._extraLargeBottom_dg7lc_306{padding-bottom:64px}._extraLargeLeft_dg7lc_310{padding-left:64px}._size_tiny_ldink_23,._size_tiny_ldink_23 *{font-size:12px}._size_small_ldink_27,._size_small_ldink_27 *{font-size:16px}._size_medium_ldink_31,._size_medium_ldink_31 *{font-size:18px}._size_large_ldink_35,._size_large_ldink_35 *{font-size:32px}._weight_thin_ldink_39,._weight_thin_ldink_39 *{font-weight:100}._weight_extraLight_ldink_43,._weight_extraLight_ldink_43 *{font-weight:200}._weight_light_ldink_47,._weight_light_ldink_47 *{font-weight:300}._weight_normal_ldink_51,._weight_normal_ldink_51 *{font-weight:400}._weight_medium_ldink_55,._weight_medium_ldink_55 *{font-weight:500}._weight_semiBold_ldink_59,._weight_semiBold_ldink_59 *{font-weight:600}._weight_bold_ldink_63,._weight_bold_ldink_63 *{font-weight:700}._weight_extraBold_ldink_67,._weight_extraBold_ldink_67 *{font-weight:800}._lineHeight_ldink_71{line-height:100%}._secondary_ldink_75{color:#8e8e8e}._modal_ib2ay_25{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;justify-content:center;align-items:center;z-index:2147483649}._modal_ib2ay_25 ._background_ib2ay_36{position:absolute;top:0;left:0;width:100%;height:100%;transition:.3s;opacity:0;overflow:auto;background-color:color-mix(in srgb,#000000 60%,white 0%);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}._modal_ib2ay_25 ._window_ib2ay_48{min-width:280px;max-width:560px;background:#fff;border-radius:6px;padding:16px;z-index:1;position:relative;opacity:0;transform:scale(.01);transition:.3s;display:flex;flex-direction:column;box-shadow:0 2px 6px 2px #00000026,0 1px 2px #0000004d;overflow:auto}._modal_ib2ay_25 ._window_ib2ay_48 ._loading_ib2ay_64{position:absolute;width:100%;height:100%;top:0;left:0;background:#000000b3}._modal_ib2ay_25 ._window_ib2ay_48 ._loading_ib2ay_64 img{width:100px}._modal_visible_ib2ay_76 ._background_ib2ay_36{opacity:1}._modal_visible_ib2ay_76 ._window_ib2ay_48{opacity:1;transform:scale(1)}._modal_hidden_ib2ay_83 ._background_ib2ay_36{opacity:0}._modal_hidden_ib2ay_83 ._window_ib2ay_48{opacity:0;transform:scale(.01)}._modal_hiddenDone_ib2ay_90 ._background_ib2ay_36{opacity:0}._modal_hiddenDone_ib2ay_90 ._window_ib2ay_48{opacity:0;transform:scale(.01)}._color_13dyv_1{padding:0 8px;border-radius:8px;width:100%;box-shadow:0 0 7px -5px #000;font-weight:800;flex-shrink:0}
+</style><style>._button_10caf_25{border-radius:8px;border:unset;cursor:pointer;transition:.3s}._button_10caf_25:disabled{opacity:.3;cursor:not-allowed}._button_default_10caf_35{background:transparent;color:#43434e}._button_default_10caf_35:hover{background:#f3f4f7}._button_default_10caf_35:active{background:#8e8e8e}._button_default_10caf_35 ._svg_10caf_45 *{fill:#43434e}._button_primary_10caf_48{background:#007eff;color:#fff}._button_primary_10caf_48:hover{background:#3398ff}._button_primary_10caf_48:active{background:#66b2ff}._button_primary_10caf_48 ._svg_10caf_45 *{fill:#fff}._button_link_10caf_61{background:transparent;color:#007eff}._button_link_10caf_61:hover{color:#3398ff}._button_link_10caf_61:active{color:#66b2ff}._button_link_10caf_61 ._svg_10caf_45 *{fill:#007eff}._button_link_10caf_61 ._svg_10caf_45 *:hover{fill:#3398ff}._button_link_10caf_61 ._svg_10caf_45 *:active{fill:#66b2ff}._button_large_10caf_80{padding:12px 16px}._button_large_10caf_80 *{font-size:16px}._button_medium_10caf_86{padding:8px 16px}._button_medium_10caf_86 *{font-size:16px}._button_small_10caf_92{padding:4px;min-height:24px}._button_small_10caf_92 *{font-size:12px}._flexBox_9xdww_14{flex-flow:unset}._gap_extraTiny_9xdww_18{gap:2px}._gap_tiny_9xdww_22{gap:4px}._gap_extraSmall_9xdww_26{gap:6px}._gap_small_9xdww_30{gap:8px}._gap_medium_9xdww_34{gap:16px}._gap_normal_9xdww_38{gap:24px}._gap_large_9xdww_42{gap:32px}._gap_xLarge_9xdww_46{gap:48px}._gap_xxLarge_9xdww_50{gap:56px}._gap_extraLarge_9xdww_54{gap:64px}._column_9xdww_58{flex-direction:column!important}._flexWrap_9xdww_62{flex-wrap:wrap}._popover_12uvb_1{position:fixed;padding:8px 10px;z-index:2147483647;background:#31363de6;border-radius:4px;color:#fff;font-size:14px}._buttons_12uvb_11{position:fixed;top:0;right:0;padding:8px;z-index:2147483647}._popup_hcu7e_1{position:fixed;z-index:2147483649;background:#ffffffe6;border-radius:4px;color:#000;font-size:14px;line-height:1.286;width:350px;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);box-shadow:0 0 7px -5px #000}._popup_hcu7e_1:before{border-color:rgba(255,255,255,.9) transparent;border-width:0 7px 7px 7px;left:7px;top:-7px;border-style:solid;content:".";display:block;height:0;position:absolute;text-indent:-30000px;width:0}._color_hcu7e_27{width:20px;height:20px;cursor:pointer;flex-shrink:0}._styleContainer_hcu7e_34{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}._extraTiny_dg7lc_14{padding:2px}._extraTinyVR_dg7lc_18{padding-top:2px;padding-bottom:2px}._extraTinyHR_dg7lc_23{padding-left:2px;padding-right:2px}._extraTinyTop_dg7lc_28{padding-top:2px}._extraTinyRight_dg7lc_32{padding-right:2px}._extraTinyBottom_dg7lc_36{padding-bottom:2px}._extraTinyLeft_dg7lc_40{padding-left:2px}._tiny_dg7lc_44{padding:4px}._tinyVR_dg7lc_48{padding-top:4px;padding-bottom:4px}._tinyHR_dg7lc_53{padding-left:4px;padding-right:4px}._tinyTop_dg7lc_58{padding-top:4px}._tinyRight_dg7lc_62{padding-right:4px}._tinyBottom_dg7lc_66{padding-bottom:4px}._tinyLeft_dg7lc_70{padding-left:4px}._extraSmall_dg7lc_74{padding:6px}._extraSmallVR_dg7lc_78{padding-top:6px;padding-bottom:6px}._extraSmallHR_dg7lc_83{padding-left:6px;padding-right:6px}._extraSmallTop_dg7lc_88{padding-top:6px}._extraSmallRight_dg7lc_92{padding-right:6px}._extraSmallBottom_dg7lc_96{padding-bottom:6px}._extraSmallLeft_dg7lc_100{padding-left:6px}._small_dg7lc_104{padding:8px}._smallVR_dg7lc_108{padding-top:8px;padding-bottom:8px}._smallHR_dg7lc_113{padding-left:8px;padding-right:8px}._smallTop_dg7lc_118{padding-top:8px}._smallRight_dg7lc_122{padding-right:8px}._smallBottom_dg7lc_126{padding-bottom:8px}._smallLeft_dg7lc_130{padding-left:8px}._medium_dg7lc_134{padding:16px}._mediumVR_dg7lc_138{padding-top:16px;padding-bottom:16px}._mediumHR_dg7lc_143{padding-left:16px;padding-right:16px}._mediumTop_dg7lc_148{padding-top:16px}._mediumRight_dg7lc_152{padding-right:16px}._mediumBottom_dg7lc_156{padding-bottom:16px}._mediumLeft_dg7lc_160{padding-left:16px}._normal_dg7lc_164{padding:24px}._normalVR_dg7lc_168{padding-top:24px;padding-bottom:24px}._normalHR_dg7lc_173{padding-left:24px;padding-right:24px}._normalTop_dg7lc_178{padding-top:24px}._normalRight_dg7lc_182{padding-right:24px}._normalBottom_dg7lc_186{padding-bottom:24px}._normalLeft_dg7lc_190{padding-left:24px}._large_dg7lc_194{padding:32px}._largeVR_dg7lc_198{padding-top:32px;padding-bottom:32px}._largeHR_dg7lc_203{padding-left:32px;padding-right:32px}._largeTop_dg7lc_208{padding-top:32px}._largeRight_dg7lc_212{padding-right:32px}._largeBottom_dg7lc_216{padding-bottom:32px}._largeLeft_dg7lc_220{padding-left:32px}._xLarge_dg7lc_224{padding:48px}._xLargeVR_dg7lc_228{padding-top:48px;padding-bottom:48px}._xLargeHR_dg7lc_233{padding-left:48px;padding-right:48px}._xLargeTop_dg7lc_238{padding-top:48px}._xLargeRight_dg7lc_242{padding-right:48px}._xLargeBottom_dg7lc_246{padding-bottom:48px}._xLargeLeft_dg7lc_250{padding-left:48px}._xxLarge_dg7lc_254{padding:56px}._xxLargeVR_dg7lc_258{padding-top:56px;padding-bottom:56px}._xxLargeHR_dg7lc_263{padding-left:56px;padding-right:56px}._xxLargeTop_dg7lc_268{padding-top:56px}._xxLargeRight_dg7lc_272{padding-right:56px}._xxLargeBottom_dg7lc_276{padding-bottom:56px}._xxLargeLeft_dg7lc_280{padding-left:56px}._extraLarge_dg7lc_284{padding:64px}._extraLargeVR_dg7lc_288{padding-top:64px;padding-bottom:64px}._extraLargeHR_dg7lc_293{padding-left:64px;padding-right:64px}._extraLargeTop_dg7lc_298{padding-top:64px}._extraLargeRight_dg7lc_302{padding-right:64px}._extraLargeBottom_dg7lc_306{padding-bottom:64px}._extraLargeLeft_dg7lc_310{padding-left:64px}._size_tiny_ldink_23,._size_tiny_ldink_23 *{font-size:12px}._size_small_ldink_27,._size_small_ldink_27 *{font-size:16px}._size_medium_ldink_31,._size_medium_ldink_31 *{font-size:18px}._size_large_ldink_35,._size_large_ldink_35 *{font-size:32px}._weight_thin_ldink_39,._weight_thin_ldink_39 *{font-weight:100}._weight_extraLight_ldink_43,._weight_extraLight_ldink_43 *{font-weight:200}._weight_light_ldink_47,._weight_light_ldink_47 *{font-weight:300}._weight_normal_ldink_51,._weight_normal_ldink_51 *{font-weight:400}._weight_medium_ldink_55,._weight_medium_ldink_55 *{font-weight:500}._weight_semiBold_ldink_59,._weight_semiBold_ldink_59 *{font-weight:600}._weight_bold_ldink_63,._weight_bold_ldink_63 *{font-weight:700}._weight_extraBold_ldink_67,._weight_extraBold_ldink_67 *{font-weight:800}._lineHeight_ldink_71{line-height:100%}._secondary_ldink_75{color:#8e8e8e}._modal_ib2ay_25{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;justify-content:center;align-items:center;z-index:2147483649}._modal_ib2ay_25 ._background_ib2ay_36{position:absolute;top:0;left:0;width:100%;height:100%;transition:.3s;opacity:0;overflow:auto;background-color:color-mix(in srgb,#000000 60%,white 0%);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}._modal_ib2ay_25 ._window_ib2ay_48{min-width:280px;max-width:560px;background:#fff;border-radius:6px;padding:16px;z-index:1;position:relative;opacity:0;transform:scale(.01);transition:.3s;display:flex;flex-direction:column;box-shadow:0 2px 6px 2px #00000026,0 1px 2px #0000004d;overflow:auto}._modal_ib2ay_25 ._window_ib2ay_48 ._loading_ib2ay_64{position:absolute;width:100%;height:100%;top:0;left:0;background:#000000b3}._modal_ib2ay_25 ._window_ib2ay_48 ._loading_ib2ay_64 img{width:100px}._modal_visible_ib2ay_76 ._background_ib2ay_36{opacity:1}._modal_visible_ib2ay_76 ._window_ib2ay_48{opacity:1;transform:scale(1)}._modal_hidden_ib2ay_83 ._background_ib2ay_36{opacity:0}._modal_hidden_ib2ay_83 ._window_ib2ay_48{opacity:0;transform:scale(.01)}._modal_hiddenDone_ib2ay_90 ._background_ib2ay_36{opacity:0}._modal_hiddenDone_ib2ay_90 ._window_ib2ay_48{opacity:0;transform:scale(.01)}._color_13dyv_1{padding:0 8px;border-radius:8px;width:100%;box-shadow:0 0 7px -5px #000;font-weight:800;flex-shrink:0}
+</style><style>._button_10caf_25{border-radius:8px;border:unset;cursor:pointer;transition:.3s}._button_10caf_25:disabled{opacity:.3;cursor:not-allowed}._button_default_10caf_35{background:transparent;color:#43434e}._button_default_10caf_35:hover{background:#f3f4f7}._button_default_10caf_35:active{background:#8e8e8e}._button_default_10caf_35 ._svg_10caf_45 *{fill:#43434e}._button_primary_10caf_48{background:#007eff;color:#fff}._button_primary_10caf_48:hover{background:#3398ff}._button_primary_10caf_48:active{background:#66b2ff}._button_primary_10caf_48 ._svg_10caf_45 *{fill:#fff}._button_link_10caf_61{background:transparent;color:#007eff}._button_link_10caf_61:hover{color:#3398ff}._button_link_10caf_61:active{color:#66b2ff}._button_link_10caf_61 ._svg_10caf_45 *{fill:#007eff}._button_link_10caf_61 ._svg_10caf_45 *:hover{fill:#3398ff}._button_link_10caf_61 ._svg_10caf_45 *:active{fill:#66b2ff}._button_large_10caf_80{padding:12px 16px}._button_large_10caf_80 *{font-size:16px}._button_medium_10caf_86{padding:8px 16px}._button_medium_10caf_86 *{font-size:16px}._button_small_10caf_92{padding:4px;min-height:24px}._button_small_10caf_92 *{font-size:12px}._flexBox_9xdww_14{flex-flow:unset}._gap_extraTiny_9xdww_18{gap:2px}._gap_tiny_9xdww_22{gap:4px}._gap_extraSmall_9xdww_26{gap:6px}._gap_small_9xdww_30{gap:8px}._gap_medium_9xdww_34{gap:16px}._gap_normal_9xdww_38{gap:24px}._gap_large_9xdww_42{gap:32px}._gap_xLarge_9xdww_46{gap:48px}._gap_xxLarge_9xdww_50{gap:56px}._gap_extraLarge_9xdww_54{gap:64px}._column_9xdww_58{flex-direction:column!important}._flexWrap_9xdww_62{flex-wrap:wrap}._popover_12uvb_1{position:fixed;padding:8px 10px;z-index:2147483647;background:#31363de6;border-radius:4px;color:#fff;font-size:14px}._buttons_12uvb_11{position:fixed;top:0;right:0;padding:8px;z-index:2147483647}._popup_hcu7e_1{position:fixed;z-index:2147483649;background:#ffffffe6;border-radius:4px;color:#000;font-size:14px;line-height:1.286;width:350px;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);box-shadow:0 0 7px -5px #000}._popup_hcu7e_1:before{border-color:rgba(255,255,255,.9) transparent;border-width:0 7px 7px 7px;left:7px;top:-7px;border-style:solid;content:".";display:block;height:0;position:absolute;text-indent:-30000px;width:0}._color_hcu7e_27{width:20px;height:20px;cursor:pointer;flex-shrink:0}._styleContainer_hcu7e_34{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}._extraTiny_dg7lc_14{padding:2px}._extraTinyVR_dg7lc_18{padding-top:2px;padding-bottom:2px}._extraTinyHR_dg7lc_23{padding-left:2px;padding-right:2px}._extraTinyTop_dg7lc_28{padding-top:2px}._extraTinyRight_dg7lc_32{padding-right:2px}._extraTinyBottom_dg7lc_36{padding-bottom:2px}._extraTinyLeft_dg7lc_40{padding-left:2px}._tiny_dg7lc_44{padding:4px}._tinyVR_dg7lc_48{padding-top:4px;padding-bottom:4px}._tinyHR_dg7lc_53{padding-left:4px;padding-right:4px}._tinyTop_dg7lc_58{padding-top:4px}._tinyRight_dg7lc_62{padding-right:4px}._tinyBottom_dg7lc_66{padding-bottom:4px}._tinyLeft_dg7lc_70{padding-left:4px}._extraSmall_dg7lc_74{padding:6px}._extraSmallVR_dg7lc_78{padding-top:6px;padding-bottom:6px}._extraSmallHR_dg7lc_83{padding-left:6px;padding-right:6px}._extraSmallTop_dg7lc_88{padding-top:6px}._extraSmallRight_dg7lc_92{padding-right:6px}._extraSmallBottom_dg7lc_96{padding-bottom:6px}._extraSmallLeft_dg7lc_100{padding-left:6px}._small_dg7lc_104{padding:8px}._smallVR_dg7lc_108{padding-top:8px;padding-bottom:8px}._smallHR_dg7lc_113{padding-left:8px;padding-right:8px}._smallTop_dg7lc_118{padding-top:8px}._smallRight_dg7lc_122{padding-right:8px}._smallBottom_dg7lc_126{padding-bottom:8px}._smallLeft_dg7lc_130{padding-left:8px}._medium_dg7lc_134{padding:16px}._mediumVR_dg7lc_138{padding-top:16px;padding-bottom:16px}._mediumHR_dg7lc_143{padding-left:16px;padding-right:16px}._mediumTop_dg7lc_148{padding-top:16px}._mediumRight_dg7lc_152{padding-right:16px}._mediumBottom_dg7lc_156{padding-bottom:16px}._mediumLeft_dg7lc_160{padding-left:16px}._normal_dg7lc_164{padding:24px}._normalVR_dg7lc_168{padding-top:24px;padding-bottom:24px}._normalHR_dg7lc_173{padding-left:24px;padding-right:24px}._normalTop_dg7lc_178{padding-top:24px}._normalRight_dg7lc_182{padding-right:24px}._normalBottom_dg7lc_186{padding-bottom:24px}._normalLeft_dg7lc_190{padding-left:24px}._large_dg7lc_194{padding:32px}._largeVR_dg7lc_198{padding-top:32px;padding-bottom:32px}._largeHR_dg7lc_203{padding-left:32px;padding-right:32px}._largeTop_dg7lc_208{padding-top:32px}._largeRight_dg7lc_212{padding-right:32px}._largeBottom_dg7lc_216{padding-bottom:32px}._largeLeft_dg7lc_220{padding-left:32px}._xLarge_dg7lc_224{padding:48px}._xLargeVR_dg7lc_228{padding-top:48px;padding-bottom:48px}._xLargeHR_dg7lc_233{padding-left:48px;padding-right:48px}._xLargeTop_dg7lc_238{padding-top:48px}._xLargeRight_dg7lc_242{padding-right:48px}._xLargeBottom_dg7lc_246{padding-bottom:48px}._xLargeLeft_dg7lc_250{padding-left:48px}._xxLarge_dg7lc_254{padding:56px}._xxLargeVR_dg7lc_258{padding-top:56px;padding-bottom:56px}._xxLargeHR_dg7lc_263{padding-left:56px;padding-right:56px}._xxLargeTop_dg7lc_268{padding-top:56px}._xxLargeRight_dg7lc_272{padding-right:56px}._xxLargeBottom_dg7lc_276{padding-bottom:56px}._xxLargeLeft_dg7lc_280{padding-left:56px}._extraLarge_dg7lc_284{padding:64px}._extraLargeVR_dg7lc_288{padding-top:64px;padding-bottom:64px}._extraLargeHR_dg7lc_293{padding-left:64px;padding-right:64px}._extraLargeTop_dg7lc_298{padding-top:64px}._extraLargeRight_dg7lc_302{padding-right:64px}._extraLargeBottom_dg7lc_306{padding-bottom:64px}._extraLargeLeft_dg7lc_310{padding-left:64px}._size_tiny_ldink_23,._size_tiny_ldink_23 *{font-size:12px}._size_small_ldink_27,._size_small_ldink_27 *{font-size:16px}._size_medium_ldink_31,._size_medium_ldink_31 *{font-size:18px}._size_large_ldink_35,._size_large_ldink_35 *{font-size:32px}._weight_thin_ldink_39,._weight_thin_ldink_39 *{font-weight:100}._weight_extraLight_ldink_43,._weight_extraLight_ldink_43 *{font-weight:200}._weight_light_ldink_47,._weight_light_ldink_47 *{font-weight:300}._weight_normal_ldink_51,._weight_normal_ldink_51 *{font-weight:400}._weight_medium_ldink_55,._weight_medium_ldink_55 *{font-weight:500}._weight_semiBold_ldink_59,._weight_semiBold_ldink_59 *{font-weight:600}._weight_bold_ldink_63,._weight_bold_ldink_63 *{font-weight:700}._weight_extraBold_ldink_67,._weight_extraBold_ldink_67 *{font-weight:800}._lineHeight_ldink_71{line-height:100%}._secondary_ldink_75{color:#8e8e8e}._modal_ib2ay_25{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;justify-content:center;align-items:center;z-index:2147483649}._modal_ib2ay_25 ._background_ib2ay_36{position:absolute;top:0;left:0;width:100%;height:100%;transition:.3s;opacity:0;overflow:auto;background-color:color-mix(in srgb,#000000 60%,white 0%);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}._modal_ib2ay_25 ._window_ib2ay_48{min-width:280px;max-width:560px;background:#fff;border-radius:6px;padding:16px;z-index:1;position:relative;opacity:0;transform:scale(.01);transition:.3s;display:flex;flex-direction:column;box-shadow:0 2px 6px 2px #00000026,0 1px 2px #0000004d;overflow:auto}._modal_ib2ay_25 ._window_ib2ay_48 ._loading_ib2ay_64{position:absolute;width:100%;height:100%;top:0;left:0;background:#000000b3}._modal_ib2ay_25 ._window_ib2ay_48 ._loading_ib2ay_64 img{width:100px}._modal_visible_ib2ay_76 ._background_ib2ay_36{opacity:1}._modal_visible_ib2ay_76 ._window_ib2ay_48{opacity:1;transform:scale(1)}._modal_hidden_ib2ay_83 ._background_ib2ay_36{opacity:0}._modal_hidden_ib2ay_83 ._window_ib2ay_48{opacity:0;transform:scale(.01)}._modal_hiddenDone_ib2ay_90 ._background_ib2ay_36{opacity:0}._modal_hiddenDone_ib2ay_90 ._window_ib2ay_48{opacity:0;transform:scale(.01)}._color_13dyv_1{padding:0 8px;border-radius:8px;width:100%;box-shadow:0 0 7px -5px #000;font-weight:800;flex-shrink:0}
+</style><style>._button_10caf_25{border-radius:8px;border:unset;cursor:pointer;transition:.3s}._button_10caf_25:disabled{opacity:.3;cursor:not-allowed}._button_default_10caf_35{background:transparent;color:#43434e}._button_default_10caf_35:hover{background:#f3f4f7}._button_default_10caf_35:active{background:#8e8e8e}._button_default_10caf_35 ._svg_10caf_45 *{fill:#43434e}._button_primary_10caf_48{background:#007eff;color:#fff}._button_primary_10caf_48:hover{background:#3398ff}._button_primary_10caf_48:active{background:#66b2ff}._button_primary_10caf_48 ._svg_10caf_45 *{fill:#fff}._button_link_10caf_61{background:transparent;color:#007eff}._button_link_10caf_61:hover{color:#3398ff}._button_link_10caf_61:active{color:#66b2ff}._button_link_10caf_61 ._svg_10caf_45 *{fill:#007eff}._button_link_10caf_61 ._svg_10caf_45 *:hover{fill:#3398ff}._button_link_10caf_61 ._svg_10caf_45 *:active{fill:#66b2ff}._button_large_10caf_80{padding:12px 16px}._button_large_10caf_80 *{font-size:16px}._button_medium_10caf_86{padding:8px 16px}._button_medium_10caf_86 *{font-size:16px}._button_small_10caf_92{padding:4px;min-height:24px}._button_small_10caf_92 *{font-size:12px}._flexBox_9xdww_14{flex-flow:unset}._gap_extraTiny_9xdww_18{gap:2px}._gap_tiny_9xdww_22{gap:4px}._gap_extraSmall_9xdww_26{gap:6px}._gap_small_9xdww_30{gap:8px}._gap_medium_9xdww_34{gap:16px}._gap_normal_9xdww_38{gap:24px}._gap_large_9xdww_42{gap:32px}._gap_xLarge_9xdww_46{gap:48px}._gap_xxLarge_9xdww_50{gap:56px}._gap_extraLarge_9xdww_54{gap:64px}._column_9xdww_58{flex-direction:column!important}._flexWrap_9xdww_62{flex-wrap:wrap}._popover_12uvb_1{position:fixed;padding:8px 10px;z-index:2147483647;background:#31363de6;border-radius:4px;color:#fff;font-size:14px}._buttons_12uvb_11{position:fixed;top:0;right:0;padding:8px;z-index:2147483647}._popup_hcu7e_1{position:fixed;z-index:2147483649;background:#ffffffe6;border-radius:4px;color:#000;font-size:14px;line-height:1.286;width:350px;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);box-shadow:0 0 7px -5px #000}._popup_hcu7e_1:before{border-color:rgba(255,255,255,.9) transparent;border-width:0 7px 7px 7px;left:7px;top:-7px;border-style:solid;content:".";display:block;height:0;position:absolute;text-indent:-30000px;width:0}._color_hcu7e_27{width:20px;height:20px;cursor:pointer;flex-shrink:0}._styleContainer_hcu7e_34{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}._extraTiny_dg7lc_14{padding:2px}._extraTinyVR_dg7lc_18{padding-top:2px;padding-bottom:2px}._extraTinyHR_dg7lc_23{padding-left:2px;padding-right:2px}._extraTinyTop_dg7lc_28{padding-top:2px}._extraTinyRight_dg7lc_32{padding-right:2px}._extraTinyBottom_dg7lc_36{padding-bottom:2px}._extraTinyLeft_dg7lc_40{padding-left:2px}._tiny_dg7lc_44{padding:4px}._tinyVR_dg7lc_48{padding-top:4px;padding-bottom:4px}._tinyHR_dg7lc_53{padding-left:4px;padding-right:4px}._tinyTop_dg7lc_58{padding-top:4px}._tinyRight_dg7lc_62{padding-right:4px}._tinyBottom_dg7lc_66{padding-bottom:4px}._tinyLeft_dg7lc_70{padding-left:4px}._extraSmall_dg7lc_74{padding:6px}._extraSmallVR_dg7lc_78{padding-top:6px;padding-bottom:6px}._extraSmallHR_dg7lc_83{padding-left:6px;padding-right:6px}._extraSmallTop_dg7lc_88{padding-top:6px}._extraSmallRight_dg7lc_92{padding-right:6px}._extraSmallBottom_dg7lc_96{padding-bottom:6px}._extraSmallLeft_dg7lc_100{padding-left:6px}._small_dg7lc_104{padding:8px}._smallVR_dg7lc_108{padding-top:8px;padding-bottom:8px}._smallHR_dg7lc_113{padding-left:8px;padding-right:8px}._smallTop_dg7lc_118{padding-top:8px}._smallRight_dg7lc_122{padding-right:8px}._smallBottom_dg7lc_126{padding-bottom:8px}._smallLeft_dg7lc_130{padding-left:8px}._medium_dg7lc_134{padding:16px}._mediumVR_dg7lc_138{padding-top:16px;padding-bottom:16px}._mediumHR_dg7lc_143{padding-left:16px;padding-right:16px}._mediumTop_dg7lc_148{padding-top:16px}._mediumRight_dg7lc_152{padding-right:16px}._mediumBottom_dg7lc_156{padding-bottom:16px}._mediumLeft_dg7lc_160{padding-left:16px}._normal_dg7lc_164{padding:24px}._normalVR_dg7lc_168{padding-top:24px;padding-bottom:24px}._normalHR_dg7lc_173{padding-left:24px;padding-right:24px}._normalTop_dg7lc_178{padding-top:24px}._normalRight_dg7lc_182{padding-right:24px}._normalBottom_dg7lc_186{padding-bottom:24px}._normalLeft_dg7lc_190{padding-left:24px}._large_dg7lc_194{padding:32px}._largeVR_dg7lc_198{padding-top:32px;padding-bottom:32px}._largeHR_dg7lc_203{padding-left:32px;padding-right:32px}._largeTop_dg7lc_208{padding-top:32px}._largeRight_dg7lc_212{padding-right:32px}._largeBottom_dg7lc_216{padding-bottom:32px}._largeLeft_dg7lc_220{padding-left:32px}._xLarge_dg7lc_224{padding:48px}._xLargeVR_dg7lc_228{padding-top:48px;padding-bottom:48px}._xLargeHR_dg7lc_233{padding-left:48px;padding-right:48px}._xLargeTop_dg7lc_238{padding-top:48px}._xLargeRight_dg7lc_242{padding-right:48px}._xLargeBottom_dg7lc_246{padding-bottom:48px}._xLargeLeft_dg7lc_250{padding-left:48px}._xxLarge_dg7lc_254{padding:56px}._xxLargeVR_dg7lc_258{padding-top:56px;padding-bottom:56px}._xxLargeHR_dg7lc_263{padding-left:56px;padding-right:56px}._xxLargeTop_dg7lc_268{padding-top:56px}._xxLargeRight_dg7lc_272{padding-right:56px}._xxLargeBottom_dg7lc_276{padding-bottom:56px}._xxLargeLeft_dg7lc_280{padding-left:56px}._extraLarge_dg7lc_284{padding:64px}._extraLargeVR_dg7lc_288{padding-top:64px;padding-bottom:64px}._extraLargeHR_dg7lc_293{padding-left:64px;padding-right:64px}._extraLargeTop_dg7lc_298{padding-top:64px}._extraLargeRight_dg7lc_302{padding-right:64px}._extraLargeBottom_dg7lc_306{padding-bottom:64px}._extraLargeLeft_dg7lc_310{padding-left:64px}._size_tiny_ldink_23,._size_tiny_ldink_23 *{font-size:12px}._size_small_ldink_27,._size_small_ldink_27 *{font-size:16px}._size_medium_ldink_31,._size_medium_ldink_31 *{font-size:18px}._size_large_ldink_35,._size_large_ldink_35 *{font-size:32px}._weight_thin_ldink_39,._weight_thin_ldink_39 *{font-weight:100}._weight_extraLight_ldink_43,._weight_extraLight_ldink_43 *{font-weight:200}._weight_light_ldink_47,._weight_light_ldink_47 *{font-weight:300}._weight_normal_ldink_51,._weight_normal_ldink_51 *{font-weight:400}._weight_medium_ldink_55,._weight_medium_ldink_55 *{font-weight:500}._weight_semiBold_ldink_59,._weight_semiBold_ldink_59 *{font-weight:600}._weight_bold_ldink_63,._weight_bold_ldink_63 *{font-weight:700}._weight_extraBold_ldink_67,._weight_extraBold_ldink_67 *{font-weight:800}._lineHeight_ldink_71{line-height:100%}._secondary_ldink_75{color:#8e8e8e}._modal_ib2ay_25{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;justify-content:center;align-items:center;z-index:2147483649}._modal_ib2ay_25 ._background_ib2ay_36{position:absolute;top:0;left:0;width:100%;height:100%;transition:.3s;opacity:0;overflow:auto;background-color:color-mix(in srgb,#000000 60%,white 0%);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}._modal_ib2ay_25 ._window_ib2ay_48{min-width:280px;max-width:560px;background:#fff;border-radius:6px;padding:16px;z-index:1;position:relative;opacity:0;transform:scale(.01);transition:.3s;display:flex;flex-direction:column;box-shadow:0 2px 6px 2px #00000026,0 1px 2px #0000004d;overflow:auto}._modal_ib2ay_25 ._window_ib2ay_48 ._loading_ib2ay_64{position:absolute;width:100%;height:100%;top:0;left:0;background:#000000b3}._modal_ib2ay_25 ._window_ib2ay_48 ._loading_ib2ay_64 img{width:100px}._modal_visible_ib2ay_76 ._background_ib2ay_36{opacity:1}._modal_visible_ib2ay_76 ._window_ib2ay_48{opacity:1;transform:scale(1)}._modal_hidden_ib2ay_83 ._background_ib2ay_36{opacity:0}._modal_hidden_ib2ay_83 ._window_ib2ay_48{opacity:0;transform:scale(.01)}._modal_hiddenDone_ib2ay_90 ._background_ib2ay_36{opacity:0}._modal_hiddenDone_ib2ay_90 ._window_ib2ay_48{opacity:0;transform:scale(.01)}._color_13dyv_1{padding:0 8px;border-radius:8px;width:100%;box-shadow:0 0 7px -5px #000;font-weight:800;flex-shrink:0}
+</style><style>._button_10caf_25{border-radius:8px;border:unset;cursor:pointer;transition:.3s}._button_10caf_25:disabled{opacity:.3;cursor:not-allowed}._button_default_10caf_35{background:transparent;color:#43434e}._button_default_10caf_35:hover{background:#f3f4f7}._button_default_10caf_35:active{background:#8e8e8e}._button_default_10caf_35 ._svg_10caf_45 *{fill:#43434e}._button_primary_10caf_48{background:#007eff;color:#fff}._button_primary_10caf_48:hover{background:#3398ff}._button_primary_10caf_48:active{background:#66b2ff}._button_primary_10caf_48 ._svg_10caf_45 *{fill:#fff}._button_link_10caf_61{background:transparent;color:#007eff}._button_link_10caf_61:hover{color:#3398ff}._button_link_10caf_61:active{color:#66b2ff}._button_link_10caf_61 ._svg_10caf_45 *{fill:#007eff}._button_link_10caf_61 ._svg_10caf_45 *:hover{fill:#3398ff}._button_link_10caf_61 ._svg_10caf_45 *:active{fill:#66b2ff}._button_large_10caf_80{padding:12px 16px}._button_large_10caf_80 *{font-size:16px}._button_medium_10caf_86{padding:8px 16px}._button_medium_10caf_86 *{font-size:16px}._button_small_10caf_92{padding:4px;min-height:24px}._button_small_10caf_92 *{font-size:12px}._flexBox_9xdww_14{flex-flow:unset}._gap_extraTiny_9xdww_18{gap:2px}._gap_tiny_9xdww_22{gap:4px}._gap_extraSmall_9xdww_26{gap:6px}._gap_small_9xdww_30{gap:8px}._gap_medium_9xdww_34{gap:16px}._gap_normal_9xdww_38{gap:24px}._gap_large_9xdww_42{gap:32px}._gap_xLarge_9xdww_46{gap:48px}._gap_xxLarge_9xdww_50{gap:56px}._gap_extraLarge_9xdww_54{gap:64px}._column_9xdww_58{flex-direction:column!important}._flexWrap_9xdww_62{flex-wrap:wrap}._popover_12uvb_1{position:fixed;padding:8px 10px;z-index:2147483647;background:#31363de6;border-radius:4px;color:#fff;font-size:14px}._buttons_12uvb_11{position:fixed;top:0;right:0;padding:8px;z-index:2147483647}._popup_hcu7e_1{position:fixed;z-index:2147483649;background:#ffffffe6;border-radius:4px;color:#000;font-size:14px;line-height:1.286;width:350px;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);box-shadow:0 0 7px -5px #000}._popup_hcu7e_1:before{border-color:rgba(255,255,255,.9) transparent;border-width:0 7px 7px 7px;left:7px;top:-7px;border-style:solid;content:".";display:block;height:0;position:absolute;text-indent:-30000px;width:0}._color_hcu7e_27{width:20px;height:20px;cursor:pointer;flex-shrink:0}._styleContainer_hcu7e_34{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}._extraTiny_dg7lc_14{padding:2px}._extraTinyVR_dg7lc_18{padding-top:2px;padding-bottom:2px}._extraTinyHR_dg7lc_23{padding-left:2px;padding-right:2px}._extraTinyTop_dg7lc_28{padding-top:2px}._extraTinyRight_dg7lc_32{padding-right:2px}._extraTinyBottom_dg7lc_36{padding-bottom:2px}._extraTinyLeft_dg7lc_40{padding-left:2px}._tiny_dg7lc_44{padding:4px}._tinyVR_dg7lc_48{padding-top:4px;padding-bottom:4px}._tinyHR_dg7lc_53{padding-left:4px;padding-right:4px}._tinyTop_dg7lc_58{padding-top:4px}._tinyRight_dg7lc_62{padding-right:4px}._tinyBottom_dg7lc_66{padding-bottom:4px}._tinyLeft_dg7lc_70{padding-left:4px}._extraSmall_dg7lc_74{padding:6px}._extraSmallVR_dg7lc_78{padding-top:6px;padding-bottom:6px}._extraSmallHR_dg7lc_83{padding-left:6px;padding-right:6px}._extraSmallTop_dg7lc_88{padding-top:6px}._extraSmallRight_dg7lc_92{padding-right:6px}._extraSmallBottom_dg7lc_96{padding-bottom:6px}._extraSmallLeft_dg7lc_100{padding-left:6px}._small_dg7lc_104{padding:8px}._smallVR_dg7lc_108{padding-top:8px;padding-bottom:8px}._smallHR_dg7lc_113{padding-left:8px;padding-right:8px}._smallTop_dg7lc_118{padding-top:8px}._smallRight_dg7lc_122{padding-right:8px}._smallBottom_dg7lc_126{padding-bottom:8px}._smallLeft_dg7lc_130{padding-left:8px}._medium_dg7lc_134{padding:16px}._mediumVR_dg7lc_138{padding-top:16px;padding-bottom:16px}._mediumHR_dg7lc_143{padding-left:16px;padding-right:16px}._mediumTop_dg7lc_148{padding-top:16px}._mediumRight_dg7lc_152{padding-right:16px}._mediumBottom_dg7lc_156{padding-bottom:16px}._mediumLeft_dg7lc_160{padding-left:16px}._normal_dg7lc_164{padding:24px}._normalVR_dg7lc_168{padding-top:24px;padding-bottom:24px}._normalHR_dg7lc_173{padding-left:24px;padding-right:24px}._normalTop_dg7lc_178{padding-top:24px}._normalRight_dg7lc_182{padding-right:24px}._normalBottom_dg7lc_186{padding-bottom:24px}._normalLeft_dg7lc_190{padding-left:24px}._large_dg7lc_194{padding:32px}._largeVR_dg7lc_198{padding-top:32px;padding-bottom:32px}._largeHR_dg7lc_203{padding-left:32px;padding-right:32px}._largeTop_dg7lc_208{padding-top:32px}._largeRight_dg7lc_212{padding-right:32px}._largeBottom_dg7lc_216{padding-bottom:32px}._largeLeft_dg7lc_220{padding-left:32px}._xLarge_dg7lc_224{padding:48px}._xLargeVR_dg7lc_228{padding-top:48px;padding-bottom:48px}._xLargeHR_dg7lc_233{padding-left:48px;padding-right:48px}._xLargeTop_dg7lc_238{padding-top:48px}._xLargeRight_dg7lc_242{padding-right:48px}._xLargeBottom_dg7lc_246{padding-bottom:48px}._xLargeLeft_dg7lc_250{padding-left:48px}._xxLarge_dg7lc_254{padding:56px}._xxLargeVR_dg7lc_258{padding-top:56px;padding-bottom:56px}._xxLargeHR_dg7lc_263{padding-left:56px;padding-right:56px}._xxLargeTop_dg7lc_268{padding-top:56px}._xxLargeRight_dg7lc_272{padding-right:56px}._xxLargeBottom_dg7lc_276{padding-bottom:56px}._xxLargeLeft_dg7lc_280{padding-left:56px}._extraLarge_dg7lc_284{padding:64px}._extraLargeVR_dg7lc_288{padding-top:64px;padding-bottom:64px}._extraLargeHR_dg7lc_293{padding-left:64px;padding-right:64px}._extraLargeTop_dg7lc_298{padding-top:64px}._extraLargeRight_dg7lc_302{padding-right:64px}._extraLargeBottom_dg7lc_306{padding-bottom:64px}._extraLargeLeft_dg7lc_310{padding-left:64px}._size_tiny_ldink_23,._size_tiny_ldink_23 *{font-size:12px}._size_small_ldink_27,._size_small_ldink_27 *{font-size:16px}._size_medium_ldink_31,._size_medium_ldink_31 *{font-size:18px}._size_large_ldink_35,._size_large_ldink_35 *{font-size:32px}._weight_thin_ldink_39,._weight_thin_ldink_39 *{font-weight:100}._weight_extraLight_ldink_43,._weight_extraLight_ldink_43 *{font-weight:200}._weight_light_ldink_47,._weight_light_ldink_47 *{font-weight:300}._weight_normal_ldink_51,._weight_normal_ldink_51 *{font-weight:400}._weight_medium_ldink_55,._weight_medium_ldink_55 *{font-weight:500}._weight_semiBold_ldink_59,._weight_semiBold_ldink_59 *{font-weight:600}._weight_bold_ldink_63,._weight_bold_ldink_63 *{font-weight:700}._weight_extraBold_ldink_67,._weight_extraBold_ldink_67 *{font-weight:800}._lineHeight_ldink_71{line-height:100%}._secondary_ldink_75{color:#8e8e8e}._modal_ib2ay_25{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;justify-content:center;align-items:center;z-index:2147483649}._modal_ib2ay_25 ._background_ib2ay_36{position:absolute;top:0;left:0;width:100%;height:100%;transition:.3s;opacity:0;overflow:auto;background-color:color-mix(in srgb,#000000 60%,white 0%);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}._modal_ib2ay_25 ._window_ib2ay_48{min-width:280px;max-width:560px;background:#fff;border-radius:6px;padding:16px;z-index:1;position:relative;opacity:0;transform:scale(.01);transition:.3s;display:flex;flex-direction:column;box-shadow:0 2px 6px 2px #00000026,0 1px 2px #0000004d;overflow:auto}._modal_ib2ay_25 ._window_ib2ay_48 ._loading_ib2ay_64{position:absolute;width:100%;height:100%;top:0;left:0;background:#000000b3}._modal_ib2ay_25 ._window_ib2ay_48 ._loading_ib2ay_64 img{width:100px}._modal_visible_ib2ay_76 ._background_ib2ay_36{opacity:1}._modal_visible_ib2ay_76 ._window_ib2ay_48{opacity:1;transform:scale(1)}._modal_hidden_ib2ay_83 ._background_ib2ay_36{opacity:0}._modal_hidden_ib2ay_83 ._window_ib2ay_48{opacity:0;transform:scale(.01)}._modal_hiddenDone_ib2ay_90 ._background_ib2ay_36{opacity:0}._modal_hiddenDone_ib2ay_90 ._window_ib2ay_48{opacity:0;transform:scale(.01)}._color_13dyv_1{padding:0 8px;border-radius:8px;width:100%;box-shadow:0 0 7px -5px #000;font-weight:800;flex-shrink:0}
+</style></head>
+<body style="">
+
+<div class="wrap">
+  <header class="bar">
+    <div class="logo"><span style="font-style:normal; font-weight:600">со мной</span> <em>всё&nbsp;так</em></div>
+    <nav>
+      <a href="#program">Программа</a>
+      <a href="#author">Автор</a>
+      <a href="#price">Запись</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn" href="https://t.me/ann_miro" target="_blank" rel="noopener"><span>В клуб</span><span class="arr">→</span></a>
+  </header>
+</div>
+
+<!-- HERO -->
+<div class="wrap">
+<div class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="eyebrow" style="margin-bottom: 24px;">Книжный клуб · Первый поток · Май 2026</div>
+      <h1>
+        <span class="so">со&nbsp;мной</span>
+        <span class="with">всё&nbsp;</span>
+        <span class="ok"><span class="it">так.</span></span>
+      </h1>
     </div>
-    <button id="mbtn">🔊</button>
-  </div>
-
-  <div style="width:100%;max-width:360px;display:flex;flex-direction:column;align-items:center;gap:6px;">
-    <div class="plist" id="m-plist"></div>
-    <div class="stline" id="m-st">Подключение…</div>
-  </div>
-
-  <div class="tw">
-    <button id="tbtn" disabled><div class="bicon">🎙️</div><div class="blbl">TALK</div></button>
-    <div class="thint" id="m-hint">Удерживай кнопку чтобы говорить</div>
-  </div>
-</div>
-
-<div id="toast"></div>
-
-<div id="splash">
-  <div class="sp-logo">🏔️</div>
-  <div class="sp-title">Поболтушки</div>
-  <div class="sp-room-lbl">Комната</div>
-  <div class="sp-room-badge" id="sp-room">—</div>
-  <div class="sp-btn">
-    <span style="font-size:1.9rem">🎙️</span>
-    <span>ВОЙТИ</span>
-  </div>
-  <div class="sp-hint">Нажми чтобы войти</div>
-</div>
-
-<div id="dbg">
-  <div id="dbg-head">
-    <span>🔧 Debug</span>
-    <div style="display:flex;gap:6px">
-      <button id="dbg-copy">Копировать</button>
-      <button id="dbg-clear">Сброс</button>
-      <button id="dbg-close">Закрыть</button>
+    <div class="hero-side">
+      <div class="hero-image">
+        <img src="assets/book-cover.png" alt="Обложка книги «Культ красоты», Анастасия Торопова">
+      </div>
     </div>
   </div>
-  <div id="dbg-body">
-    <div id="dbg-peers"></div>
-    <div id="dbg-log"></div>
+
+  <p class="hero-desc" style="">
+    Книжный клуб, после которого ты перестанешь считать себя проблемой&nbsp;— и начнёшь жить свою жизнь. Обсуждаем идеи книги&nbsp;<em style="font-size: clamp(20px, 2.4vw, 28px);">«Культ красоты»</em><span style="font-size: clamp(20px, 2.4vw, 28px);">&nbsp;вместе с автором Анастасией Тороповой.</span><span style="color: rgb(0, 0, 0); font-family: &quot;Helvetica Neue&quot;; font-size: 13px;"><br></span><br></p>
+
+  <div class="hero-meta">
+    <div class="m"><div class="k">Встреч</div><div class="v"><span class="it">5</span></div></div>
+    <div class="m"><div class="k">Формат</div><div class="v">Онлайн</div></div>
+    <div class="m"><div class="k">Старт</div><div class="v">13 мая</div></div>
+    <div class="m"><div class="k">Круг</div><div class="v"><span class="it">Только</span> женщины</div></div>
+  </div>
+
+  <div class="hero-cta">
+    <a class="btn" href="https://t.me/ann_miro" target="_blank" rel="noopener"><span>Хочу в клуб</span><span class="arr">→</span></a>
+    <a class="btn btn-ghost" href="#program"><span>Посмотреть программу</span></a>
+  </div>
+</div>
+</div>
+
+<!-- MARQUEE -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>Со мной всё так</span><span class="dot"></span>
+    <span>Со мной всё так</span><span class="dot"></span>
+    <span>Со мной всё так</span><span class="dot"></span>
+    <span>Со мной всё так</span><span class="dot"></span>
+    <span>Со мной всё так</span><span class="dot"></span>
+    <span>Со мной всё так</span><span class="dot"></span>
+    <span>Со мной всё так</span><span class="dot"></span>
+    <span>Со мной всё так</span><span class="dot"></span>
+    <span>Со мной всё так</span><span class="dot"></span>
+    <span>Со мной всё так</span><span class="dot"></span>
+    <span>Со мной всё так</span><span class="dot"></span>
+    <span>Со мной всё так</span><span class="dot"></span>
   </div>
 </div>
 
-<script>
-// ── Конфиг ───────────────────────────────────────────────────────────────────
-const DB = 'https://racia-275ba-default-rtdb.europe-west1.firebasedatabase.app';
-const ICE_FALLBACK = [
-  { urls: 'stun:stun.l.google.com:19302' },
-  { urls: 'turn:a.relay.metered.ca:80',
-    username:'487b1823f1e0ce14f1f2b901', credential:'ehdRPgYE8003rQWu' },
-  { urls: 'turn:a.relay.metered.ca:443?transport=tcp',
-    username:'487b1823f1e0ce14f1f2b901', credential:'ehdRPgYE8003rQWu' },
-  { urls: 'turns:a.relay.metered.ca:443',
-    username:'487b1823f1e0ce14f1f2b901', credential:'ehdRPgYE8003rQWu' },
-];
-let ICE_SERVERS = ICE_FALLBACK;
-async function loadIceServers() {
-  try {
-    const r = await fetch('https://annmiro.metered.live/api/v1/turn/credentials?apiKey=3441f7c12cc6972242a1364ddba767e06a7c');
-    const s = await r.json();
-    if (s && s.length) { ICE_SERVERS = s; dbg('TURN-api✓', s.length+' servers'); }
-  } catch(e) { dbg('TURN-api-fallback', String(e)); }
-}
-loadIceServers();
+<!-- PAINS -->
+<section class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">02 — Узнавание</div>
+      <h2 style="">Скажи честно&nbsp;— тебе это тоже&nbsp;<span class="it">знакомо?</span></h2>
+    </div>
 
-// ── Смешные имена ─────────────────────────────────────────────────────────────
-const ADJ  = ['Быстрый','Лихой','Дерзкий','Крутой','Смелый','Дикий','Хитрый','Ловкий','Шустрый','Удалой','Бравый','Лютый','Сонный','Хмурый','Весёлый','Мощный','Пушистый','Звонкий','Ярый','Хрустящий'];
-const NOUN = ['Бобёр','Лось','Медведь','Заяц','Волк','Лиса','Бурундук','Сурок','Орёл','Сова','Ёж','Кабан','Рысь','Соболь','Снегирь','Зубр','Барсук','Суслик','Хомяк','Глухарь'];
-function funnyName() { return ADJ[Math.random()*ADJ.length|0] + ' ' + NOUN[Math.random()*NOUN.length|0]; }
+    <div class="pains-grid">
+      <div class="col">
+        <div class="bubble" style="">«С моим телом что-то не так. Так было всегда»<span class="tail"></span></div>
+        <div class="bubble">«Шкаф набит&nbsp;— надеть нечего. Деньги уходят куда-то. Ощущение, что я всё делаю не так, никуда не уходит.»<span class="tail"></span></div>
+        <div class="bubble">«Я не понимаю, чего хочу на самом деле. Своего&nbsp;— или того, что мне сказали хотеть?»<span class="tail"></span></div>
+      </div>
+      <div class="col">
+        <div class="bubble alt r" style="">«Я опять виновата. За шоколад. За пропущенную тренировку. За покупку, которую не планировала. За то, что выгляжу не так»<span class="tail"></span></div>
+        <div class="bubble r">«Я читаю про любовь к себе. Слушаю про принятие. Хожу на практики. И всё равно чувствую: я недостаточно стараюсь.»<span class="tail"></span></div>
+        <div class="bubble r">«Я устала работать над собой. Устала быть лучшей версией себя. Просто устала.»<span class="tail"></span></div>
+      </div>
+    </div>
 
-// ── Утилиты ──────────────────────────────────────────────────────────────────
-const $ = id => document.getElementById(id);
-function toast(msg) { const el=$('toast'); el.textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2200); }
+    <div class="turn">
+      <div class="turn-eyebrow">Поворот</div>
+      <h3>Если что-то из этого&nbsp;— про тебя, у нас есть кое-что важное.<br>Ты <s>не сломана</s>. Ты <s>не слабая</s>. <b>С тобой всё <span class="it">так.</span></b></h3>
+    </div>
+  </div>
+</section>
 
-function fbUrl(room,path) { return DB+'/rooms/'+room+'/'+path+'.json'; }
-function fbPut(room,path,val) { return fetch(fbUrl(room,path),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(val)}); }
-function fbDel(room,path)    { return fetch(fbUrl(room,path),{method:'DELETE'}); }
-function fbListen(room,path,cb,{pollMs=0}={}) {
-  const isSignals = path.startsWith('signals/');
-  let es, reconnTimer, pollTimer, sseOk = false;
-  function connect() {
-    if (es) { try{es.close();}catch(_){} }
-    clearTimeout(reconnTimer);
-    sseOk = false;
-    es = new EventSource(fbUrl(room,path)+'?stream=true');
-    es.addEventListener('put', e => {
-      sseOk = true;
-      const d=JSON.parse(e.data);
-      if(path==='users') dbg('SSE-users put', 'path='+d.path+' data='+(d.data?JSON.stringify(d.data).slice(0,60):'null'));
-      if(isSignals && d.data) {
-        const inner = d.path==='/' ? Object.values(d.data)[0] : d.data;
-        dbg('SSE-signal put', 'path='+d.path+' type='+(inner&&inner.type||'?'));
-      }
-      cb(d.path,d.data);
-    });
-    es.addEventListener('error', ()=> {
-      dbg('SSE-error', path.slice(0,20));
-      // Переподключаемся через 2с — не ждём медленный браузерный backoff
-      reconnTimer = setTimeout(connect, 2000);
-    });
-    es.addEventListener('open',  ()=> { sseOk = true; dbg('SSE-open',  path.slice(0,20)); });
-  }
-  // Polling-фоллбэк: если SSE не работает — делаем обычный GET каждые pollMs мс
-  function poll() {
-    if (pollMs <= 0) return;
-    if (!sseOk) {
-      fetch(fbUrl(room,path))
-        .then(r=>r.json())
-        .then(data=>{ dbg('poll-fallback', path.slice(0,20)); cb('/',data); })
-        .catch(()=>{});
-    }
-    pollTimer = setTimeout(poll, pollMs);
-  }
-  connect();
-  if (pollMs > 0) setTimeout(poll, pollMs); // первый poll через pollMs
-  return { close: ()=>{ clearTimeout(reconnTimer); clearTimeout(pollTimer); if(es) es.close(); } };
-}
+<!-- WHY -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">03 — Откуда</div>
+      <h2>Тогда откуда это <span class="it">берётся?</span></h2>
+    </div>
 
-// ── Комната и режим ──────────────────────────────────────────────────────────
-const P = new URLSearchParams(window.location.search);
-let room = P.get('room');
-if (!room) {
-  room = Math.random().toString(36).slice(2,8).toUpperCase();
-  const u = new URL(location.href); u.searchParams.set('room',room); history.replaceState({},'',u);
-}
-$('m-room').textContent = room;
-$('sp-room').textContent = room;
+    <div class="two-col">
+      <div>
+        <p style="">Потому что мы живём в культуре, которая <strong style="">зарабатывает на твоей недостаточности.</strong></p>
+        <p>«Ты недостаточна — купи это» — реклама, индустрия красоты, диет-культура, духовные практики, соцсети, романтические сценарии. Всё это&nbsp;— не случайно. Это <strong>система.</strong> <span style="color: var(--accent);">И у неё есть механизмы.</span></p>
+        <div class="system-chips" style="margin-top: 24px;">
+          <span class="chip">Индустрия красоты</span>
+          <span class="chip">Диет-культура</span>
+          <span class="chip">Саморазвитие</span>
+          <span class="chip x">Соцсети</span>
+          <span class="chip">Реклама</span>
+          <span class="chip">Будь собой</span>
+        </div>
+      </div>
+      <div>
+        <div class="pull-card">Когда понимаешь <span class="accent">механизм</span>&nbsp;— он перестаёт работать.</div>
+      </div>
+    </div>
+  </div>
+</section>
 
-// Открытый режим: ?open=1 — кнопка-переключатель, не нужно удерживать
-const OPEN_MODE = P.get('open') === '1';
+<!-- PHILOSOPHY -->
+<section class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">04 — Метод</div>
+      <h2>Почему книга? <span class="it">Почему философия?</span></h2>
+    </div>
 
-// ── Debug — объявляем ДО сплэша, чтобы не было TDZ-ошибки ───────────────────
-const DEBUG_MODE = P.get('debug') === '1';
-// Загружаем предыдущий лог из sessionStorage (не теряется при обновлении страницы)
-let dbgLog = [];
-try {
-  const saved = sessionStorage.getItem('racia_dbglog');
-  if (saved) {
-    dbgLog = JSON.parse(saved);
-    dbgLog.unshift({sec:'---', event:'PAGE-RELOAD', detail: new Date().toLocaleTimeString()});
-  }
-} catch(_) {}
-const T0 = Date.now();
-function dbg(event, detail='') {
-  const sec = ((Date.now()-T0)/1000).toFixed(1);
-  dbgLog.unshift({sec, event, detail});
-  if (dbgLog.length > 120) dbgLog.length = 120;
-  try { sessionStorage.setItem('racia_dbglog', JSON.stringify(dbgLog.slice(0,120))); } catch(_) {}
-  if ($('dbg').classList.contains('on')) renderDbg();
-}
+    <div class="two-col">
+      <p>Психология говорит «работай над собой». Философия задаёт другой вопрос: <strong>а зачем вообще это «работай над собой» придумали?</strong></p>
+      <p>Философия&nbsp;— инструмент, чтобы увидеть систему <em>снаружи</em>, а не изнутри. <strong>Не лекция. Разговор.</strong> С практиками, дискуссиями и пространством, где можно говорить честно.</p>
+    </div>
 
-// ── AudioContext на уровне модуля — разблокируется через тап на сплэше ───────
-let audioCtx = null;
-function getAudioCtx() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  return audioCtx;
-}
+    <div class="stats">
+      <div class="stat-card"><div class="n"><span class="it">5</span></div><div class="l">живых встреч по 90&nbsp;минут</div></div>
+      <div class="stat-card"><div class="n"><span class="it">Только</span></div><div class="l">женский круг&nbsp;— пространство, где можно быть честной</div></div>
+    </div>
+  </div>
+</section>
 
-// Глобальный хук: startApp заполняет его после инициализации
-window._tryPlayAll = null;
+<!-- OUTCOMES -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">05 — После</div>
+      <h2>После клуба <span class="it">ты:</span></h2>
+    </div>
 
-// gestureReady: true после клика на splash (или сразу в debug-режиме).
-// Офферы не отправляются пока false — чтобы ontrack гарантированно приходил ПОСЛЕ gesture.
-let gestureReady = false;
-const pendingOfferUIDs = new Set(); // UIDs ожидающие sendOffer
-window._onGestureReady = null; // startApp заполняет после инициализации
+    <div class="outcomes">
+      <div class="outcome-card"><span class="num">01</span><p style="">«С моим телом что-то не так». Перестанешь стыдиться своего тела, фигуры, лица, потому что поймешь механизмы стоящие за этим.</p></div>
+      <div class="outcome-card"><span class="num">02</span><p style="">Научишься отличать свои желания от маркетинговых импульсов&nbsp;— и начнёшь тратить деньги на одежду и косметику осознаннее.</p></div>
+      <div class="outcome-card"><span class="num">03</span><p style="">Станет легче с чувством вины за то, что ты делаешь что-то не так в жизни относительно себя и найдешь свое "можно"</p></div>
+      <div class="outcome-card"><span class="num">04</span><p style="">Разберёшь, какие любовные и сексуальные сценарии навязаны культурой и поймешь как выйти из токсичных отношений.&nbsp;</p></div>
+      <div class="outcome-card"><span class="num">05</span><p style="">Увидишь, как «забота о себе» превратилась в новую форму дисциплины&nbsp;— и разрешишь себе "не стараться"!</p></div>
+      <div class="outcome-card"><span class="num">06</span><p style="">Выйдешь из ловушки идеи «быть собой»&nbsp;— и найдёшь точку опоры, не зависящую от трендов и чужих ожиданий.</p></div>
+    </div>
+  </div>
+</section>
 
-// ── Сплэш: тап разблокирует AudioContext до прихода любого звука ─────────────
-(function initSplash() {
-  const splash = $('splash');
-  function enterRoom() {
-    const ctx = getAudioCtx();
-    dbg('splash-enter', 'ctx='+ctx.state);
-    ctx.resume().then(() => {
-      dbg('ctx-resumed', ctx.state);
-      if (window._tryPlayAll) window._tryPlayAll();
-    }).catch(()=>{});
-    splash.classList.add('out');
-    setTimeout(() => { splash.style.display = 'none'; }, 380);
-    splash.removeEventListener('click',    enterRoom);
-    splash.removeEventListener('touchend', onTouch);
-    // Разблокируем отложенные офферы
-    gestureReady = true;
-    if (window._onGestureReady) window._onGestureReady();
-  }
-  function onTouch(e) { e.preventDefault(); enterRoom(); }
-  // В debug-режиме сплэш пропускается автоматически — gesture считается выданным сразу
-  if (DEBUG_MODE) {
-    gestureReady = true;
-    splash.style.display = 'none';
-    dbg('splash-auto-skip', 'debug mode');
-  } else {
-    splash.addEventListener('click',    enterRoom);
-    splash.addEventListener('touchend', onTouch);
-  }
-})();
-function iceClass(state) {
-  if (state==='connected'||state==='completed') return 'ice-connected';
-  if (state==='checking'||state==='new') return 'ice-checking';
-  if (state==='failed'||state==='disconnected'||state==='closed') return 'ice-failed';
-  return 'ice-new';
-}
-function valClass(v) {
-  if (!v || v==='null' || v==='ended' || v==='failed' || v==='disconnected' || v==='closed' || v==='recvonly' || v==='inactive') return 'bad';
-  if (v==='checking'||v==='new'||v==='have-local-offer'||v==='have-remote-offer') return 'mid';
-  return 'ok';
-}
-function renderDbg() {
-  const pc_el = $('dbg-peers');
-  const peerList = Object.entries(typeof peers!=='undefined'?peers:{});
-  pc_el.innerHTML = peerList.length ? '' : '<div style="color:#555;font-size:11px">Нет соединений</div>';
-  peerList.forEach(([uid, {pc}]) => {
-    const name = (typeof presence!=='undefined'&&presence[uid]) ? presence[uid].name : uid.slice(0,6);
-    const ice  = pc.iceConnectionState;
-    const conn = pc.connectionState;
-    const sig  = pc.signalingState;
-    const senders = pc.getSenders();
-    const recvs   = pc.getReceivers();
-    const sndTrack = senders[0]?.track;
-    const rcvTrack = recvs[0]?.track;
-    const sndInfo = sndTrack ? `${sndTrack.kind} ${sndTrack.readyState} en=${sndTrack.enabled}` : 'null';
-    const rcvInfo = rcvTrack ? `${rcvTrack.kind} ${rcvTrack.readyState}` : 'null';
-    const div = document.createElement('div');
-    div.className = 'dbg-peer '+iceClass(ice);
-    div.innerHTML = `<div class="dbg-pname">${name} <span style="color:#444;font-weight:normal">${uid.slice(0,6)}</span></div>
-      <div class="dbg-row"><span class="dbg-lbl">ICE:</span><span class="dbg-val ${valClass(ice)}">${ice}</span></div>
-      <div class="dbg-row"><span class="dbg-lbl">conn:</span><span class="dbg-val ${valClass(conn)}">${conn}</span></div>
-      <div class="dbg-row"><span class="dbg-lbl">signal:</span><span class="dbg-val ${valClass(sig)}">${sig}</span></div>
-      <div class="dbg-row"><span class="dbg-lbl">send:</span><span class="dbg-val ${valClass(sndInfo)}">${sndInfo}</span></div>
-      <div class="dbg-row"><span class="dbg-lbl">recv:</span><span class="dbg-val ${valClass(rcvInfo)}">${rcvInfo}</span></div>`;
-    pc_el.appendChild(div);
-  });
-  const log_el = $('dbg-log');
-  log_el.innerHTML = dbgLog.map(e=>`<div class="dbg-entry"><span class="t">${e.sec}s</span><span class="ev">${e.event}</span>${e.detail?' <span class="detail">'+e.detail+'</span>':''}</div>`).join('');
-}
+<!-- PROGRAM -->
+<section id="program" class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">06 — Программа</div>
+      <h2 style="">Пять встреч&nbsp;— <span class="it" style="">пять шагов к себе</span></h2>
+    </div>
 
-if (DEBUG_MODE) { $('dbg').classList.add('on'); setInterval(renderDbg, 1000); }
-$('dbg-close').addEventListener('click', ()=>$('dbg').classList.remove('on'));
-$('dbg-clear').addEventListener('click', ()=>{ dbgLog.length=0; try{sessionStorage.removeItem('racia_dbglog');}catch(_){} renderDbg(); $('dbg-clear').textContent='✓ Сброшен'; setTimeout(()=>{ $('dbg-clear').textContent='Сброс'; },1500); });
-$('dbg-copy').addEventListener('click', ()=>{
-  const peerLines = Object.entries(typeof peers!=='undefined'?peers:{}).map(([uid,{pc}])=>{
-    const s=pc.getSenders(); const r=pc.getReceivers();
-    return `  PEER ${uid.slice(0,6)}: ice=${pc.iceConnectionState} conn=${pc.connectionState} sig=${pc.signalingState}`
-      +`\n    send=${s.map(snd=>snd.track?snd.track.kind+'/'+snd.track.readyState+'/en='+snd.track.enabled:'null').join(',')}`
-      +`\n    recv=${r.map(rcv=>rcv.track?rcv.track.kind+'/'+rcv.track.readyState:'null').join(',')}`;
-  }).join('\n');
-  const logLines = dbgLog.map(e=>`${e.sec}s ${e.event} ${e.detail}`).join('\n');
-  const txt = '=== PEERS ===\n'+(peerLines||'none')+'\n\n=== LOG ===\n'+logLines;
-  navigator.clipboard.writeText(txt).then(()=>{ $('dbg-copy').textContent='✓ Скопировано!'; setTimeout(()=>{ $('dbg-copy').textContent='Копировать'; },2000); }).catch(()=>alert(txt));
-});
-let tapCount=0, tapTimer=0;
-document.querySelector('.hd-title').addEventListener('click', ()=>{
-  tapCount++; clearTimeout(tapTimer);
-  tapTimer = setTimeout(()=>tapCount=0, 800);
-  if (tapCount>=5) { tapCount=0; $('dbg').classList.toggle('on'); renderDbg(); setInterval(renderDbg,1000); }
-});
+    <div class="program-meta">
+      <span>Каждую среду</span>
+      <span>13 мая — 10 июня</span>
+      <span>90 минут</span>
+      <span>Онлайн</span>
+    </div>
 
-function copyLink() {
-  navigator.clipboard.writeText(location.href).then(()=>{
-    toast('Ссылка скопирована!');
-    $('m-chint').classList.add('on');
-    setTimeout(()=>$('m-chint').classList.remove('on'),2200);
-  });
-}
-$('m-room').addEventListener('click', copyLink);
+    <div class="session-card">
+      <div><div class="ord"><em>01</em></div><div class="date">13 мая · ср</div></div>
+      <div>
+        <h3 style=""><div><span style="font-size: 31.2px;">Тело как текст:</span></div><div><span style="font-size: 31.2px;">как перестать себя критиковать</span></div></h3>
+        <p style="">Введение в философию телесности, разбор культурных механизмов, которые формируют наши представления о собственном теле.</p>
+        <div class="takeaway"><b>Что унесёшь</b><p style="">Узнаешь, как культура сформировала твои представления о своем теле, и почему научила быть собой вечно недовольной.&nbsp;</p></div>
+      </div>
+    </div>
 
-// ── Имя из localStorage или генерируем ────────────────────────────────────────
-let myName = localStorage.getItem('racia_name') || funnyName();
-localStorage.setItem('racia_name', myName);
+    <div class="session-card">
+      <div><div class="ord"><em>02</em></div><div class="date">20 мая · ср</div></div>
+      <div>
+        <h3 style="">Еда, косметика, одежда: экономим деньги на покупках</h3>
+        <p style="">Как вещи вокруг нас формируют тревогу, желания и ощущение «недостаточности»</p>
+        <div class="takeaway"><b>Что унесёшь</b><p style="">Научишься распознавать скрытые механизмы идеологий в повседневной жизни. И ты наконец увидишь разницу между тем, что желаешь ты — и чего хотят от тебя.</p></div>
+      </div>
+    </div>
 
-// ── Старт сразу ─────────────────────────────────────────────────────────────
-startApp(myName);
+    <div class="session-card">
+      <div><div class="ord"><em>03</em></div><div class="date">27 мая · ср</div></div>
+      <div>
+        <h3 style="">Три вида красоты, которые мы видим вокруг</h3>
+        <p style="">Какие три типа красоты сегодня конкурируют за твое тело в обществе?</p>
+        <div class="takeaway"><b>Что унесёшь</b><p style="">Увидишь, что настоящая женственность и идеальное тело это исторически меняющиеся конструкции. Научишься распознавать три идеологии 21 века, предлагающиеся противоположные взгляды на красоту - модерн, постмодерн и метамодерн. После занятия ты узнаешь, кто ты - модернистка, постмодернистка или метамодернистка.</p></div>
+      </div>
+    </div>
 
-// ════════════════════════════════════════════════════════════════════════════
-async function startApp(initialName) {
-  const myUid = localStorage.getItem('racia_uid') || Math.random().toString(36).slice(2,10);
-  localStorage.setItem('racia_uid', myUid);
+    <div class="session-card">
+      <div><div class="ord"><em>04</em></div><div class="date">3 июня · ср</div></div>
+      <div>
+        <h3 style="">Любовь и секс: как мы строим отношения</h3>
+        <p style="">Как культура учит нас быть сексуальными и строить отношения</p>
+        <div class="takeaway"><b>Что унесёшь</b><p style="">Узнаешь как культурные установки управляют нашими представлениями об отношениях и сексуальности. Перестанешь испытывать чувство вины за "неправильные" желания. Распознаешь в какие игры играешь ты, а в какие твой партнер, возможно, это причина вашего недопонимания?</p></div>
+      </div>
+    </div>
 
-  const presence = {}, peers = {};
-  let muted=false, talking=false, localStream=null;
-  let currentMyName = initialName;
-  let isEditing = false;
+    <div class="session-card">
+      <div><div class="ord"><em>05</em></div><div class="date">10 июня · ср</div></div>
+      <div>
+        <h3 style="">Красота не на продажу: восстановливаем связь с телом</h3>
+        <p style="">Как разорвать цикл самоулучшений и найти точку опоры за пределами чужих ожиданий.</p>
+        <div class="takeaway"><b>Что унесёшь</b><p style="">Найдешь телесные практики, которые помогут восстановить связь с телом и заново переоткрыть свою телесность, исходя из индивидуальных ценностей.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-  const tbtn=$('tbtn'), mbtn=$('mbtn');
+<!-- INCLUDES -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">07 — Состав</div>
+      <h2 style="">Что ты <span class="it">получаешь</span></h2>
+    </div>
 
-  function setStatus(txt, isTx=false) { const el=$('m-st'); el.textContent=txt; el.classList.toggle('tx',isTx); }
+    <div class="includes">
+      <div class="inc-card"><h4>5 живых онлайн-встреч</h4><p>Каждая среда с 13 мая по 10 июня, по 90 минут.</p></div>
+      <div class="inc-card"><h4>Безлимитный доступ к&nbsp;записям</h4><p>На Rutube — смотри когда угодно, пересматривай, возвращайся.</p></div>
+      <div class="inc-card"><h4>Закрытый чат</h4><p>Для разговоров, вопросов, обсуждений между встречами.</p></div>
+    </div>
+  </div>
+</section>
 
-  // ── Рендер списка участников ─────────────────────────────────────────────
-  function renderList() {
-    if (isEditing) return;
-    const c=$('m-plist'); c.innerHTML='';
-    const sorted = [[myUid, presence[myUid]], ...Object.entries(presence).filter(([uid])=>uid!==myUid)];
-    sorted.forEach(([uid, p]) => {
-      if (!p || !p.name) return;
-      const { name, speaking } = p;
-      const isMe = uid === myUid;
-      const div = document.createElement('div');
-      div.className = 'pi' + (speaking?' speaking':'') + (isMe?' me-row':'');
-      const dot = document.createElement('div');
-      dot.className = 'pd '+(isMe?'me':speaking?'speaking':'online');
-      const nm = document.createElement('div'); nm.className='pname'; nm.textContent=name;
-      const tag = document.createElement('div');
-      if (isMe) { tag.className='ptag'; tag.textContent='ты ✏️'; }
-      else if (speaking) { tag.className='pspk'; tag.textContent='● говорит'; }
-      div.append(dot, nm, tag);
-      if (isMe) div.addEventListener('click', startEditing);
-      c.appendChild(div);
-    });
-    if (!talking) setStatus('Онлайн: '+Object.keys(presence).length+' чел.');
-  }
+<!-- AUTHOR -->
+<section id="author" class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">08 — Автор</div>
+      <h2>Кто <span class="it">говорит</span></h2>
+    </div>
 
-  // ── Редактирование имени ─────────────────────────────────────────────────
-  function startEditing() {
-    if (isEditing) return;
-    isEditing = true;
-    const c = $('m-plist');
-    const rows = c.querySelectorAll('.pi');
-    const myRow = Array.from(rows).find(r => r.classList.contains('me-row'));
-    if (!myRow) return;
-    myRow.classList.add('editing');
-    myRow.removeEventListener('click', startEditing);
-    myRow.innerHTML = '';
-    const dot = document.createElement('div'); dot.className='pd me';
-    const input = document.createElement('input');
-    input.className='pname-input'; input.type='text';
-    input.value=currentMyName; input.maxLength=18;
-    input.placeholder='Твоё имя';
-    input.autocomplete='off'; input.autocorrect='off'; input.spellcheck=false;
-    const btn = document.createElement('button'); btn.className='save-btn'; btn.textContent='Готово';
-    const save = () => {
-      const newName = input.value.trim();
-      if (newName && newName !== currentMyName) {
-        currentMyName = newName; myName = newName;
-        localStorage.setItem('racia_name', newName);
-        if (presence[myUid]) presence[myUid].name = newName;
-        fbPut(room,'users/'+myUid+'/name', newName);
-      }
-      isEditing = false; renderList();
-    };
-    btn.addEventListener('click', save);
-    input.addEventListener('keydown', e => { if(e.key==='Enter'){input.blur();} if(e.key==='Escape'){isEditing=false;renderList();} });
-    input.addEventListener('blur', () => setTimeout(save, 200));
-    myRow.append(dot, input, btn);
-    setTimeout(() => { input.focus(); input.select(); }, 50);
-  }
+    <div class="author-card">
+      <div class="author-photo">
+        <img src="assets/author.png" alt="Анастасия Торопова">
+      </div>
+      <div>
+        <div class="press-strip">
+          <span class="press-label">Публикации</span>
+          <span class="press-links">
+            <a href="https://www.forbes.ru/forbes-woman/558960-igra-v-podlinnost-kak-menalos-otnosenie-k-zenskomu-telu-v-xxi-veke" target="_blank" rel="noopener" style="">Forbes</a>
+            <span class="dot"></span>
+            <a href="https://www.marieclaire.ru/stil-zjizny/20-knig-kotorye-stoit-prochitat-etoi-vesnoi/" target="_blank" rel="noopener">Marie&nbsp;Claire</a>
+          </span>
+        </div>
+        <div class="author-name">Анастасия <span class="it">Торопова</span></div>
+        <div class="author-role">Философ · исследователь телесности</div>
+        <div class="author-quote">«В старших классах мне говорили: „Ты как модель“&nbsp;— при росте 176 см. Через эту призму я посмотрела на себя в зеркало и обнаружила, что „ужасно толстая“ — хотя объективно вес был в норме.»</div>
+        <p class="author-bio">Я начала худеть, тратить силы и время, подчиняясь чужому стандарту. Со временем я начала работать со своим образом не как человек, который следит за фигурой, а как философ, исследующий собственный опыт. И вот тогда всё изменилось.</p>
+        <div class="author-credits">
+          <span class="cred"><b>Образование</b>[ философский ф-т, к.ф.н. ]</span>
+          <span class="cred"><b>Опыт</b>[ 10 лет философии телесности ]</span>
+          <span class="cred"><b>Лекции</b>[ публичные лекции, эфиры ]</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-  // ── Кнопка разблокировки звука (появляется если play() заблокирован браузером) ──
-  let unlockBtnShown = false;
-  function showAudioUnlock() {
-    if (unlockBtnShown || document.getElementById('audio-unlock')) return;
-    unlockBtnShown = true;
-    const btn = document.createElement('div');
-    btn.id = 'audio-unlock';
-    btn.innerHTML = '🔊';
-    btn.title = 'Нажми чтобы включить звук';
-    btn.style.cssText = [
-      'position:fixed','bottom:108px','left:50%','transform:translateX(-50%)',
-      'z-index:4000','background:#ff3b30','color:#fff','font-size:1.6rem',
-      'width:60px','height:60px','border-radius:50%',
-      'display:flex','align-items:center','justify-content:center',
-      'cursor:pointer','box-shadow:0 4px 18px rgba(255,59,48,.55)',
-      'animation:unlockPulse 1.1s ease-in-out infinite',
-    ].join(';');
-    if (!document.getElementById('unlock-pulse-style')) {
-      const s = document.createElement('style');
-      s.id = 'unlock-pulse-style';
-      s.textContent = '@keyframes unlockPulse{0%,100%{transform:translateX(-50%) scale(1);opacity:1}50%{transform:translateX(-50%) scale(1.12);opacity:.85}}';
-      document.head.appendChild(s);
-    }
-    document.body.appendChild(btn);
-    dbg('show-unlock-btn', '');
-    const doUnlock = (e) => {
-      if (e) e.preventDefault();
-      btn.remove(); unlockBtnShown = false;
-      dbg('unlock-btn-tap', '');
-      tryPlayAll();
-    };
-    btn.addEventListener('click',    doUnlock);
-    btn.addEventListener('touchend', doUnlock, {passive:false});
-  }
-  function hideAudioUnlock() {
-    const btn = document.getElementById('audio-unlock');
-    if (btn) { btn.remove(); unlockBtnShown = false; }
-  }
+<!-- REVIEWS -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">09 — Голоса</div>
+      <h2>Что говорят <span class="it">о книге</span></h2>
+    </div>
 
-  // ── Микрофон ─────────────────────────────────────────────────────────────
-  async function acquireStream() {
-    if (localStream) return localStream;
-    localStream = await navigator.mediaDevices.getUserMedia({audio:true, video:false});
-    localStream.getAudioTracks().forEach(t => {
-      t.enabled = false;
-      t.onended = () => {
-        localStream = null;
-        if (talking) { stopTalk(); toast(OPEN_MODE ? 'Микрофон отключился — нажми кнопку снова' : 'Микрофон отключился'); }
-      };
-    });
-    return localStream;
-  }
+    <div class="reviews duo">
+      <div class="review-card"><div class="ph"><img src="assets/reader-1.jpg" alt=""></div><p>«Я бы очень хотела пройтись по каждой фразе, абзацу или теме, которую поднимает Анастасия Торопова, чтобы обсудить, донести, удивить или помочь, но это невозможно. А поэтому я бы снова и снова рекомендовала подобные книги девушкам и женщинам, которые хотят любить себя, свое тело и не стать теми загнанными и побитыми зависимыми, которые из-за непонимания и общества, настроенного не под „слабый пол“, сейчас превалируют.»</p><div class="who"><a href="https://t.me/ninanewworld/4610" target="_blank" rel="noopener">Книги и больше</a></div></div>
+      <div class="review-card"><div class="ph"><img src="assets/reader-2.jpg" alt=""></div><p>«У вас греческий нос» или «вы женщина с картин Тициана»&nbsp;— сегодня такие «комплименты» считываются как ловко замаскированное оскорбление. Философ Анастасия Торопова исследует, как культура, идеология и экономика формируют представление о нормальном теле: от древнегреческой женщины как «слабого мужчины» и корсета как инструмента социального неравенства до Ким Кардашьян как идеального тела общества потребления.»</p><div class="who"><a href="https://www.marieclaire.ru/stil-zjizny/20-knig-kotorye-stoit-prochitat-etoi-vesnoi/" target="_blank" rel="noopener">Marie&nbsp;Claire</a></div></div>
+    </div>
+  </div>
+</section>
 
-  // ── Восстановление после возврата на вкладку ──────────────────────────────
-  document.addEventListener('visibilitychange', async () => {
-    if (document.visibilityState !== 'visible') return;
-    doHeartbeat();
-    // Повторный heartbeat через 3с — даём время SSE переподключиться
-    // Это разбудит offer-failsafe у оферрора, даже если наш первый heartbeat пришёл пока его SSE была мертва
-    setTimeout(doHeartbeat, 3000);
-    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
-    if (localStream) {
-      const track = localStream.getAudioTracks()[0];
-      if (!track || track.readyState === 'ended') {
-        localStream = null;
-        if (talking) { stopTalk(); toast(OPEN_MODE ? 'Нажми кнопку — микрофон отключился' : 'Микрофон отключился'); }
-      } else if (talking && track.readyState === 'live') {
-        track.enabled = true;
-      }
-    }
-    for (const [remoteUid, {pc}] of Object.entries(peers)) {
-      if ((pc.connectionState === 'failed' || pc.connectionState === 'disconnected') && pc.signalingState === 'stable') {
-        try {
-          const offer = await pc.createOffer({iceRestart:true});
-          await pc.setLocalDescription(offer);
-          fbPut(room,'signals/'+remoteUid+'/'+myUid,{type:'offer',sdp:offer.sdp});
-        } catch(e) {}
-      }
-    }
-    // Оферрор: если есть пир в presence без соединения — сразу переотправляем оффер
-    // (покрывает кейс когда телефон спал и пропустил все офферы)
-    if (gestureReady) {
-      for (const uid of Object.keys(presence)) {
-        if (uid === myUid || myUid >= uid) continue;
-        const peer = peers[uid];
-        const state = peer ? peer.pc.iceConnectionState : 'none';
-        if (state !== 'connected' && state !== 'completed' && state !== 'checking') {
-          dbg('visibility→sendOffer', uid.slice(0,6)+' was='+state);
-          if (peer) dropPeer(uid);
-          sendOffer(uid);
-        }
-      }
-    }
-  });
+<!-- PRICE -->
+<section id="price" class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">10 — Запись</div>
+      <h2>Участие <span class="it">в клубе</span></h2>
+    </div>
 
-  // ── WebRTC ────────────────────────────────────────────────────────────────
+    <div class="price-card">
+      <div>
+        <div class="price-num">12 000<span class="cur"> ₽</span></div>
+        <div class="price-sub">Уютный женский круг · Первый поток</div>
+        <div style="margin-top: 32px;">
+          <a class="btn" href="https://t.me/ann_miro" target="_blank" rel="noopener"><span>Хочу участвовать</span><span class="arr">→</span></a>
+          <p class="price-cta-note">Напишешь в Telegram&nbsp;— расскажем про оплату и ответим на вопросы.</p>
+        </div>
+      </div>
+      <ul class="price-list">
+        <li>5 живых онлайн-встреч&nbsp;· по средам</li>
+        <li>13 мая — 10 июня</li>
+        <li>Записи на Rutube&nbsp;— навсегда</li>
+        <li>Закрытый чат участниц</li>
+      </ul>
+    </div>
+  </div>
+</section>
 
-  // audioCtx и getAudioCtx — на уровне модуля (разблокированы через сплэш)
-  const peerNodes = {};
-  const VOLUME = 3;
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">11 — Вопросы</div>
+      <h2>Вопросы, которые могут <span class="it">возникнуть</span></h2>
+    </div>
 
-  function playViaCtx(remoteUid, stream) {
-    if (!audioCtx || audioCtx.state !== 'running') return false;
-    if (peerNodes[remoteUid]) { try{peerNodes[remoteUid].disconnect();}catch(_){} }
-    const src = audioCtx.createMediaStreamSource(stream);
-    const gain = audioCtx.createGain();
-    gain.gain.value = muted ? 0 : VOLUME;
-    const comp = audioCtx.createDynamicsCompressor();
-    comp.threshold.value = -24; comp.knee.value = 30;
-    comp.ratio.value = 12; comp.attack.value = 0.003; comp.release.value = 0.25;
-    src.connect(gain); gain.connect(comp); comp.connect(audioCtx.destination);
-    peerNodes[remoteUid] = gain;
-    dbg('ctx-play', remoteUid.slice(0,6)+' vol='+VOLUME);
-    return true;
-  }
+    <div class="faq">
+      <details><summary><span>Я не знакома с философией&nbsp;— это не слишком сложно?</span><span class="icon">+</span></summary><div class="ans">Нет. Анастасия переводит философские идеи на человеческий язык. Здесь не нужны никакие знания&nbsp;— нужно только желание думать и говорить честно.</div></details>
+      <details><summary><span>Нужно ли читать книгу до начала клуба?</span><span class="icon">+</span></summary><div class="ans">Не обязательно. Важные идеи книги мы обсуждаем вместе.</div></details>
+      <details><summary><span>Что если я пропущу встречу?</span><span class="icon">+</span></summary><div class="ans">Все встречи записываются. Доступ на Rutube&nbsp;— без ограничений по времени.</div></details>
+      <details><summary><span>Клуб только для женщин?</span><span class="icon">+</span></summary><div class="ans">Да. Это уютный женский круг&nbsp;— пространство, где можно честно делиться своими проблемами, говорить о сокровенном и быть услышанной без оценки.</div></details>
+      <details><summary><span>Когда старт?</span><span class="icon">+</span></summary><div class="ans">13 мая 2026 года (среда). Всего 5 встреч, последняя&nbsp;— 10 июня.</div></details>
+      <details><summary><span>Как проходит оплата?</span><span class="icon">+</span></summary><div class="ans">Перейди по ссылке выше&nbsp;— напишем в Telegram, ответим на вопросы и пришлём реквизиты.</div></details>
+    </div>
+  </div>
+</section>
 
-  function tryPlayAll() {
-    document.querySelectorAll('audio').forEach(a => {
-      if (a.srcObject) {
-        a.muted = true;
-        a.play().then(() => {
-          a.muted = muted;
-          hideAudioUnlock();
-        }).catch(e => dbg('tryplay-fail', String(e)));
-      }
-    });
-  }
-  // Регистрируем глобально — сплэш вызовет их после gesture
-  window._tryPlayAll = tryPlayAll;
-  window._onGestureReady = () => {
-    // Отправляем офферы которые пришли до gesture (другой уже в комнате когда открыл приложение)
-    dbg('gesture-ready', 'pending='+pendingOfferUIDs.size);
-    pendingOfferUIDs.forEach(uid => { if (presence[uid]) sendOffer(uid); });
-    pendingOfferUIDs.clear();
-  };
+<!-- FINAL -->
+<div class="final">
+  <div class="wrap">
+    <h2>Пять сред. <span class="it">Одна</span> книга. <span class="it">Уютный</span> женский круг.</h2>
+    <p>И, возможно, первый раз за долгое время&nbsp;— ощущение, что <span style="font-style:italic; color: var(--accent)">с тобой всё так.</span></p>
+    <a class="btn" href="https://t.me/ann_miro" target="_blank" rel="noopener"><span>Написать в Telegram</span><span class="arr">→</span></a>
+    <div class="final-meta">Старт 13 мая · Только для женщин</div>
+  </div>
+</div>
 
-  async function makePC(remoteUid) {
-    if (peers[remoteUid]) return peers[remoteUid].pc;
-    const pc = new RTCPeerConnection({iceServers: ICE_SERVERS});
-    peers[remoteUid] = {pc, iceTx:0};
+<footer>
+  <div class="wrap row">
+    <span>© 2026 · Книжный клуб «Со мной всё так»</span>
+    <span>Контакт: <a href="https://t.me/ann_miro" target="_blank" rel="noopener" style="color: var(--ink-2); text-decoration: none; border-bottom: 1px solid var(--rule);">@ann_miro</a></span>
+  </div>
+</footer>
 
-    pc.ontrack = ({track, streams}) => {
-      dbg('ontrack', `${remoteUid.slice(0,6)} kind=${track.kind} state=${track.readyState}`);
-      const stream = (streams && streams[0]) ? streams[0] : new MediaStream([track]);
-      let a = document.getElementById('a-'+remoteUid);
-      if (!a) {
-        a = new Audio(); a.id = 'a-'+remoteUid; a.autoplay = true;
-        a.setAttribute('playsinline', 'true');
-        a.setAttribute('webkit-playsinline', 'true');
-        document.body.appendChild(a);
-      }
-      a.srcObject = stream;
-      a.muted = true;
-      a.play().then(() => {
-        a.muted = muted;
-        hideAudioUnlock();
-        dbg('play-ok', remoteUid.slice(0,6));
-      }).catch(e => {
-        dbg('play-fail', String(e));
-        showAudioUnlock();
 
-        const retryPlay = (ev) => {
-          dbg('play-retry', remoteUid.slice(0,6)+' on='+ev.type);
-          a.muted = true;
-          a.play()
-            .then(() => { a.muted = muted; hideAudioUnlock(); dbg('play-retry-ok', remoteUid.slice(0,6)); })
-            .catch(e2 => dbg('play-retry-fail', String(e2)));
-        };
-        ['click','touchstart','keydown'].forEach(ev =>
-          document.addEventListener(ev, retryPlay, {once:true, passive:true})
-        );
-      });
-    };
 
-    pc.onicecandidate = ({candidate}) => {
-      if(!candidate) return;
-      if(candidate.type==='relay') dbg('ICE-relay✓', candidate.relatedAddress+' via '+candidate.address);
-      const idx = peers[remoteUid].iceTx++;
-      fbPut(room,'ice/'+myUid+'/'+remoteUid+'/'+idx, candidate.toJSON());
-    };
-
-    pc.oniceconnectionstatechange = () => {
-      dbg('ICE→'+pc.iceConnectionState, remoteUid.slice(0,6));
-    };
-
-    // Восстановление соединения при разрыве
-    pc.onconnectionstatechange = async () => {
-      dbg('conn→'+pc.connectionState, remoteUid.slice(0,6));
-      if (peers[remoteUid] && peers[remoteUid].disconnectTimer) {
-        clearTimeout(peers[remoteUid].disconnectTimer);
-        peers[remoteUid].disconnectTimer = null;
-      }
-      if (pc.connectionState === 'failed') {
-        // Только оферрор (myUid < remoteUid) вправе инициировать или перезапускать
-        if (myUid < remoteUid && pc.signalingState === 'stable') {
-          try {
-            const offer = await pc.createOffer({iceRestart:true});
-            await pc.setLocalDescription(offer);
-            fbPut(room,'signals/'+remoteUid+'/'+myUid,{type:'offer',sdp:offer.sdp,ts:Date.now()});
-            dbg('ICE-restart→sent', remoteUid.slice(0,6));
-            if (peers[remoteUid]) peers[remoteUid].offerSentAt = Date.now();
-          } catch(e) {}
-        } else {
-          dbg('conn-fail-reset', remoteUid.slice(0,6));
-          dropPeer(remoteUid);
-          // Только оферрор переотправляет; answerer ждёт входящего offer
-          if (presence[remoteUid] && myUid < remoteUid) sendOffer(remoteUid);
-        }
-      } else if (pc.connectionState === 'disconnected') {
-        if (peers[remoteUid]) {
-          peers[remoteUid].disconnectTimer = setTimeout(async () => {
-            if (!peers[remoteUid] || peers[remoteUid].pc !== pc) return;
-            if (pc.connectionState !== 'disconnected' && pc.connectionState !== 'failed') return;
-            if (myUid < remoteUid && pc.signalingState === 'stable') {
-              // Оферрор: ICE restart на существующем PC — трек и audio сохраняются, звук не прерывается
-              try {
-                dbg('ICE-restart→', remoteUid.slice(0,6));
-                const offer = await pc.createOffer({iceRestart:true});
-                await pc.setLocalDescription(offer);
-                fbPut(room,'signals/'+remoteUid+'/'+myUid,{type:'offer',sdp:offer.sdp,ts:Date.now()});
-                if (peers[remoteUid]) peers[remoteUid].offerSentAt = Date.now();
-              } catch(e) {
-                dbg('ICE-restart-err→reset', String(e).slice(0,40));
-                dropPeer(remoteUid);
-                if (presence[remoteUid]) sendOffer(remoteUid);
-              }
-            } else {
-              // Answerer или non-stable: полный reset; answerer ждёт нового offer от оферрора
-              dbg('disconnect-timeout→reset', remoteUid.slice(0,6));
-              dropPeer(remoteUid);
-              if (presence[remoteUid] && myUid < remoteUid) sendOffer(remoteUid);
-              else if (presence[remoteUid]) dbg('disconnect-wait-offer', remoteUid.slice(0,6));
-            }
-          }, 2000);
-        }
-      }
-    };
-
-    fbListen(room,'ice/'+remoteUid+'/'+myUid,(path,data)=>{
-      if(path==='/'){ if(data) Object.values(data).forEach(c=>pc.addIceCandidate(new RTCIceCandidate(c)).catch(()=>{})); return; }
-      if(data) pc.addIceCandidate(new RTCIceCandidate(data)).catch(()=>{});
-    });
-
-    // DataChannel keepalive: отправляем данные каждые 8с чтобы TURN биндинг не истекал (~13с timeout)
-    const setupKeepalive = (dc) => {
-      let kInterval = null;
-      dc.onopen = () => {
-        kInterval = setInterval(() => {
-          if (dc.readyState === 'open') try { dc.send('k'); } catch(_) {}
-        }, 8000);
-        dbg('ka-open', remoteUid.slice(0,6));
-      };
-      dc.onclose = () => { if (kInterval) { clearInterval(kInterval); kInterval = null; } dbg('ka-close', remoteUid.slice(0,6)); };
-    };
-    if (myUid < remoteUid) {
-      setupKeepalive(pc.createDataChannel('ka'));
-    } else {
-      pc.ondatachannel = ({channel}) => setupKeepalive(channel);
-    }
-
-    return pc;
-  }
-
-  const SESSION_START = Date.now();
-
-  async function sendOffer(remoteUid) {
-    dbg('sendOffer→', remoteUid.slice(0,6));
-    const pc = await makePC(remoteUid);
-    peers[remoteUid].offerSentAt = Date.now();
-    pc.addTransceiver('audio', {direction:'sendrecv'});
-    const offer = await pc.createOffer();
-    const sdp = offer.sdp
-      .replace(/\r\na=sendonly/g, '\r\na=sendrecv')
-      .replace(/\r\na=inactive/g, '\r\na=sendrecv');
-    await pc.setLocalDescription({type:'offer', sdp});
-    fbPut(room,'signals/'+remoteUid+'/'+myUid,{type:'offer',sdp,ts:Date.now()});
-  }
-
-  async function handleOffer(remoteUid, data) {
-    if (data.ts && (Date.now() - data.ts > 90000 || data.ts < SESSION_START - 5000)) { dbg('offer-ignored stale age='+Math.round((Date.now()-data.ts)/1000)+'s', remoteUid.slice(0,6)); return; }
-    // Строгое разделение ролей: кто с меньшим UID — всегда offerer, никогда не принимает чужие offer.
-    // Это предотвращает сброс DTLS-рукопожатия когда другая сторона присылает offer одновременно.
-    if (myUid < remoteUid) {
-      dbg('offer-ignored offerer-role', remoteUid.slice(0,6));
-      return;
-    }
-    const existingP = peers[remoteUid];
-    if (existingP) {
-      const ice = existingP.pc.iceConnectionState;
-      if (ice === 'connected' || ice === 'completed') {
-        dbg('offer-ignored ice='+ice, remoteUid.slice(0,6)); return;
-      }
-    }
-    dbg('handleOffer←', remoteUid.slice(0,6));
-    const pc = await makePC(remoteUid);
-    try {
-      if(pc.signalingState==='have-local-offer') await pc.setLocalDescription({type:'rollback'});
-      if(pc.signalingState!=='stable') { dbg('offer-skip sig='+pc.signalingState, remoteUid.slice(0,6)); return; }
-      await pc.setRemoteDescription(new RTCSessionDescription(data));
-      pc.getTransceivers().forEach(tc => {
-        if (tc.receiver.track && tc.receiver.track.kind === 'audio') {
-          try { tc.direction = 'sendrecv'; } catch(_) {}
-        }
-      });
-      const ans = await pc.createAnswer();
-      const sdp = ans.sdp
-        .replace(/\r\na=recvonly/g, '\r\na=sendrecv')
-        .replace(/\r\na=inactive/g, '\r\na=sendrecv');
-      await pc.setLocalDescription({type:'answer', sdp});
-      fbPut(room,'signals/'+remoteUid+'/'+myUid,{type:'answer',sdp,ts:Date.now()});
-      dbg('answer→sent', remoteUid.slice(0,6));
-    } catch(e) { dbg('handleOffer-ERR', String(e)); }
-  }
-
-  async function handleAnswer(remoteUid, data) {
-    if (data.ts && (Date.now() - data.ts > 90000 || data.ts < SESSION_START - 5000)) { dbg('answer-ignored stale age='+Math.round((Date.now()-data.ts)/1000)+'s', remoteUid.slice(0,6)); return; }
-    dbg('handleAnswer←', remoteUid.slice(0,6));
-    const p = peers[remoteUid];
-    if(!p || p.pc.signalingState==='stable') return;
-    try { await p.pc.setRemoteDescription(new RTCSessionDescription(data)); } catch(e) {}
-  }
-
-  function dropPeer(remoteUid) {
-    if (peers[remoteUid]) {
-      if (peers[remoteUid].disconnectTimer) clearTimeout(peers[remoteUid].disconnectTimer);
-      try{peers[remoteUid].pc.close();}catch(_){}
-      delete peers[remoteUid];
-    }
-    // Не удаляем audio-элемент — только сбрасываем srcObject.
-    // ontrack новой сессии переиспользует элемент (иначе при glare ontrack не срабатывает).
-    const a = document.getElementById('a-'+remoteUid);
-    if (a) a.srcObject = null;
-    if (peerNodes[remoteUid]) { try{peerNodes[remoteUid].disconnect();}catch(_){} delete peerNodes[remoteUid]; }
-  }
-
-  // ── Очистка мусора от прошлой сессии ─────────────────────────────────────
-  try {
-    await Promise.all([
-      fbDel(room,'signals/'+myUid),
-      fbDel(room,'ice/'+myUid),
-      fbDel(room,'talking/'+myUid),
-    ]);
-  } catch(e) {}
-
-  // ── Presence ─────────────────────────────────────────────────────────────
-  presence[myUid] = {name:currentMyName, speaking:false};
-  dbg('registered', 'uid='+myUid.slice(0,6)+' room='+room);
-  fbPut(room,'users/'+myUid,{name:currentMyName,ts:Date.now(),sid:SESSION_START});
-
-  function onLeave() {
-    fetch(fbUrl(room,'users/'+myUid),{method:'DELETE',keepalive:true});
-    fetch(fbUrl(room,'talking/'+myUid),{method:'DELETE',keepalive:true});
-  }
-  window.addEventListener('beforeunload', onLeave);
-  window.addEventListener('pagehide', onLeave);
-
-  const doHeartbeat = () => fbPut(room,'users/'+myUid,{name:currentMyName,ts:Date.now(),sid:SESSION_START});
-  setInterval(doHeartbeat, 8000);
-
-  // ── Детектор ушедших участников ──────────────────────────────────────────
-  const lastSeen = {};
-  setInterval(() => {
-    const now = Date.now();
-    let changed = false;
-    Object.keys(lastSeen).forEach(uid => {
-      if (now - lastSeen[uid] > 28000) {
-        fbDel(room,'users/'+uid); fbDel(room,'talking/'+uid);
-        delete presence[uid]; delete peerSids[uid]; delete lastSeen[uid];
-        dropPeer(uid); changed = true;
-      }
-    });
-    if (changed) renderList();
-  }, 8000);
-
-  async function cleanGhosts() {
-    let all;
-    try { const res = await fetch(fbUrl(room,'users')); all = await res.json(); } catch(e){ return; }
-    if (!all) return;
-    Object.entries(all).forEach(([uid, data]) => {
-      if (uid === myUid) return;
-      if (!data || !data.name) {
-        fbDel(room,'users/'+uid); fbDel(room,'talking/'+uid);
-        delete presence[uid]; delete lastSeen[uid]; dropPeer(uid);
-      }
-    });
-    renderList();
-  }
-  cleanGhosts();
-  setInterval(cleanGhosts, 60000);
-
-  // ── Слушатели Firebase ────────────────────────────────────────────────────
-  const peerSids = {};
-
-  fbListen(room,'users',(path,data)=>{
-    const proc=(uid,d)=>{
-      if(uid===myUid)return;
-      if(!d || !d.name){
-        if(d && !d.name) { fbDel(room,'users/'+uid); fbDel(room,'talking/'+uid); }
-        delete presence[uid]; delete peerSids[uid]; dropPeer(uid);
-      } else {
-        // sidChanged = только если новый sid БОЛЬШЕ (пир реально перезагрузился).
-        // Если новый sid МЕНЬШЕ — протухшая запись из старой сессии, игнорируем.
-        const isStale    = d.sid && peerSids[uid] && d.sid < peerSids[uid];
-        if (isStale) { dbg('SSE-stale-ignored', uid.slice(0,6)); return; }
-        const sidChanged = d.sid && peerSids[uid] && d.sid > peerSids[uid];
-        if (sidChanged) { dropPeer(uid); delete presence[uid]; }
-        if (d.sid) peerSids[uid] = d.sid;
-        lastSeen[uid] = Date.now();
-        if (!presence[uid]) {
-          presence[uid]={name:d.name,speaking:false};
-          if(myUid<uid) {
-            if (gestureReady) {
-              sendOffer(uid);
-            } else {
-              // Gesture ещё не было (пользователь ещё не кликнул splash).
-              // Откладываем offer — ontrack придёт ПОСЛЕ gesture → play() не упадёт.
-              dbg('offer-deferred', uid.slice(0,6));
-              pendingOfferUIDs.add(uid);
-            }
-          }
-          // answerer (myUid > uid) просто ждёт offer от оферрора — никакого fallback,
-          // иначе оба создают have-local-offer и попадают в неразрешимый glare
-        } else {
-          presence[uid].name = d.name;
-          // Если оферрор и offer завис без ответа >8с — переотправляем
-          if (myUid < uid) {
-            if (!peers[uid]) {
-              dbg('offer-failsafe', uid.slice(0,6)+' no PC, resend');
-              sendOffer(uid);
-            } else {
-              const pc = peers[uid].pc;
-              const age = Date.now() - (peers[uid].offerSentAt || 0);
-              if (pc.signalingState === 'have-local-offer' && age > 8000) {
-                dbg('offer-timeout→retry', uid.slice(0,6)+' age='+(age/1000|0)+'s');
-                dropPeer(uid);
-                delete presence[uid];
-                presence[uid]={name:d.name,speaking:false};
-                sendOffer(uid);
-              }
-            }
-          }
-        }
-      }
-    };
-    if(path==='/'){if(data)Object.entries(data).forEach(([uid,d])=>proc(uid,d));}
-    else proc(path.slice(1),data);
-    renderList();
-  },{pollMs:15000}); // polling-фоллбэк для users если SSE умерла (iOS-проблема)
-
-  fbListen(room,'signals/'+myUid,(path,data)=>{
-    const proc=(fromUid,sig)=>{ if(!sig)return; if(sig.type==='offer')handleOffer(fromUid,sig); if(sig.type==='answer')handleAnswer(fromUid,sig); };
-    if(path==='/'){if(data)Object.entries(data).forEach(([uid,s])=>proc(uid,s));}
-    else proc(path.slice(1),data);
-  },{pollMs:10000}); // polling-фоллбэк для signals если SSE умерла
-
-  fbListen(room,'talking',(path,data)=>{
-    const proc=(uid,val)=>{ if(uid===myUid)return; if(presence[uid])presence[uid].speaking=!!val; };
-    if(path==='/'){if(data)Object.entries(data).forEach(([uid,v])=>proc(uid,v));}
-    else proc(path.slice(1),data);
-    renderList();
-    if(!talking){ const sp=Object.entries(presence).find(([uid,p])=>uid!==myUid&&p.speaking); setStatus(sp?sp[1].name+' говорит…':'Онлайн: '+Object.keys(presence).length+' чел.'); }
-  });
-
-  tbtn.disabled=false;
-  renderList();
-  setStatus('Онлайн: 1 чел.');
-
-  const HINT_IDLE = OPEN_MODE ? 'Нажми чтобы начать говорить' : 'Удерживай кнопку чтобы говорить';
-  const HINT_TALK = OPEN_MODE ? 'Нажми чтобы замолчать'       : 'Отпусти, чтобы замолчать';
-  $('m-hint').textContent = HINT_IDLE;
-
-  // ── PTT / Open-mode ──────────────────────────────────────────────────────
-  async function startTalk() {
-    if(talking||tbtn.disabled)return;
-    tryPlayAll(); // вызываем ДО await — пока ещё активен контекст пользовательского жеста (iOS autoplay)
-    try {
-      const s = await acquireStream();
-      s.getAudioTracks().forEach(t => t.enabled = true);
-      const audioTrack = s.getAudioTracks()[0];
-      const peerCount = Object.keys(peers).length;
-      dbg('startTalk', 'peers='+peerCount+' track='+audioTrack.readyState+' en='+audioTrack.enabled);
-      for (const [remoteUid, {pc}] of Object.entries(peers)) {
-        const senders = pc.getSenders();
-        const ice = pc.iceConnectionState;
-        dbg('talk-peer', remoteUid.slice(0,6)+' ice='+ice+' senders='+senders.length+' sig='+pc.signalingState);
-        senders.forEach((snd,i)=>dbg('  sender'+i, (snd.track?snd.track.kind+'/'+snd.track.readyState+'/en='+snd.track.enabled:'null')));
-        const sender = senders.find(snd => !snd.track || snd.track.kind === 'audio');
-        if (sender) {
-          dbg('replaceTrack→', remoteUid.slice(0,6)+' hadTrack='+(sender.track?sender.track.readyState:'null'));
-          sender.replaceTrack(audioTrack)
-            .then(()=>dbg('replaceTrack-ok', remoteUid.slice(0,6)))
-            .catch(e=>dbg('replaceTrack-ERR',String(e)));
-        } else {
-          dbg('addTrack→', remoteUid.slice(0,6)+' (no sender found)');
-          pc.addTrack(audioTrack, s);
-          if (pc.signalingState === 'stable') {
-            try {
-              const offer = await pc.createOffer();
-              await pc.setLocalDescription(offer);
-              fbPut(room,'signals/'+remoteUid+'/'+myUid,{type:'offer',sdp:offer.sdp,ts:Date.now()});
-              dbg('addTrack-offer→sent', remoteUid.slice(0,6));
-            } catch(e) { dbg('addTrack-offer-ERR',String(e)); }
-          }
-        }
-      }
-      tryPlayAll(); // повторный вызов — на случай если ontrack пришёл пока ждали acquireStream
-      talking=true; tbtn.classList.add('pressing'); $('m-hint').textContent=HINT_TALK;
-      setStatus('Ты говоришь…',true); if(presence[myUid])presence[myUid].speaking=true; renderList();
-      fbPut(room,'talking/'+myUid,true);
-    } catch(e){ toast('Нет доступа к микрофону'); }
-  }
-
-  function stopTalk() {
-    if(!talking)return;
-    if(localStream)localStream.getAudioTracks().forEach(t=>t.enabled=false);
-    talking=false; tbtn.classList.remove('pressing'); $('m-hint').textContent=HINT_IDLE;
-    if(presence[myUid])presence[myUid].speaking=false; renderList();
-    fbDel(room,'talking/'+myUid); setStatus('Онлайн: '+Object.keys(presence).length+' чел.');
-  }
-
-  if (OPEN_MODE) {
-    tbtn.addEventListener('click', e => { e.preventDefault(); if (talking) stopTalk(); else startTalk(); });
-  } else {
-    tbtn.addEventListener('mousedown',  e=>{e.preventDefault();startTalk();});
-    tbtn.addEventListener('touchstart', e=>{e.preventDefault();startTalk();},{passive:false});
-    tbtn.addEventListener('mouseup',    stopTalk);
-    tbtn.addEventListener('touchend',   e=>{e.preventDefault();stopTalk();},{passive:false});
-    tbtn.addEventListener('mouseleave', stopTalk);
-    tbtn.addEventListener('touchcancel',stopTalk);
-  }
-
-  mbtn.addEventListener('click',()=>{
-    muted=!muted; mbtn.textContent=muted?'🔇':'🔊'; mbtn.classList.toggle('muted',muted);
-    document.querySelectorAll('audio').forEach(a=>{ a.muted=muted; });
-    Object.values(peerNodes).forEach(gain=>{ if(gain) gain.gain.value = muted ? 0 : VOLUME; });
-    toast(muted?'Звук выключен':'Звук включён');
-  });
-}
-</script>
-</body>
-</html>
+<div></div><div></div><div></div><div></div><div></div><div></div></body><div></div></html>
